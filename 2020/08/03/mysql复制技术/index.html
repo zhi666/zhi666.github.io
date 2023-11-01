@@ -1,0 +1,561 @@
+<!doctype html>
+<html lang="zh"><head><meta charset="utf-8"><meta name="generator" content="Hexo 4.2.0"><meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"><meta><meta name="keywords" content="[object Object]"><meta name="description" content="mysql复制技术架构讲解:一、mysql AB 复制技术(主从)（异步复制） 
+MySQL支持单向、异步(async)复制，复制过程中一个服务器充当主服务器，而一个或多个其它服务器充当从服务器。"><meta name="author" content="zhi666"><title>mysql复制技术 - 逸尘秀</title><meta description="mysql复制技术架构讲解:一、mysql AB 复制技术(主从)（异步复制）  MySQL支持单向、异步(async)复制，复制过程中一个服务器充当主服务器，而一个或多个其它服务器充当从服务器。"><meta property="og:type" content="article"><meta property="og:title" content="mysql复制技术"><meta property="og:url" content="https://yc6.cool/2020/08/03/mysql%E5%A4%8D%E5%88%B6%E6%8A%80%E6%9C%AF/"><meta property="og:site_name" content="逸尘秀"><meta property="og:description" content="mysql复制技术架构讲解:一、mysql AB 复制技术(主从)（异步复制）  MySQL支持单向、异步(async)复制，复制过程中一个服务器充当主服务器，而一个或多个其它服务器充当从服务器。"><meta property="og:locale" content="zh_CN"><meta property="article:published_time" content="2020-08-03T09:50:36.000Z"><meta property="article:modified_time" content="2023-11-01T02:25:44.573Z"><meta property="article:author" content="zhi666"><meta property="article:tag" content="数据库"><meta property="article:tag" content="mysql"><meta property="twitter:card" content="summary"><meta property="twitter:image" content="https://yc6.cool/img/avatar.png"><script type="application/ld+json">{"@context":"https://schema.org","@type":"BlogPosting","mainEntityOfPage":{"@type":"WebPage","@id":"https://yc6.cool/2020/08/03/mysql%E5%A4%8D%E5%88%B6%E6%8A%80%E6%9C%AF/"},"headline":"mysql复制技术","image":["https://yc6.cool/img/avatar.png"],"datePublished":"2020-08-03T09:50:36.000Z","dateModified":"2023-11-01T02:25:44.573Z","author":{"@type":"Person","name":"zhi666"},"description":"mysql复制技术架构讲解:一、mysql AB 复制技术(主从)（异步复制）  MySQL支持单向、异步(async)复制，复制过程中一个服务器充当主服务器，而一个或多个其它服务器充当从服务器。"}</script><link rel="alternative" href="/atom.xml" title="逸尘秀" type="application/atom+xml"><link rel="icon" href="/img/favicon.png"><link rel="stylesheet" href="https://cdnjs.loli.net/ajax/libs/font-awesome/5.12.0/css/all.min.css"><link rel="stylesheet" href="https://fonts.loli.net/css?family=Ubuntu:400,600|Source+Code+Pro|Monda:300,300italic,400,400italic,700,700italic|Roboto Slab:300,300italic,400,400italic,700,700italic|Microsoft YaHei:300,300italic,400,400italic,700,700italic|PT Mono:300,300italic,400,400italic,700,700italic&amp;amp;subset=latin,latin-ext|Inconsolata|Itim|Lobster.css"><link rel="stylesheet" href="https://cdnjs.loli.net/ajax/libs/highlight.js/9.12.0/styles/atom-one-dark.min.css"><style>body>.footer,body>.navbar,body>.section{opacity:0}</style><!--!--><!--!--><script src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js" defer></script><link rel="stylesheet" href="https://cdnjs.loli.net/ajax/libs/lightgallery/1.6.12/css/lightgallery.min.css"><link rel="stylesheet" href="https://cdnjs.loli.net/ajax/libs/justifiedGallery/3.7.0/css/justifiedGallery.min.css"><!--!--><!--!--><script src="https://cdnjs.loli.net/ajax/libs/pace/1.0.2/pace.min.js"></script><link rel="stylesheet" href="/css/style.css"><script src="https://cdnjs.loli.net/ajax/libs/jquery/3.3.1/jquery.min.js"></script><script src="/js/globalUtils.js"></script><link rel="stylesheet" href="/live2d/waifu.css"><script type="text/javascript" async src="/live2d/autoload.js"></script></head><body class="is-3-column has-navbar-fixed-top"><nav class="navbar navbar-main is-fixed-top"><div class="container"><div class="navbar-brand justify-content-center"><a class="navbar-item navbar-logo" href="/"><img src="/img/logo.png" alt="逸尘秀" height="28"></a></div><div class="navbar-menu"><div class="navbar-start"><a class="navbar-item" href="/">首页</a><a class="navbar-item" href="/archives">归档</a><a class="navbar-item" href="/categories">分类</a><a class="navbar-item" href="/tags">标签</a><a class="navbar-item" href="/media">影音</a><a class="navbar-item" href="/album">相册</a><a class="navbar-item" href="/friend">友链</a><a class="navbar-item" href="/self-talking">碎碎念</a><a class="navbar-item" href="/message">留言</a><a class="navbar-item" href="/about">关于</a></div><div class="navbar-end"><a class="navbar-item" target="_blank" rel="noopener" title="Download on GitHub" href="https://github.com/zhi666"><i class="fab fa-github"></i></a><a class="navbar-item search" title="搜索" href="javascript:;"><i class="fas fa-search"></i></a><a class="navbar-item" id="night-nav" title="Night Mode" href="javascript:;"><i class="fas fa-moon" id="night-icon"></i></a></div></div></div></nav><script type="text/javascript" src="/js/theme-setting.js"></script><section class="section"><div class="container"><div class="columns"><div class="column order-2 column-main is-8-tablet is-8-desktop is-9-widescreen"><div class="card"><article class="card-content article" role="article"><div class="article-meta size-small is-uppercase level is-mobile"><div class="level-left"><i class="far fa-calendar-plus"> </i>2020-08-03  <a class="commentCountImg" href="/2020/08/03/mysql%E5%A4%8D%E5%88%B6%E6%8A%80%E6%9C%AF/#comment-container"><span class="display-none-class">74f543e8c855af8d932fd00e76cc11c0</span><i class="far fa-comment-dots"></i> <span class="commentCount" id="74f543e8c855af8d932fd00e76cc11c0">99+</span>  </a><span class="level-item"><i class="far fa-clock"> </i>1 小时  <i class="fas fa-pencil-alt"> </i>8.6 k</span><span class="level-item" id="busuanzi_container_page_pv"><i class="far fa-eye"></i>&nbsp;&nbsp;<span id="busuanzi_value_page_pv">0</span>次访问</span></div></div><h1 class="title is-3 is-size-4-mobile">mysql复制技术</h1><div class="content"><h2 id="mysql复制技术架构讲解"><a href="#mysql复制技术架构讲解" class="headerlink" title="mysql复制技术架构讲解:"></a>mysql复制技术架构讲解:</h2><p><strong>一、mysql AB 复制技术(主从)（异步复制）</strong> </p>
+<p>MySQL支持单向、异步(async)复制，复制过程中一个服务器充当主服务器，而一个或多个其它服务器充当从服务器。</p>
+<a id="more"></a>
+<p>​            mysql主 - - &gt;  mysql从</p>
+<p>​             master        slave</p>
+<p>把<strong>主</strong>上的二进制日志(bin-log)的内容传到<strong>从</strong>上的一个新的日志叫relay-bin-log</p>
+<p>​         <strong>从</strong>上的  IO 线程  负责传输       </p>
+<p>​         <strong>从</strong>上的  SQL 线程 负责从服务器解析日志</p>
+<p>复制的过程：</p>
+<p>​     1，slave端的IO线程连上master端，请求</p>
+<p>​     2，master端返回给slave端，bin log文件名和位置信息</p>
+<p>​     3，IO线程把master端的bin log内容依次写到slave端relay bin log里，并把master端的bin-log文件名和位置记录到master.info里。</p>
+<p>​     4，salve端的sql线程，检测到relay bin log中内容更新，就会解析relay log里更新的内容，并执行这些操作；也就是说salve执行和master一样的操作而达到数据同步的目的</p>
+<p>架构图：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line">       客户	</span><br><span class="line">	    ｜</span><br><span class="line">	    ｜	</span><br><span class="line"> web程序，游戏程序（c,php,java.......)	</span><br><span class="line">	    |</span><br><span class="line">	    |</span><br><span class="line">代理层	(mysqlproxy,amoeba)	</span><br><span class="line">	    |	</span><br><span class="line">	    |	</span><br><span class="line">mysql主   ----&gt;	 mysql从</span><br></pre></td></tr></table></figure>
+
+<p>思考回答题：</p>
+<p>1，主打开二进制日志，从要不要开二进制日志? </p>
+<p>2，主和从的读写情况怎么分开？</p>
+<p><strong>二、一主多从复制构架</strong></p>
+<p>架构图</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"></span><br><span class="line">		    －－&gt;	salve</span><br><span class="line">master  	－－&gt;	salve		</span><br><span class="line">			－－&gt;	salve</span><br><span class="line"></span><br><span class="line">master		——负责写</span><br><span class="line">salve		——负责读</span><br></pre></td></tr></table></figure>
+
+<p>适合于以读为主的业务，使用多个salve分担读的压力，但要注意的是这种架构，salve越多，那么master复制的压力就越大</p>
+<p><strong>三、双主复制架构</strong></p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">master A &lt;－－&gt;  master B</span><br><span class="line"></span><br><span class="line">         discuz</span><br></pre></td></tr></table></figure>
+
+<p>​     双主架构最大的优点是，两台服务器实现数据互通，两台即能写又读，在任何一台服务器上写数据，另一台都会同步</p>
+<p>思考题：</p>
+<p>1、双主mysql复制构架，能同时写相同的数据吗?</p>
+<p>2，两边可以写不同的数据吗？</p>
+<p>可以通过业务程序层，指定一些表的写操作全在一端，另一些表的写操作全在另一端，也就是说两边不会同时写相同的表（当然这是理想状态，因为业务复杂的话会有表的联结等情况）</p>
+<p>然后通过指定mysql复制的参数，一部分表或库会从A复制到B，另外一部分表或库从B复制到A就可以避免上面的问题了</p>
+<p>或者两个库，一个库master A来写，另一个库master B来写</p>
+<p>前面三个问题也说明了双主架构的第一种应用（就是两边写不关联的数据，互相复制)，双主架构的第二种应用就是解决一主一从架构里主挂掉了的问题。</p>
+<p>看下面的分析</p>
+<p>mysql主     mysql从</p>
+<p>思考：</p>
+<p><strong>问题1</strong>:如果一主一从，主挂了，slave能不能写，如果能写，主修好启起来后，salve写的数据如何传回给主? </p>
+<p>答案:主挂了，slave应该要写，否则论坛不能发贴，只能看贴；</p>
+<p>​      主修好后（假设一小时)，slave写了这一小时的数据应该要想办法传回主才行。</p>
+<p>   方法一：DBA人为的把salve这一小时写的数据找出来再导入到主(如果很多表，一小时的操作也非常多，可以说几乎不可能找出这小时改变了啥）</p>
+<p>   方法二：使用类似rsync的同步方法,这是通过存储层来实现数据同步回去。备：是把整个数据目录复制过去。</p>
+<p>   方法三：DBA人为的把从这一小时改变的二进制日志（要确认slave打开二进制日志)给找出来然后应用到主上去</p>
+<p>   方法四：直接把一主一从架构改为双主，或者把一主一从反过改成一从一主 </p>
+<p><strong>问题2:</strong>  上面的方法无论哪一种都会有一个问题，就是把从写的一小时数据传回给主需要一定的时间</p>
+<p>就是假设这一小时slave创建了一个aaa表，主mysql修好启动后，</p>
+<p>如果主马上接管从的写功能，这时前端程序马上给了一个insert into aaa的插入操作，这样肯定会出问题，因为创建aaa表的操作还没有从slave那传回来,如何解决? </p>
+<p>解决方法一:人为控制主现在不能写，等slave的数据传回来后再写；但这样的话，等待时间太长了</p>
+<p>解决方法二:就是把一主一从的架构改成双主的架构（假设master A和master B)</p>
+<p>​         master A —&gt; master B (平时主B只读，不写，只有到主A挂了，才会写)</p>
+<p>​         挂一个小时       </p>
+<p>​        读写一个小时</p>
+<p>​         修复后启动了</p>
+<p>​         把读给A     写留给B</p>
+<p><strong>问题3</strong>: 改成双主后，<strong>master B</strong>在<strong>master A</strong>挂掉的一小时内帮他写了数据，A修好启起来后，B的数据可以自动传回A；但是如果数据量大的话，这个传回也可能需要一定时间，如果正好在这个传回时间内也出现了问题2的情况，又如何解决?</p>
+<p>解决方法一:人为控制主不能写，这样的话等待时间很短（因为是自动传回来，跟手动导回来速度快很多)，影响不大</p>
+<p>解决方法二: 就直接把master B 做为新的写服务器，master A启动后，也只是做为读服务器；除非等下一次B挂了，A会重新成为写服务器（当然这是在两台服务器性能相等的情况下)</p>
+<p><strong>总结: 上面说明双主架构的两种应用</strong></p>
+<p><strong>四、级联架构</strong></p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">	    －－	salve  	－－	salve</span><br><span class="line"></span><br><span class="line">master	－－	salve	－－	salve</span><br><span class="line">		－－	salve	－－ 	salve</span><br><span class="line"></span><br><span class="line">		bin-log		bin-log		?</span><br></pre></td></tr></table></figure>
+
+<p>  为了解决一主多从的master的复制压力</p>
+<p>​     可以把slave做为下一级从机的master</p>
+<p>加复制的级联层次，造成的延迟更长</p>
+<p>  所以这种架构并不是很推荐，一般会进行分拆集群</p>
+<p><strong>五、双主和级联合起来</strong></p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"> master   --salve    --slave</span><br><span class="line">			  |</span><br><span class="line">			  |		    		－－ slave</span><br><span class="line">master	－－ salve  －－ slave</span><br><span class="line">								－－ slave</span><br></pre></td></tr></table></figure>
+
+<p>优化原则:分 </p>
+<p>大型结构的数据量太大，要用到数据切分(水平，垂直)</p>
+<h2 id="mysql-复制技术部署"><a href="#mysql-复制技术部署" class="headerlink" title="mysql 复制技术部署"></a>mysql 复制技术部署</h2><p>1、关闭iptables,selinux,NetworkManager</p>
+<p>2、将主机名和IP写进hosts</p>
+<p>3、使用yum rpm包或tar安装数据库，主从两台机安装一致</p>
+<p>4、主：开启二进制日志，用于记录对表的增删改操作，并流传给从</p>
+<p>5、主从设置server-id值，主的值比从要小</p>
+<p>6、主：建立复制的帐号并授权</p>
+<p>master A 主服务器ip：192.168.224.10</p>
+<p>slave B 从服务器ip： 192.168.224.11</p>
+<p><strong>第一步，安装好8.0的Mysql</strong></p>
+<p>修改主、从配置文件 /etc/my.conf</p>
+<p>主：master:在[mysqld]标签下加入下面二句</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">［mysqld] </span><br><span class="line">log-bin&#x3D;mysql-bin</span><br><span class="line">server-id&#x3D;1</span><br></pre></td></tr></table></figure>
+
+<p>备：slave：在[mysqld]标签下加入下面一句</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">[mysqld]</span><br><span class="line">server-id&#x3D;2</span><br></pre></td></tr></table></figure>
+
+<p>完成配置后重新启动mysql服务 </p>
+<p>主服务器上ll /usr/local//mysql/data/看下是否已经有二进制日志,mysql-bin.000001和mysql-bin.index</p>
+<p><a href="https://imgchr.com/i/aarx0J"><img src="https://s1.ax1x.com/2020/08/03/aarx0J.png" alt="aarx0J.png"></a></p>
+<p><strong>第二步：建立复制的帐号并授权</strong></p>
+<p>先创建用户密码为123.Shui!!@#</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">create user &#39;aa&#39;@&#39;%&#39; identified with mysql_native_password by &#39;123.Shui!!@#&#39;;</span><br></pre></td></tr></table></figure>
+
+<p>然后授予复制权限</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">grant super,replication slave on *.* to &#39;aa&#39;@&#39;%&#39;;</span><br></pre></td></tr></table></figure>
+
+<p>授权完成后，在从服务器上登陆测试 登陆成功后就退出</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">mysql -uaa -h192.168.224.10 -p&#39;123.Shui!!@#&#39;</span><br></pre></td></tr></table></figure>
+
+<p><strong>第三步：给master加上锁，防止有新的数据写入</strong></p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">flush tables with read lock;</span><br></pre></td></tr></table></figure>
+
+<p>查看二进制日志记录的位置，配置从服务器要用,只要服务器开启二进制日志后才允许当主</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">show master status;  #查看主服务器配置</span><br><span class="line">show slave status;   #查看从服务器配置</span><br></pre></td></tr></table></figure>
+
+<p>查看master</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">show master status;</span><br></pre></td></tr></table></figure>
+
+<p><img src="https://s1.ax1x.com/2020/08/03/aasip6.png" alt="aasip6.png"></p>
+<p>备注：尝试在主服务器上使用命令<code>show slave status;  </code>查看是否有数据，因这台服务器是主服务器，所以条命令是看不到任何东西，是空的。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">mysql&gt; exit</span><br></pre></td></tr></table></figure>
+
+<p>查看主服务器的日志文件名是否和上面查出来的一致，配置从服务器要用</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">ll &#x2F;usr&#x2F;local&#x2F;mysql&#x2F;data&#x2F;</span><br></pre></td></tr></table></figure>
+
+<p><img src="https://s1.ax1x.com/2020/08/03/aase7d.png" alt="aase7d.png"></p>
+<p>对照文件名是否一致</p>
+<p><strong>第四步：在从服务器slave端，配置mysql主从关系</strong></p>
+<p>切到从服务器192.168.224.11上面</p>
+<p>先登陆数据库</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">mysql -p</span><br></pre></td></tr></table></figure>
+
+<p>停止从服务器复制线程：备注：默认该线程就是停止状态，执行该命令是告诉数据库该线程明确的要停止</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">stop slave;</span><br></pre></td></tr></table></figure>
+
+<p>配置主从关系：</p>
+<p>该台服务器为从时，需要配置连接主服务器的信息，从服务器能不能在主服务器上面获取二进制日志，全靠下面的配置信息。</p>
+<p>mysql&gt; change master to                               #配置从服务器连接主服务器</p>
+<p>  -&gt; master_user=’aa’,                                      #主服务器建立复制的帐号</p>
+<p>  -&gt; master_password=’123.Shui!!@#’,         #密码</p>
+<p>  -&gt; master_host=’192.168.224.10’,               #主服务器IP</p>
+<p>  -&gt; master_port=3306,                                   #端口，注：不能加引号</p>
+<p>  -&gt; master_log_file=’mysql-bin.000001’,     #主上面查到的文件名</p>
+<p>-&gt; master_log_pos=662                                #主上面查到的位置号</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">change master to master_user&#x3D;&#39;aa&#39;,master_password&#x3D;&#39;123.Shui!!@#&#39;,master_host&#x3D;&#39;192.168.224.10&#39;,master_log_file&#x3D;&#39;mysql-bin.000001&#39;,master_log_pos&#x3D;662;</span><br></pre></td></tr></table></figure>
+
+<p>配置连接主服务器信息后，在从服务器上启动slave线程。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">start slave;</span><br></pre></td></tr></table></figure>
+
+<p>启动完成后，再查看slave线程连接主服务器的状态</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">show slave status\G</span><br></pre></td></tr></table></figure>
+
+<p><img src="https://s1.ax1x.com/2020/08/03/aasKht.png" alt="aasKht.png"></p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">START SLAVE  启动除group_replication_recovery和 group_replication_applier通道之外的所有通道的复制线程 。</span><br><span class="line">STOP SLAVE   停止所有通道（group_replication_recovery和和 group_replication_applier通道除外）的复制线程 。</span><br><span class="line">SHOW SLAVE STATUS   报告除group_replication_applier通道之外的所有通道的状态 。</span><br><span class="line">RESET SLAVE         重置所有通道。</span><br><span class="line">reset slave all;    清除所有信息；</span><br></pre></td></tr></table></figure>
+
+<p><strong>警告</strong></p>
+<p>请<code>RESET SLAVE</code>谨慎使用，因为此语句将删除所有现有通道，清除其中继日志文件，并仅重新创建默认通道。</p>
+<p><strong>第五步：在主服务器master端解锁mysql：</strong></p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">unlock tables;</span><br><span class="line"></span><br><span class="line">#可以查看连接信息</span><br><span class="line">show processlist\G</span><br></pre></td></tr></table></figure>
+
+<p><strong>第六步：测试</strong></p>
+<p>在主服务器上创建库、表和插入表数据后，在从服务器查看是否有相同数据</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">create database aa;</span><br><span class="line">create table aa.test (id int,name varchar(20));</span><br><span class="line">insert into aa.test values(0,&quot;zhangshan&quot;),(1,&quot;wangwu&quot;);</span><br></pre></td></tr></table></figure>
+
+<p>在从服务器上查看</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">select * from aa.test;</span><br></pre></td></tr></table></figure>
+
+
+
+<p><strong>第七步：查看日志文件：</strong></p>
+<p>在从服务器上查看(192.168.224.11)</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">cat  &#x2F;usr&#x2F;local&#x2F;mysql&#x2F;data&#x2F;server1-relay-bin.index</span><br><span class="line">.&#x2F;server1-relay-bin.000001</span><br><span class="line">.&#x2F;server1-relay-bin.000002</span><br><span class="line"></span><br><span class="line">mysqlbinlog &#x2F;usr&#x2F;local&#x2F;mysql&#x2F;data&#x2F;server1-relay-bin.000002</span><br></pre></td></tr></table></figure>
+
+<p><strong>题外：</strong></p>
+<p>​     尝试<strong>登陆从</strong>服务器: 192.168.224.11</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">mysql -uroot -p&#39;123.Shui!!&#39;</span><br></pre></td></tr></table></figure>
+
+<p>​     在从服务器上面登陆库、表并使用insert插入数据。</p>
+<p>  这时再<strong>登陆主</strong>服务器:192.168.224.10</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">mysql -uroot -p&#39;123.Shui!!&#39;</span><br></pre></td></tr></table></figure>
+
+<p>​     在主服务器上查看是否有从服务器创建和插入的数据。  </p>
+<p>备注：只有master写，slave可以看到，slave写，master看不到</p>
+<p> 如果复制出现问题</p>
+<p>（要模拟问题的话，在从上创建一个库，然后在主上也创建这个库，就会冲突，造成复制出现问题），</p>
+<p>重做复制集群只需要重新在从上执行stop slave; change master to …… ; start slave;</p>
+<p><strong>测试：</strong>把从重启后，再上去查看状态，还是连接的，没什么影响</p>
+<p>把主重启后，再去slave上去查看状态，发现重试时间为60秒，等60秒后又自动连接OK了</p>
+<p>如果想要改这个60秒的话，可以把从服务器上的master.info文件里的60直接改成30(rpm版测试有点问题)</p>
+<p><strong>1主多从的做法</strong></p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">            -&gt;slave</span><br><span class="line">master </span><br><span class="line">		-&gt;slave</span><br></pre></td></tr></table></figure>
+
+<p>就是上面的步骤有几个从就做几次,</p>
+<p><strong>双主架构</strong></p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">master - master</span><br></pre></td></tr></table></figure>
+
+<p>把上面的1主1从，反过来做一遍，在上面的slave机也打开二进制日志，反着做一遍就行，注意做的过程中，保证数据一致</p>
+<p>做好的架构，只要两边不同时操作相同的数据，就不会出现复制不一致的问题；</p>
+<p>或者是在业务程序层，将一部分的写操作定义到master A,另一部分的写操作定义到master B</p>
+<h3 id="级联架构"><a href="#级联架构" class="headerlink" title="级联架构"></a>级联架构</h3><p>master A 主服务器ip：192.168.224.10</p>
+<p>slave B 从服务器ip：192.168.224.11</p>
+<p>slave C 从服务器IP：192.168.224.12</p>
+<p>master A -slave B -slave C</p>
+<p>把中间的从也要打开二进制日志。但是它默认不把应用master的操作记录到自己的二进制日志。所以需要打开一个参数让它记录，才可以传给第三级的从</p>
+<p>本文需要验证的疑问：</p>
+<p><strong>从库做为其他从库的主库时 log-slave-updates参数是必须要添加的</strong>，因为从库要作为其他从库的主库，必须添加该参数。该参数就是为了让从库从主库复制数据时可以写入到binlog日志，为什么要用这个参数写binlog日志呢，不是在配置文件中开启log-bin =mysql-bin选项就可以吗？</p>
+<p>答：从库开启log-bin参数，如果直接往从库写数据，是可以记录log-bin日志的，但是从库通过I0线程读取主库二进制日志文件，然后通过SQL线程写入的数据，是不会记录binlog日志的。也就是说从库从主库上复制的数据，是不写入从库的binlog日志的。所以从库做为其他从库的主库时需要在配置文件中添加<code>log-slave-updates</code> 参数。</p>
+<p>在/etc/my.cnf文件里加上以下二句：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">max_allowed_packet&#x3D;20M		#代表应用的日志大小</span><br><span class="line">log-slave-updates&#x3D;1			#代表可以读取上一级从服务器应用主服务器的日志</span><br></pre></td></tr></table></figure>
+
+<p>在服务器里查看参数</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">show variables like &#39;%max_allowed%&#39;;</span><br><span class="line">show variables like &#39;%log_slave%&#39;;</span><br></pre></td></tr></table></figure>
+
+<p><strong>架构图：</strong></p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"> master A	   			slave B	  	     	             slave C	</span><br><span class="line"></span><br><span class="line">192.168.224.10	   		192.168.224.11	     	      192.168.224.12	</span><br><span class="line"></span><br><span class="line">sever-id&#x3D;1	  		   server-id&#x3D;2	        	       server-id&#x3D;3</span><br><span class="line">log-bin&#x3D;mysql-bin       log-bin&#x3D;mysql-bin	</span><br><span class="line">		          log-slave-updates&#x3D;1               log-slave-updates&#x3D;1 这台不需要加这个参数</span><br></pre></td></tr></table></figure>
+
+<p><strong>日志应用流程：</strong></p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">bin-log        relay-bin-log    relay-bin-log</span><br><span class="line"></span><br><span class="line">    -&gt;master A 创建一个库时日志会写进bin-log(二进制日志)</span><br><span class="line">	-&gt;这时slave B 去master A读取bin-log再将应用日志放到本地的relay-bin-log日志里</span><br><span class="line">	-&gt;slave C  这时去读取slave B的bin-log和relay-bin-log日志(因为slave B添加了允许其它服务器读取我的应用日志log-slave-updates&#x3D;1)</span><br></pre></td></tr></table></figure>
+
+
+
+<p><strong>2主多从+级联</strong></p>
+<p><strong>2主</strong>就是把前面的双主架构做一遍，多从就是在新服务器上把从服务做一遍，如果要加级联就是再把级联架构做一遍。</p>
+<h3 id="Mysql-基于表复制技术"><a href="#Mysql-基于表复制技术" class="headerlink" title="Mysql 基于表复制技术"></a>Mysql 基于表复制技术</h3><p>复制库、表和表内容参数：可使用show slave status\G 命令看到以下参数</p>
+<p>Replicate_Do_DB:                        #接受哪个库的复制：必须在指定的库下操作才能复制。包括表结构和表数据。</p>
+<p>Replicate_Ignore_DB:                #忽略哪个库的复制</p>
+<p>Replicate_Do_Table:           #接受哪个表的复制：注：只能指定某个库下的某个表的内容更新与修改，例：aaa.a3</p>
+<p>Replicate_Ignore_Table:             #忽略哪个表的复制</p>
+<p>Replicate_Wild_Do_Table:         #通配符表示复制哪些表：注：接收某个库下的所有表内容的修改，例:aaa.%</p>
+<p>Replicate_Wild_Ignore_Table:   #通配符表示忽略哪些表</p>
+<p>实例说明：</p>
+<p>​         master A   slave B</p>
+<p>1、先把两台做成ab复制的架构</p>
+<p>​     此时在master上做任何创建库、表或插入数据等动作，从服务器都会复制过来。 </p>
+<p>2、现在的业务需求是：</p>
+<p>  要求：把master的aaa库下的表复制到slave上，其它的库都不要</p>
+<p>3、为了满足需求我们在slave b的my.cnf配置文件的[mysqld]参数组里加上</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">replicate_do_db&#x3D;aaa            #只接受aaa库的复制</span><br></pre></td></tr></table></figure>
+
+<p>4、重启slave b，然后测试</p>
+<p>测试结果为</p>
+<p>​     -&gt;在master上创建aaa库:create database aaa;</p>
+<p>​     -&gt;在master创建aaa.a1表:create table aaa.a1(id int(1));</p>
+<p>​     -&gt;并插入数据insert into aaa.a1 values(1);</p>
+<p>​    -&gt;回到slave上查看有aaa库，也有a1表，但没有数据  </p>
+<p>​     如果要同步aaa.a1表下的数据，master要进到aaa库下操作才可以</p>
+<p>​     -&gt;在master上操作，use aaa;然后再插入数据：insert into aaa.a1 values(2);</p>
+<p>​     -&gt;回到slave上查看aaa库的a1表数据，这时就有了</p>
+<p>​     如果想要复制该库下所有的表数据，这时就要加入另外一个参数</p>
+<p> 5、解决方法：</p>
+<p>​     在slave b上的my.cnf文件的[mysqld]标签下加上以下参数，就可以复制aaa库下的所有表和表内容了</p>
+ <figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">replicate_wild_do_table&#x3D;aaa.%                   #%是通配符</span><br></pre></td></tr></table></figure>
+
+<p>6、重启slave b 然后测试</p>
+<p>测试步骤：</p>
+<p>​     -&gt;在master创建aaa.a2表:create table aaa.a2(id int(1));</p>
+<p>​     -&gt;并插入数据insert into aaa.a2 values(1);</p>
+<p>​     -&gt;并给aaa.a1表也插入数据：insert into aaa.a1 values(2);</p>
+<p>​     -&gt;回到slave上查看aaa库下是否有a2表，a2和a1表是否有上面插入的数据。     </p>
+<p>表复制技术完成</p>
+<h3 id="多源复制"><a href="#多源复制" class="headerlink" title="多源复制"></a>多源复制</h3><p><strong>注意：mysql多源复制技术仅支持5.7以上版本mysql</strong></p>
+<p>官方文档</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">https:&#x2F;&#x2F;dev.mysql.com&#x2F;doc&#x2F;refman&#x2F;8.0&#x2F;en&#x2F;channels-startup-options.html</span><br></pre></td></tr></table></figure>
+
+
+
+<p><strong>1、多源复制的特性</strong></p>
+<p>  1.1 和主从复制技术一样，都是通过mysql的二进制日志（binlog）来实现数据的同步 </p>
+<p><strong>2、什么地方需要用到多源复制</strong></p>
+<p>  2.1 在此之前，我们讲到了mysql主从复制技术，但考虑一下，如果我有两台不同数据的mysql服务器，该如何才能实现同时使用一个slave进行数据同步备份呢？</p>
+<p>提示：在做多源复制之前先把之前搭建好的双主关掉</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">stop slave;</span><br><span class="line">reset slave all;</span><br></pre></td></tr></table></figure>
+
+
+
+<p><strong>参数讲解：</strong></p>
+<p><em>必须</em>正确配置 以下启动设置<em>才能</em>使用多源复制。</p>
+<ul>
+<li><p><a href="https://dev.mysql.com/doc/refman/8.0/en/replication-options-replica.html#sysvar_relay_log_info_repository"><code>relay_log_info_repository</code></a>。</p>
+<p>必须将其设置为<code>TABLE</code>。如果将此变量设置为<code>FILE</code>，则尝试向副本添加更多源失败 <a href="https://dev.mysql.com/doc/refman/8.0/en/server-error-reference.html#error_er_slave_new_channel_wrong_repository"><code>ER_SLAVE_NEW_CHANNEL_WRONG_REPOSITORY</code></a>。<code>FILE</code>现在已弃用该设置，它 <code>TABLE</code>是默认设置。</p>
+</li>
+<li><p><a href="https://dev.mysql.com/doc/refman/8.0/en/replication-options-replica.html#sysvar_master_info_repository"><code>master_info_repository</code></a></p>
+<p>必须将其设置为<code>TABLE</code>。如果将此变量设置为<code>FILE</code>，则尝试向副本添加更多源失败 <a href="https://dev.mysql.com/doc/refman/8.0/en/server-error-reference.html#error_er_slave_new_channel_wrong_repository"><code>ER_SLAVE_NEW_CHANNEL_WRONG_REPOSITORY</code></a>。<code>FILE</code>现在已弃用该设置，它 <code>TABLE</code>是默认设置。</p>
+<p><code>skip_slave_start=1</code> </p>
+<p>该参数能够让数据库实例在启动的时候禁止建立主从关系，即禁止开启mysql的io线程和sql线程，用于搭建从库的时候需要，防止数据库启动的时候会自动开启了这两个线程，进而导致破坏了从库</p>
+<p>因此在mysql的配置文件中的mysqld栏上加上该参数可防止破坏</p>
+<p>当启用<code>enforce_gtid_consistency</code> 功能的时候，MySQL只允许能够保障事务安全，并且能够被日志记录的SQL语句被执行，像create table … select 和 create temporary table语句，以及同时更新事务表和非事务表的SQL语句或事务都不允许执行<br>binlog有三种模式：Row、Statement 和 Mixed 。</p>
+</li>
+</ul>
+<p>现在，以下启动选项会影响 复制拓扑中的<em>所有</em>通道。</p>
+<p>master 1 主服务器ip：192.168.224.10</p>
+<p>master 2 主服务器ip：192.168.224.12</p>
+<p>slave       从服务器IP：192.168.224.11</p>
+<p><strong>master端</strong></p>
+<p>gtid-mode=on              # 是否开启多源同步技术</p>
+<p>enforce-gtid-consistency=1       </p>
+<p>skip_slave_start=1          </p>
+<p>log-bin=mysql-bin           </p>
+<p>server-id=1                     # 指定mysql主从ID（该ID在主从集群中是唯一的）</p>
+<p><strong>slave端</strong></p>
+<p>server-id=3                     # 指定mysql主从ID（该ID在主从集群中是唯一的）</p>
+<p>gtid-mode = on                 # 是否开启多源同步技术</p>
+<p>binlog_gtid_simple_recovery=1</p>
+<p>enforce_gtid_consistency=1</p>
+<p>master_info_repository=TABLE</p>
+<p>relay_log_info_repository=TABLE</p>
+<p>replicate_ignore_db=mysql</p>
+<p>skip_slave_start = 1</p>
+<p><strong>一、配置文件</strong></p>
+<p><strong>Master1和Master2:</strong></p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">#GTID</span><br><span class="line">gtid-mode &#x3D; on</span><br><span class="line">binlog_gtid_simple_recovery&#x3D;1</span><br><span class="line">enforce_gtid_consistency&#x3D;1</span><br><span class="line">binlog_format &#x3D; row</span><br><span class="line">skip_slave_start &#x3D; 1</span><br><span class="line">log-bin &#x3D; mysql-bin</span><br><span class="line">server-id&#x3D;1		</span><br><span class="line"># master1和master2的id不能相同</span><br></pre></td></tr></table></figure>
+
+<p><strong>Slave:</strong></p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line">#binlog</span><br><span class="line">binlog_format&#x3D;row</span><br><span class="line">server-id&#x3D;3</span><br><span class="line">log-bin&#x3D;mysql-bin</span><br><span class="line">#GTID</span><br><span class="line">gtid-mode&#x3D;on</span><br><span class="line">binlog_gtid_simple_recovery&#x3D;1</span><br><span class="line">enforce_gtid_consistency&#x3D;1</span><br><span class="line">#修改MySQL存储master-info和relay-info的方式，即从文件存储改为表存储</span><br><span class="line">master_info_repository&#x3D;TABLE</span><br><span class="line">relay_log_info_repository&#x3D;TABLE</span><br><span class="line">replicate_ignore_db&#x3D;mysql　　#忽略mysql库的同步</span><br><span class="line">skip_slave_start&#x3D;1</span><br></pre></td></tr></table></figure>
+
+<p>分别重启数据库</p>
+<p><strong>二、主库创建复制账号：</strong></p>
+<p>先创建用户和密码</p>
+<p><strong>master1</strong></p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">create user &#39;aa1&#39;@&#39;%&#39; identified with mysql_native_password by &#39;123.Shui!!@#&#39;;</span><br></pre></td></tr></table></figure>
+
+<p>再授权</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">grant replication slave,replication client on *.* to &#39;aa1&#39;@&#39;%&#39;;</span><br></pre></td></tr></table></figure>
+
+<p><strong>master2</strong></p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">create user &#39;aa2&#39;@&#39;%&#39; identified with mysql_native_password by &#39;123.Shui!!@#&#39;;</span><br><span class="line"></span><br><span class="line">grant replication slave,replication client on *.* to &#39;aa2&#39;@&#39;%&#39;;</span><br></pre></td></tr></table></figure>
+
+<p><strong>slave 测试能否连接</strong></p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">mysql -u aa1 -h 192.168.224.10 -p&#39;123.Shui!!@#&#39;</span><br><span class="line">mysql -u aa2 -h 192.168.224.12 -p&#39;123.Shui!!@#&#39;</span><br></pre></td></tr></table></figure>
+
+
+
+<p><strong>三：从库启动复制</strong></p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">mysql&gt; stop slave;</span><br><span class="line"></span><br><span class="line">mysql&gt; change master to master_user&#x3D;&#39;aa1&#39;,master_password&#x3D;&#39;123.Shui!!@#&#39;,master_host&#x3D;&#39;192.168.224.10&#39;,master_port&#x3D;3306,master_auto_position&#x3D;1 for channel &#39;Master_1&#39;;</span><br><span class="line"></span><br><span class="line">mysql&gt; change master to master_user&#x3D;&#39;aa2&#39;,master_password&#x3D;&#39;123.Shui!!@#&#39;,master_host&#x3D;&#39;192.168.224.12&#39;,master_port&#x3D;3306,master_auto_position&#x3D;1 for channel &#39;Master_2&#39;;</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">mysql&gt; start slave;</span><br></pre></td></tr></table></figure>
+
+<p>也可以start slave for channel ‘Master_1 ‘启动单个channel的复制。</p>
+<p><strong>四：查看slave状态</strong></p>
+<p>也可以直接show slave status for channel ‘Master_1’ \G查看各个channel的复制状态</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">show slave status for channel &#39;Master_1&#39; \G</span><br></pre></td></tr></table></figure>
+
+<p>通过查看performance_schema相关的表查看同步状态：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">select * from performance_schema.replication_connection_status\G</span><br></pre></td></tr></table></figure>
+
+<p><strong>五、数据同步检查：</strong></p>
+<p>Master1建库建表并插入数据：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">mysql&gt; create database master1;</span><br><span class="line">mysql&gt; use master1;</span><br><span class="line">mysql&gt; create table test1(id int);</span><br><span class="line">mysql&gt; insert into test1 values(1);</span><br></pre></td></tr></table></figure>
+
+<p>Master2建库建表并插入数据：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">mysql&gt; create database master2;</span><br><span class="line">mysql&gt; use master2;</span><br><span class="line">mysql&gt; create table test1(id int);</span><br><span class="line">mysql&gt; insert into test1 values(1);</span><br></pre></td></tr></table></figure>
+
+<p>Slave查看数据是否同步：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">mysql&gt; show databases;</span><br><span class="line"></span><br><span class="line">mysql&gt; select * from master1.test1;</span><br><span class="line">mysql&gt; select * from master2.test1;</span><br></pre></td></tr></table></figure>
+
+<p>查看从库的状态</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">mysql&gt; show slave status\G</span><br></pre></td></tr></table></figure>
+
+
+
+<h3 id="Mysql复制技术-之-半同步技术"><a href="#Mysql复制技术-之-半同步技术" class="headerlink" title="Mysql复制技术 之 半同步技术"></a>Mysql复制技术 之 半同步技术</h3><p>这个技术是Mysql5.5版本之后的新功能。</p>
+<p>前面我们学到的MySQL复制技术，是叫异步技术：</p>
+<p>异步技术的概述：</p>
+<p>在<strong>主服务器</strong>上每执行完一条事务命令后都会写进二进制的日志，<strong>从服务器</strong>通过IO线程监控主服务器的二进制日志，每当主服务器的二进制日志发生改变，从服务器就会启动复制</p>
+<p><strong>异步技术的特点：</strong></p>
+<p>是允许主从之间的数据存在一定的延迟，对网络要求不高，这样设计的目的是基于数据库的高可用性，为了保证master不受slave的影响，并且异步复制使得master处于一种性能最优的状态</p>
+<p><strong>缺点：</strong></p>
+<p>在主从架构中使用异步技术，如果master停机，会发生刚刚已提交的事务，slave未能及时复制过来的可能。</p>
+<p><strong>半同步技术特点：</strong></p>
+<p> master每操作一个事务,<strong>要等待slave应用这个事物后给master确认信号</strong>。这样master才能把操作成功执行。这样保证了主从数据的绝对一致，mysql半同步复制等待时间超时后(默认时间为10秒)，会自动转换成异步复制</p>
+<p>下面开始配置半同步复制技术：</p>
+<p>环境要求:</p>
+<p>​         <strong>搭建好 mysql主从异步复制</strong></p>
+<p><strong>1、在master上安装半同步插件</strong></p>
+<p>安装插件之前记得需要解锁<code>unlock tables;</code> </p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">install plugin rpl_semi_sync_master soname &#39;semisync_master.so&#39;;</span><br></pre></td></tr></table></figure>
+
+<p>备注：删除主服务器插件的方法 </p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">uninstall plugin rpl_semi_sync_master;</span><br></pre></td></tr></table></figure>
+
+<p>安装成功后，会查询出以下6项参数</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">show global variables like &#39;rpl_semi_sync%&#39;;</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br></pre></td><td class="code"><pre><span class="line">rpl_semi_sync_master_timeout  #默认主等待从返回信息的超时间时间，10秒。</span><br><span class="line"></span><br><span class="line">rpl_semi_sync_master_wait_for_slave_count </span><br><span class="line">该变量控制slave应答的数量，默认是1，表示master接收到几个slave应答后才commit。在多从的环境下，设置大于1可以提高数据的可靠性。</span><br><span class="line">rpl_semi_sync_master_wait_no_slave  #是否允许每个事物的提交都要等待slave的信号,on为每一个事物都等待</span><br><span class="line">rpl_semi_sync_master_wait_point：</span><br><span class="line">该参数控制半同步复制在哪个点（提交后再等待响应还是响应后再提交）等待slave的响应，默认AFTER_SYNC（slave响应后再提交），可选值有AFTER_COMMIT（提交后再等待响应）。</span><br><span class="line"></span><br><span class="line">+-------------------------------------------+------------+</span><br><span class="line">| Variable_name                             | Value      |</span><br><span class="line">+-------------------------------------------+------------+</span><br><span class="line">| rpl_semi_sync_master_enabled              | OFF        | #是否启用master的半同步复制</span><br><span class="line">| rpl_semi_sync_master_timeout              | 10000      |</span><br><span class="line">| rpl_semi_sync_master_trace_level          | 32         | #监控等级，32代表的是等待</span><br><span class="line">| rpl_semi_sync_master_wait_for_slave_count | 1          |</span><br><span class="line">| rpl_semi_sync_master_wait_no_slave        | ON         |</span><br><span class="line">| rpl_semi_sync_master_wait_point           | AFTER_SYNC |</span><br><span class="line">+-------------------------------------------+------------+</span><br></pre></td></tr></table></figure>
+
+<p><strong>2、在slave上安装插件</strong></p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"></span><br><span class="line">install plugin rpl_semi_sync_slave soname &#39;semisync_slave.so&#39;;</span><br></pre></td></tr></table></figure>
+
+<p>备注：删除从服务器插件的方法</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">uninstall plugin rpl_semi_sync_slave;</span><br></pre></td></tr></table></figure>
+
+<p>从服务器安装成功后，会查询出以下</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">show global variables like &#39;rpl_semi_sync%&#39;;</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">+---------------------------------+-------+</span><br><span class="line">| Variable_name                   | Value |</span><br><span class="line">+---------------------------------+-------+</span><br><span class="line">| rpl_semi_sync_slave_enabled     | OFF   |   #是否启用slave的半同步复制</span><br><span class="line">| rpl_semi_sync_slave_trace_level | 32    |   #监控等级，32代表的是等待</span><br><span class="line">+---------------------------------+-------+</span><br></pre></td></tr></table></figure>
+
+<p><strong>3、在主服务器master开启半同步复制</strong></p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">set global rpl_semi_sync_master_enabled&#x3D;on;    #开启命令</span><br></pre></td></tr></table></figure>
+
+<p>在master查看状态</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">show global status like &#39;rpl_semi_sync%&#39;;</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br></pre></td><td class="code"><pre><span class="line">+--------------------------------------------+-------+</span><br><span class="line">| Variable_name                              | Value |</span><br><span class="line">+--------------------------------------------+-------+</span><br><span class="line">| Rpl_semi_sync_master_clients               | 0     | #启用半同步复制的slave数量，现在是0，</span><br><span class="line">| Rpl_semi_sync_master_net_avg_wait_time     | 0     | #master等待slave回复确认的平均等待时间。单位毫秒</span><br><span class="line">| Rpl_semi_sync_master_net_wait_time         | 0     | #master总的等待时间。单位毫秒</span><br><span class="line">| Rpl_semi_sync_master_net_waits             | 0     | #master等待slave回复的总的等待次数</span><br><span class="line">| Rpl_semi_sync_master_no_times              | 0     | #master关闭半同步复制的次数</span><br><span class="line">| Rpl_semi_sync_master_no_tx                 | 0     | #master 等待超时的次数</span><br><span class="line">| Rpl_semi_sync_master_status                | ON    | #标记master现在是否是半同步复制状态</span><br><span class="line">| Rpl_semi_sync_master_timefunc_failures     | 0     | #master调用时间（如gettimeofday())失败的次数	</span><br><span class="line">| Rpl_semi_sync_master_tx_avg_wait_time      | 0     | #master在处理每个事务的平均等待时间</span><br><span class="line">| Rpl_semi_sync_master_tx_wait_time          | 0     | #master在处理事物等待的总时间</span><br><span class="line">| Rpl_semi_sync_master_tx_waits              | 0     | #master事物等待次数</span><br><span class="line">| Rpl_semi_sync_master_wait_pos_backtraverse | 0     | #后来的先到了，而先来的还没有到的次数</span><br><span class="line">| Rpl_semi_sync_master_wait_sessions         | 0     | #当前有多少个session因为slave回复而造成等待</span><br><span class="line">| Rpl_semi_sync_master_yes_tx                | 0     | #表示这次事物成功从slave返回一次确认信号</span><br><span class="line">+--------------------------------------------+-------+</span><br></pre></td></tr></table></figure>
+
+<p><strong>4、在从服务器slave开启半同步复制</strong></p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">set global rpl_semi_sync_slave_enabled&#x3D;on;  #开启命令</span><br><span class="line"></span><br><span class="line">stop slave IO_THREAD;</span><br><span class="line">start slave IO_THREAD;  #重启IO 小写也可以。</span><br><span class="line"></span><br><span class="line">直接 stop  slave;    start  slave; 也可以</span><br></pre></td></tr></table></figure>
+
+<p>在slave上查看状态</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">show global status like &#39;rpl_semi_sync%&#39;;</span><br></pre></td></tr></table></figure>
+
+<p><strong>5、测试半同步：</strong></p>
+<p>在主服务器上往aaa.a1表里插入数据：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">create database aaa;</span><br><span class="line">create table aaa.a1 (id int);</span><br><span class="line">insert into aaa.a1 values (3);</span><br><span class="line"></span><br><span class="line">再查看半同步状态，和前面进行对比</span><br><span class="line">show global status like &#39;rpl_semi_sync%&#39;;</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br></pre></td><td class="code"><pre><span class="line">+--------------------------------------------+-------+</span><br><span class="line">| Variable_name                              | Value |</span><br><span class="line">+--------------------------------------------+-------+                                                     </span><br><span class="line">| Rpl_semi_sync_master_clients               | 1     | #有一个从服务器启用半同步复制                     </span><br><span class="line">| Rpl_semi_sync_master_net_avg_wait_time     | 814   | #master等待slave回复确认的平均等待时间。单位毫秒  </span><br><span class="line">| Rpl_semi_sync_master_net_wait_time         | 814   | #master总的等待时间。单位毫秒                     </span><br><span class="line">| Rpl_semi_sync_master_net_waits             | 1     | #master等待slave回复的总的等待次数                </span><br><span class="line">| Rpl_semi_sync_master_no_times              | 0     | #master关闭半同步复制的次数                      </span><br><span class="line">| Rpl_semi_sync_master_no_tx                 | 0     | #master 等待超时的次数                           </span><br><span class="line">| Rpl_semi_sync_master_status                | ON    | #标记master现在是否是半同步复制状态               </span><br><span class="line">| Rpl_semi_sync_master_timefunc_failures     | 0     | #master调用时间（如gettimeofday())失败的次数	     </span><br><span class="line">| Rpl_semi_sync_master_tx_avg_wait_time      | 4481  | #master在处理每个事务的平均等待时间               </span><br><span class="line">| Rpl_semi_sync_master_tx_wait_time          | 13444 | #master在处理事物等待的总时间                     </span><br><span class="line">| Rpl_semi_sync_master_tx_waits              | 3     | #master事物等待次数                               </span><br><span class="line">| Rpl_semi_sync_master_wait_pos_backtraverse | 0     | #后来的先到了，而先来的还没有到的次数             </span><br><span class="line">| Rpl_semi_sync_master_wait_sessions         | 0     | #当前有多少个session因为slave回复而造成等待       </span><br><span class="line">| Rpl_semi_sync_master_yes_tx                | 3     | #表示这次事物成功从slave返回一次确认信号          </span><br><span class="line">+--------------------------------------------+-------+</span><br></pre></td></tr></table></figure>
+
+<p><strong>6、模拟错误，把slave上的mysql停掉</strong> </p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">systemctl stop mysqld</span><br></pre></td></tr></table></figure>
+
+<p>再回到master上往aaa.a1表里插入数据。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">insert into aaa.a1 values (4);</span><br><span class="line">Query OK, 1 row affected (10.18 sec)</span><br><span class="line">这次插入一个值需要等待10秒（默认的等待时间)</span><br><span class="line"></span><br><span class="line">insert into aaa.a1 values (5);</span><br><span class="line">现在自动转成了原来的异步模式（类似oracle DG里的最大性能模式)</span><br></pre></td></tr></table></figure>
+
+<p>再查看半同步的状态</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">show global status like &#39;rpl_semi_sync%&#39;;</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br></pre></td><td class="code"><pre><span class="line">+--------------------------------------------+-------+</span><br><span class="line">| Variable_name                              | Value |</span><br><span class="line">+--------------------------------------------+-------+</span><br><span class="line">| Rpl_semi_sync_master_clients               | 0     |</span><br><span class="line">| Rpl_semi_sync_master_net_avg_wait_time     | 884   |</span><br><span class="line">| Rpl_semi_sync_master_net_wait_time         | 8845  |</span><br><span class="line">| Rpl_semi_sync_master_net_waits             | 10    |</span><br><span class="line">| Rpl_semi_sync_master_no_times              | 1     |   #表示同步已经停止了一次</span><br><span class="line">| Rpl_semi_sync_master_no_tx                 | 2     |   #有3个同步超时的事务</span><br><span class="line">| Rpl_semi_sync_master_status                | OFF   |   #表示同步状态为关闭状态</span><br><span class="line">| Rpl_semi_sync_master_timefunc_failures     | 0     |</span><br><span class="line">| Rpl_semi_sync_master_tx_avg_wait_time      | 1093  |</span><br><span class="line">| Rpl_semi_sync_master_tx_wait_time          | 8748  |</span><br><span class="line">| Rpl_semi_sync_master_tx_waits              | 8     |</span><br><span class="line">| Rpl_semi_sync_master_wait_pos_backtraverse | 0     |</span><br><span class="line">| Rpl_semi_sync_master_wait_sessions         | 0     |</span><br><span class="line">| Rpl_semi_sync_master_yes_tx                | 9     |</span><br><span class="line">+--------------------------------------------+-------+</span><br></pre></td></tr></table></figure>
+
+<p>再次把slave启动。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">systemctl start mysqld</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">show global variables like &#39;rpl_semi_sync%&#39;;</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">+---------------------------------+-------+</span><br><span class="line">| Variable_name                   | Value |</span><br><span class="line">+---------------------------------+-------+</span><br><span class="line">| rpl_semi_sync_slave_enabled     | OFF   |  #看到半同步复制已经关闭了，切换成了异步模式</span><br><span class="line">| rpl_semi_sync_slave_trace_level | 32    |</span><br><span class="line">+---------------------------------+-------+</span><br></pre></td></tr></table></figure>
+
+<p>再执行下开启动作，才可以重新打开半同步复制模式。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">set global rpl_semi_sync_slave_enabled&#x3D;on;</span><br><span class="line">stop slave IO_THREAD;</span><br><span class="line">start slave IO_THREAD;</span><br></pre></td></tr></table></figure>
+
+<p>slave启起来后，查看表，发现刚才slave关闭期间的那几条数据还是会自动复制过来，数据又回到一致</p>
+<p><strong>思考题：</strong></p>
+<p>半同步技术模式：</p>
+<p>​     在主服务器上只要执行：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">set global rpl_semi_sync_master_enabled&#x3D;on;   这条语句就能开启</span><br></pre></td></tr></table></figure>
+
+<p>在从服务器上只要执行以下3条命令能就开启</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">set global rpl_semi_sync_slave_enabled&#x3D;on; </span><br><span class="line"></span><br><span class="line">stop slave IO_THREAD;</span><br><span class="line"></span><br><span class="line">start slave IO_THREAD;</span><br></pre></td></tr></table></figure>
+
+<p> 一但主服务器或从服务器mysql服务停止或重启，半同步就会失效，有什么办法可以让他永久生效。</p>
+<h3 id="mysql的延时复制"><a href="#mysql的延时复制" class="headerlink" title="mysql的延时复制"></a>mysql的延时复制</h3><p>延迟的复制特点：</p>
+<p>  可自行设置复制间隔时间，可以防止主节点数据误删，查看数据库历史状态等</p>
+<p> <strong>在MySQL 的主从复制基础上操作：</strong></p>
+<p>命令语法：CHANGE MASTER TO MASTER_DELAY = 30;    #设置备节点延迟的时间，单位秒。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">change master to master_user&#x3D;&#39;aa1&#39;,master_password&#x3D;&#39;123.Shui!!@#&#39;,master_host&#x3D;&#39;192.168.224.10&#39;,master_log_file&#x3D;&#39;mysql-bin.000001&#39;,master_log_pos&#x3D;1663,master_delay&#x3D;30;</span><br></pre></td></tr></table></figure>
+
+<p>在slave从服务器上操作：</p>
+<p>1、在slave从服务器上将slave服务停止</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">stop slave;</span><br></pre></td></tr></table></figure>
+
+<p>2、配置延迟复制时间，不用重新配置，直接添加下面这个语法就可以了</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">change master to master_delay&#x3D;30;</span><br></pre></td></tr></table></figure>
+
+<p>3、启动slave线程</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">start slave;</span><br></pre></td></tr></table></figure>
+
+<p>4、查看状态</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">show slave status\G</span><br><span class="line"></span><br><span class="line">Master_Info_File: mysql.slave_master_info</span><br><span class="line">SQL_Delay: 30</span><br></pre></td></tr></table></figure>
+
+<p>已经将延时0秒变成了延时30秒。</p>
+<p>5、测试，在master主服务器上插入1条数据</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">insert into aaa.a1 values(6);</span><br></pre></td></tr></table></figure>
+
+<p>回到slave从服务器上查询主刚插入的数据：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">select * from aaa.a1;</span><br></pre></td></tr></table></figure>
+
+<p>主服务器插入完成后，马上回到从服务器查询是查询不到的，要等待30秒过后才可以</p>
+<h2 id="补充：mysql二进制日志管理"><a href="#补充：mysql二进制日志管理" class="headerlink" title="补充：mysql二进制日志管理"></a>补充：mysql二进制日志管理</h2><p>查看所有二进制日志：</p>
+<p>1、直接查看数据目录下的文件</p>
+<p>2、使用SQL语句：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">show binary logs;</span><br><span class="line"></span><br><span class="line">+------------------+-----------+-----------+</span><br><span class="line">| Log_name         | File_size | Encrypted |</span><br><span class="line">+------------------+-----------+-----------+</span><br><span class="line">| mysql-bin.000001 |      1368 | No        |</span><br><span class="line">| mysql-bin.000002 |      2792 | No        |</span><br><span class="line">+------------------+-----------+-----------+</span><br></pre></td></tr></table></figure>
+
+
+
+<p><strong>二进制日志滚动：</strong></p>
+<p>1、每次<strong>重启MySQL</strong>都会促发一次二进制日志滚动，文件后缀名+1</p>
+<p>2、手动滚动；可使用 flush logs语句，执行后，二进制日志将会发生一次滚动，后缀名+1</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line">mysql&gt; flush logs;</span><br><span class="line">Query OK, 0 rows affected (0.18 sec)</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">mysql&gt; show binary  logs;</span><br><span class="line">+------------------+-----------+-----------+</span><br><span class="line">| Log_name         | File_size | Encrypted |</span><br><span class="line">+------------------+-----------+-----------+</span><br><span class="line">| mysql-bin.000001 |      1368 | No        |</span><br><span class="line">| mysql-bin.000002 |      2839 | No        |</span><br><span class="line">| mysql-bin.000003 |       196 | No        |</span><br><span class="line">+------------------+-----------+-----------+</span><br><span class="line">3 rows in set (0.00 sec)</span><br></pre></td></tr></table></figure>
+
+
+
+<p><strong>二进制日志清除：</strong></p>
+<p>1、按文件名删除</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line"> </span><br><span class="line"> purge binary logs to &#39;mysql-bin.000003&#39;;	</span><br><span class="line"> 删除000003之前的二进制日志，不包含000003</span><br><span class="line"> </span><br><span class="line"> mysql&gt; show binary  logs;</span><br><span class="line">+------------------+-----------+-----------+</span><br><span class="line">| Log_name         | File_size | Encrypted |</span><br><span class="line">+------------------+-----------+-----------+</span><br><span class="line">| mysql-bin.000003 |       196 | No        |</span><br><span class="line">+------------------+-----------+-----------+</span><br><span class="line">1 row in set (0.00 sec)</span><br><span class="line"></span><br><span class="line">就只剩下一个二进制日志了。</span><br></pre></td></tr></table></figure>
+
+<p>2、按时间段删除</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">mysql&gt; purge binary logs before &#39;2020-07-19 19:45&#39;;</span><br><span class="line">删除指定时间之前的二进制日志</span><br></pre></td></tr></table></figure>
+
+<p>作业题：</p>
+<p>思考题：</p>
+<p>  假设在A上误删除一条数据，用二进制日志来恢复不太方便，因为日志里记录的是删除的操作，并没有记录这条数据具体是什么，所以你要在所有的日志里找到当初插入这条数据时的记录，这是很麻烦的。</p>
+<p>原理理解题：</p>
+<p>题1:  mysql架构中,一主多从、双主、级联这三种的区别和优缺点</p>
+<p>题2:  某公司mysql数据库运行了一年，现在要求搭建mysqlAB复制，检查主库后，发现它这一年没有使用二进制日志，请问如何做复制？</p>
+<p>题3: 在实际大数据量的数据库中，因为负载太高或者网络问题，造成主从复制时有延时，此时你是DBA，请问如何处理？</p>
+<p>题4: 如果一个lamp架构在深圳机房在运行，如何尽量无影响的把这个lamp迁移到惠州的机房</p>
+<p>1，在惠州机房做一个lamp，mysql双主架构，web做rsync远程实时同步</p>
+<p>2，把网站域名对应的IP地址A记录改成惠州的IP</p>
+<p>3，当深圳机房服务器无连接时，就可以关闭深圳机房的服务器了</p>
+</div><ul class="post-copyright"><li><strong>本文标题：</strong><a href="https://yc6.cool/2020/08/03/mysql复制技术/">mysql复制技术</a></li><li><strong>本文作者：</strong><a href="https://yc6.cool">yichen</a></li><li><strong>本文链接：</strong><a href="https://yc6.cool/2020/08/03/mysql复制技术/">https://yc6.cool/2020/08/03/mysql复制技术/</a></li><li><strong>版权声明：</strong><span>本博客所有文章除特别声明外，均采用 <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/deed.zh" rel="external nofollow" target="_blank">CC BY-NC-SA 4.0</a> 许可协议。转载请注明出处！</span></li></ul><div><div class="recommend-post"><span class="is-size-6 has-text-grey has-mr-7"># 相关文章</span><br><span>  1.<a class="is-size-6" href="/2023/05/10/Prometheus%E4%BD%BF%E7%94%A8%E6%89%8B%E6%9C%BA%E7%94%B5%E8%AF%9D_%E7%9F%AD%E4%BF%A1%E6%8E%A5%E6%94%B6%E5%91%8A%E8%AD%A6%E9%80%9A%E7%9F%A5/" target="_blank">Prometheus使用手机电话_短信接收告警通知</a><br></span><span>  2.<a class="is-size-6" href="/2023/05/10/Prometheus%E4%BD%BF%E7%94%A8%E4%BC%81%E4%B8%9A%E5%BE%AE%E4%BF%A1%E6%8E%A5%E6%94%B6%E5%91%8A%E8%AD%A6%E9%80%9A%E7%9F%A5/" target="_blank">Prometheus使用企业微信接收告警通知</a><br></span><span>  3.<a class="is-size-6" href="/2023/05/10/Prometheus%E4%BD%BF%E7%94%A8%E4%BC%81%E4%B8%9A%E9%92%89%E9%92%89%E5%91%8A%E8%AD%A6%E9%80%9A%E7%9F%A5/" target="_blank">Prometheus使用企业钉钉接收告警通知</a><br></span><span>  4.<a class="is-size-6" href="/2023/05/10/Prometheus%E4%BD%BF%E7%94%A8%E9%82%AE%E7%AE%B1%E6%8E%A5%E6%94%B6%E5%91%8A%E8%AD%A6%E9%80%9A%E7%9F%A5/" target="_blank">Prometheus使用邮件接收告警通知</a><br></span><span>  5.<a class="is-size-6" href="/2023/05/09/%E5%9F%BA%E4%BA%8E_Consul_%E7%9A%84%E6%9C%8D%E5%8A%A1%E5%8F%91%E7%8E%B0/" target="_blank">Prometheus基于Consul服务发现</a><br></span><span>  6.<a class="is-size-6" href="/2023/05/09/%E6%9C%8D%E5%8A%A1%E5%8F%91%E7%8E%B0&amp;%E5%9F%BA%E4%BA%8E%E6%96%87%E4%BB%B6%E7%9A%84%E6%9C%8D%E5%8A%A1%E5%8F%91%E7%8E%B0/" target="_blank">Prometheus服务发现</a><br></span><span>  7.<a class="is-size-6" href="/2023/05/08/Prometheus%E7%9B%91%E6%8E%A7domain%E5%9F%9F%E5%90%8D/" target="_blank">Prometheus监控domain域名</a><br></span><span>  8.<a class="is-size-6" href="/2023/05/08/pushgateway/" target="_blank">Prometheus的Pushgateway工具</a><br></span></div><div class="recommend-post"><span class="is-size-6 has-text-grey has-mr-7"># 推荐文章</span><br><span>  1.<a class="is-size-6" href="/2020/08/04/docker%E4%BD%BF%E7%94%A8/" target="_blank">docker的使用</a><br></span><span>  2.<a class="is-size-6" href="/2020/08/03/mysql%E5%9F%BA%E7%A1%80/" target="_blank">mysql基础</a><br></span><span>  3.<a class="is-size-6" href="/2020/08/03/nginx%E5%9F%BA%E7%A1%80/" target="_blank">nginx基础</a><br></span><span>  4.<a class="is-size-6" href="/2020/08/04/python3%E5%9F%BA%E7%A1%80%E7%9F%A5%E8%AF%86%E9%87%8D%E7%82%B9/" target="_blank">python3基础知识重点</a><br></span><span>  5.<a class="is-size-6" href="/2023/05/07/Linux%E6%9C%8D%E5%8A%A1%E5%99%A8%E7%B3%BB%E7%BB%9F%E7%9B%91%E6%8E%A7/" target="_blank">Prometheus监控linux</a><br></span><span>  6.<a class="is-size-6" href="/2023/05/10/Prometheus%E4%BD%BF%E7%94%A8%E9%82%AE%E7%AE%B1%E6%8E%A5%E6%94%B6%E5%91%8A%E8%AD%A6%E9%80%9A%E7%9F%A5/" target="_blank">Prometheus使用邮件接收告警通知</a><br></span></div></div><link rel="stylesheet" href="https://cdnjs.loli.net/ajax/libs/social-share.js/1.0.16/css/share.min.css"><div class="social-share"></div><script src="https://cdnjs.loli.net/ajax/libs/social-share.js/1.0.16/js/social-share.min.js"></script></article></div><div class="card"><div class="card-content"><h3 class="menu-label has-text-centered">喜欢这篇文章？打赏一下作者吧</h3><div class="buttons is-centered"><a class="button is-info donate"><span class="icon is-small"><i class="fab fa-alipay"></i></span><span>支付宝</span><span class="qrcode"><img src="https://yichenxiu.com/tupian/tubiao/alipay1.jpg" alt="支付宝"></span></a><a class="button is-success donate"><span class="icon is-small"><i class="fab fa-weixin"></i></span><span>微信</span><span class="qrcode"><img src="https://i.328888.xyz/2023/03/05/dZXCk.jpeg" alt="微信"></span></a></div></div></div><nav class="post-navigation mt-4 level is-mobile"><div class="level-start"><a class="article-nav-prev level level-item link-muted" href="/2020/08/03/amoeba%E4%BB%A3%E7%90%86/"><i class="level-item fas fa-chevron-left"></i><span class="level-item">amoeba代理</span></a></div><div class="level-end"><a class="article-nav-next level level-item link-muted" href="/2020/08/03/mysql%E5%9F%BA%E7%A1%80/"><span class="level-item">mysql基础</span><i class="level-item fas fa-chevron-right"></i></a></div></nav><div class="card"><div class="card-content"><h3 class="title is-5">评论</h3><div id="comment-container"></div><link rel="stylesheet" href="https://cdnjs.loli.net/ajax/libs/gitalk/1.6.0/gitalk.css"><script> $.getScript('/js/gitalk.min.js', function () { 
+            var gitalk = new Gitalk({
+            language:'zh-CN',
+            id: '74f543e8c855af8d932fd00e76cc11c0',
+            repo: 'issue_database',
+            owner: 'zhi666',
+            clientID: '1b861f81e9a79ee6028d',
+            clientSecret: 'cc629aff090aa9c60d5e13ddf7fcfce14f00a478',
+            admin: ["zhi666"],
+            createIssueManually: true,
+            distractionFreeMode: true,
+            perPage: 10,
+            pagerDirection: 'last',
+            proxy: 'https://cors-anywhere.azm.workers.dev/https://github.com/login/oauth/access_token',
+            
+            enableHotKey: true,
+            isLocked: false
+        })
+        gitalk.render('comment-container')});</script></div></div></div><div class="column column-left is-4-tablet is-4-desktop is-4-widescreen  order-1 is-sticky"><!--!--><div class="card widget"><div class="card-content"><nav class="level"><div class="level-item has-text-centered flex-shrink-1"><div><figure class="image is-128x128 mx-auto mb-2"><img class="is-rounded" src="/img/toudong.jpg" alt="逸尘秀"></figure><p class="title is-size-4 is-block line-height-inherit">逸尘秀</p><p class="is-size-6 is-block">只此一生 ， 必须快乐 ！</p><p class="is-size-6 is-flex justify-content-center"><i class="fas fa-map-marker-alt mr-1"></i><span>深圳</span></p></div></div></nav><nav class="level is-mobile"><div class="level-item has-text-centered is-marginless"><div><p class="heading">文章</p><a href="/archives"><p class="title">136</p></a></div></div><div class="level-item has-text-centered is-marginless"><div><p class="heading">分类</p><a href="/categories"><p class="title">17</p></a></div></div><div class="level-item has-text-centered is-marginless"><div><p class="heading">标签</p><a href="/tags"><p class="title">55</p></a></div></div></nav><div class="level"><a class="level-item button is-primary is-rounded" href="https://weibo.com/u/6155656382" target="_blank" rel="noopener">关注我</a></div><div class="level is-mobile"><a class="level-item button is-transparent is-white is-marginless" target="_blank" rel="noopener" title="Github" href="https://github.com/zhi666"><i class="fab fa-github"></i></a><a class="level-item button is-transparent is-white is-marginless" target="_blank" rel="noopener" title="Weibo" href="https://weibo.com/u/6155656382"><i class="fab fa-weibo"></i></a><a class="level-item button is-transparent is-white is-marginless" target="_blank" rel="noopener" title="Email" href="mailto:1378373724@qq.com"><i class="fa fa-envelope"></i></a><a class="level-item button is-transparent is-white is-marginless" target="_blank" rel="noopener" title="Next" href="https://zhi666.github.io/remove.io"><i class="fab fa-dribbble"></i></a><a class="level-item button is-transparent is-white is-marginless" target="_blank" rel="noopener" title="RSS" href="/atom.xml"><i class="fas fa-rss"></i></a></div><div><hr><p id="hitokoto">:D 一言句子获取中...</p><script type="text/javascript" defer>function getYiyan(){
+                                $.getJSON("https://v1.hitokoto.cn/", function (data) {
+                                if(data){
+                                    $('#hitokoto').html("");
+                                    $('#hitokoto').append("<strong style='color: #3273dc;'>"+data.hitokoto+"</strong>"+
+                                    "<p>"+"来源《"+data.from+"》</p><p>提供者-"+data.creator+"</p>");
+                                }});}
+                                $(function (){getYiyan();$('#hitokoto').click(function(){getYiyan();})});</script></div></div></div><div class="card widget"><div class="card-content"><h3 class="menu-label">最新评论</h3><span class="body_hot_comment">加载中，最新评论有1分钟缓存...</span></div></div><div class="card widget"><div class="card-content"><h3 class="menu-label">最新文章</h3><article class="media"><div class="media-content size-small"><p><time dateTime="2023-11-01T02:25:44.578Z">2023-11-01</time></p><p class="title is-6"><a class="link-muted" href="/2023/11/01/selenlium%E6%89%B9%E9%87%8F%E6%B7%BB%E5%8A%A0dns%E5%9F%9F%E5%90%8D/">批量添加dns域名解析</a></p><p class="is-uppercase"><i class="fas fa-folder-open has-text-grey"> </i><a class="link-muted" href="/categories/python/">python</a></p></div></article><article class="media"><div class="media-content size-small"><p><time dateTime="2023-05-17T01:45:36.000Z">2023-05-17</time></p><p class="title is-6"><a class="link-muted" href="/2023/05/17/Kubernetes%E9%AB%98%E5%8F%AF%E7%94%A8%E9%9B%86%E7%BE%A4%E4%BA%8C%E8%BF%9B%E5%88%B6%E9%83%A8%E7%BD%B2/">Kubernetes高可用集群二进制部署</a></p><p class="is-uppercase"><i class="fas fa-folder-open has-text-grey"> </i><a class="link-muted" href="/categories/linux3/">linux3</a></p></div></article><article class="media"><div class="media-content size-small"><p><time dateTime="2023-05-10T06:25:36.000Z">2023-05-10</time></p><p class="title is-6"><a class="link-muted" href="/2023/05/10/Prometheus%E4%BD%BF%E7%94%A8%E6%89%8B%E6%9C%BA%E7%94%B5%E8%AF%9D_%E7%9F%AD%E4%BF%A1%E6%8E%A5%E6%94%B6%E5%91%8A%E8%AD%A6%E9%80%9A%E7%9F%A5/">Prometheus使用手机电话_短信接收告警通知</a></p><p class="is-uppercase"><i class="fas fa-folder-open has-text-grey"> </i><a class="link-muted" href="/categories/linux2/">linux2</a></p></div></article><article class="media"><div class="media-content size-small"><p><time dateTime="2023-05-10T06:22:36.000Z">2023-05-10</time></p><p class="title is-6"><a class="link-muted" href="/2023/05/10/Prometheus%E4%BD%BF%E7%94%A8%E4%BC%81%E4%B8%9A%E5%BE%AE%E4%BF%A1%E6%8E%A5%E6%94%B6%E5%91%8A%E8%AD%A6%E9%80%9A%E7%9F%A5/">Prometheus使用企业微信接收告警通知</a></p><p class="is-uppercase"><i class="fas fa-folder-open has-text-grey"> </i><a class="link-muted" href="/categories/linux2/">linux2</a></p></div></article><article class="media"><div class="media-content size-small"><p><time dateTime="2023-05-10T06:20:36.000Z">2023-05-10</time></p><p class="title is-6"><a class="link-muted" href="/2023/05/10/Prometheus%E4%BD%BF%E7%94%A8%E4%BC%81%E4%B8%9A%E9%92%89%E9%92%89%E5%91%8A%E8%AD%A6%E9%80%9A%E7%9F%A5/">Prometheus使用企业钉钉接收告警通知</a></p><p class="is-uppercase"><i class="fas fa-folder-open has-text-grey"> </i><a class="link-muted" href="/categories/linux2/">linux2</a></p></div></article></div></div><div class="card widget"><div class="card-content"><div class="menu"><h3 class="menu-label">分类</h3><ul class="menu-list"><li><a class="level is-mobile is-marginless" href="/categories/English/"><span class="level-start"><span class="level-item">English</span></span><span class="level-end"><span class="level-item tag">1</span></span></a></li><li><a class="level is-mobile is-marginless" href="/categories/HTML/"><span class="level-start"><span class="level-item">HTML</span></span><span class="level-end"><span class="level-item tag">4</span></span></a></li><li><a class="level is-mobile is-marginless" href="/categories/JS/"><span class="level-start"><span class="level-item">JS</span></span><span class="level-end"><span class="level-item tag">2</span></span></a></li><li><a class="level is-mobile is-marginless" href="/categories/html/"><span class="level-start"><span class="level-item">html</span></span><span class="level-end"><span class="level-item tag">1</span></span></a></li><li><a class="level is-mobile is-marginless" href="/categories/linux1/"><span class="level-start"><span class="level-item">linux1</span></span><span class="level-end"><span class="level-item tag">15</span></span></a></li><li><a class="level is-mobile is-marginless" href="/categories/linux2/"><span class="level-start"><span class="level-item">linux2</span></span><span class="level-end"><span class="level-item tag">33</span></span></a></li><li><a class="level is-mobile is-marginless" href="/categories/linux3/"><span class="level-start"><span class="level-item">linux3</span></span><span class="level-end"><span class="level-item tag">27</span></span></a></li><li><a class="level is-mobile is-marginless" href="/categories/python/"><span class="level-start"><span class="level-item">python</span></span><span class="level-end"><span class="level-item tag">12</span></span></a></li><li><a class="level is-mobile is-marginless" href="/categories/web/"><span class="level-start"><span class="level-item">web</span></span><span class="level-end"><span class="level-item tag">1</span></span></a></li><li><a class="level is-mobile is-marginless" href="/categories/work/"><span class="level-start"><span class="level-item">work</span></span><span class="level-end"><span class="level-item tag">7</span></span></a></li><a class="level is-mobile is-marginless" href="/categories/"><span class="level-start"><span class="level-item">查看全部&gt;&gt;</span></span></a></ul></div></div></div><div class="card widget"><div class="card-content"><div class="menu"><h3 class="menu-label">归档</h3><ul class="menu-list"><li><a class="level is-mobile is-marginless" href="/archives/2023/11/"><span class="level-start"><span class="level-item">十一月 2023</span></span><span class="level-end"><span class="level-item tag">5</span></span></a></li><li><a class="level is-mobile is-marginless" href="/archives/2023/05/"><span class="level-start"><span class="level-item">五月 2023</span></span><span class="level-end"><span class="level-item tag">13</span></span></a></li><li><a class="level is-mobile is-marginless" href="/archives/2023/04/"><span class="level-start"><span class="level-item">四月 2023</span></span><span class="level-end"><span class="level-item tag">2</span></span></a></li><li><a class="level is-mobile is-marginless" href="/archives/2023/02/"><span class="level-start"><span class="level-item">二月 2023</span></span><span class="level-end"><span class="level-item tag">1</span></span></a></li><li><a class="level is-mobile is-marginless" href="/archives/2022/06/"><span class="level-start"><span class="level-item">六月 2022</span></span><span class="level-end"><span class="level-item tag">3</span></span></a></li><a class="level is-mobile is-marginless" href="/archives/"><span class="level-start"><span class="level-item">查看全部&gt;&gt;</span></span></a></ul></div></div></div><div class="card widget"><div class="card-content"><div class="menu"><h3 class="menu-label">标签</h3><div class="field is-grouped is-grouped-multiline"><div class="control"><a class="tags has-addons" href="/tags/linux/"><span class="tag">linux</span><span class="tag is-grey-lightest">18</span></a></div><div class="control"><a class="tags has-addons" href="/tags/docker/"><span class="tag">docker</span><span class="tag is-grey-lightest">16</span></a></div><div class="control"><a class="tags has-addons" href="/tags/Prometheus/"><span class="tag">Prometheus</span><span class="tag is-grey-lightest">14</span></a></div><div class="control"><a class="tags has-addons" href="/tags/html/"><span class="tag">html</span><span class="tag is-grey-lightest">14</span></a></div><div class="control"><a class="tags has-addons" href="/tags/python/"><span class="tag">python</span><span class="tag is-grey-lightest">12</span></a></div><div class="control"><a class="tags has-addons" href="/tags/web/"><span class="tag">web</span><span class="tag is-grey-lightest">12</span></a></div><div class="control"><a class="tags has-addons" href="/tags/nginx/"><span class="tag">nginx</span><span class="tag is-grey-lightest">9</span></a></div><div class="control"><a class="tags has-addons" href="/tags/mysql/"><span class="tag">mysql</span><span class="tag is-grey-lightest">7</span></a></div><div class="control"><a class="tags has-addons" href="/tags/%E5%AE%B9%E5%99%A8/"><span class="tag">容器</span><span class="tag is-grey-lightest">7</span></a></div><div class="control"><a class="tags has-addons" href="/tags/%E6%95%B0%E6%8D%AE%E5%BA%93/"><span class="tag">数据库</span><span class="tag is-grey-lightest">7</span></a></div><div class="control"><a class="tags has-addons" href="/tags/%E7%A7%91%E5%AD%A6%E4%B8%8A%E7%BD%91/"><span class="tag">科学上网</span><span class="tag is-grey-lightest">6</span></a></div><div class="control"><a class="tags has-addons" href="/tags/work/"><span class="tag">work</span><span class="tag is-grey-lightest">5</span></a></div><div class="control"><a class="tags has-addons" href="/tags/%E8%87%AA%E5%8A%A8%E5%8C%96/"><span class="tag">自动化</span><span class="tag is-grey-lightest">5</span></a></div><div class="control"><a class="tags has-addons" href="/tags/%E5%8D%9A%E5%AE%A2/"><span class="tag">博客</span><span class="tag is-grey-lightest">4</span></a></div><div class="control"><a class="tags has-addons" href="/tags/%E5%B7%A5%E4%BD%9C/"><span class="tag">工作</span><span class="tag is-grey-lightest">4</span></a></div><div class="control"><a class="tags has-addons" href="/tags/%E5%B7%A5%E5%85%B7/"><span class="tag">工具</span><span class="tag is-grey-lightest">4</span></a></div><div class="control"><a class="tags has-addons" href="/tags/ssl/"><span class="tag">ssl</span><span class="tag is-grey-lightest">3</span></a></div><div class="control"><a class="tags has-addons" href="/tags/%E6%96%87%E4%BB%B6%E7%B3%BB%E7%BB%9F/"><span class="tag">文件系统</span><span class="tag is-grey-lightest">3</span></a></div><div class="control"><a class="tags has-addons" href="/tags/%E6%97%A5%E5%BF%97/"><span class="tag">日志</span><span class="tag is-grey-lightest">3</span></a></div><div class="control"><a class="tags has-addons" href="/tags/%E6%97%A5%E5%BF%97%E5%8A%A0%E5%AF%86/"><span class="tag">日志加密</span><span class="tag is-grey-lightest">3</span></a></div></div><div class="field is-grouped is-grouped-multiline"><a class="tags has-addons" href="/tags/"><span class="tag">查看全部&gt;&gt;</span></a></div></div></div></div><div class="card widget"><div class="card-content"><div class="menu"><h3 class="menu-label">订阅更新</h3><form action="https://feedburner.google.com/fb/a/mailverify" method="post" target="popupwindow" onsubmit="window.open(&#039;https://feedburner.google.com/fb/a/mailverify?uri=zhi666FeedsId&#039;,&#039;popupwindow&#039;,&#039;scrollbars=yes,width=550,height=520&#039;);return true"><input type="hidden" value="zhi666FeedsId" name="uri"><input type="hidden" name="loc" value="en_US"><div class="field has-addons"><div class="control has-icons-left is-expanded"><input class="input" name="email" type="email" placeholder="Email"><span class="icon is-small is-left"><i class="fas fa-envelope"></i></span></div><div class="control"><input class="button is-primary" type="submit" value="订阅"></div></div><p class="help">输入邮箱开始订阅，更博后邮件通知！</p></form></div></div></div></div></div></div></section><footer class="footer"><div class="container"><div class="level"><div class="level-start"><a class="footer-logo is-block mb-2" href="/"><img src="/img/logo.png" alt="逸尘秀" height="28"></a><p class="size-small"><span>&copy; 2023 yichen</span>  Powered by <a href="https://hexo.io/" target="_blank">Hexo</a> &amp; <a href="https://github.com/ppoffice/hexo-theme-icarus" target="_blank">Icarus</a>,Modify by <a href="https://github.com/removeif/hexo-theme-amazing" target="_blank">removeif</a> <br><span>© 版权说明：[本网站所有内容均收集于互联网或自己创作,<br />&nbsp;&nbsp;&nbsp;&nbsp;方便于网友与自己学习交流，如有侵权，请<a href="/message" target="_blank">留言</a>，立即处理]<br /></span><span><span id="statistic-times">loading...</span><script>function createTime(time) {
+            var n = new Date(time);
+            now.setTime(now.getTime() + 250),
+                days = (now - n) / 1e3 / 60 / 60 / 24,
+                dnum = Math.floor(days),
+                hours = (now - n) / 1e3 / 60 / 60 - 24 * dnum,
+                hnum = Math.floor(hours),
+            1 == String(hnum).length && (hnum = "0" + hnum),
+                minutes = (now - n) / 1e3 / 60 - 1440 * dnum - 60 * hnum,
+                mnum = Math.floor(minutes),
+            1 == String(mnum).length && (mnum = "0" + mnum),
+                seconds = (now - n) / 1e3 - 86400 * dnum - 3600 * hnum - 60 * mnum,
+                snum = Math.round(seconds),
+            1 == String(snum).length && (snum = "0" + snum),
+                document.getElementById("statistic-times").innerHTML = "❤️本站自 <strong>"+time.split(" ")[0].replace(/\//g,".")+"</strong> 已运行 <strong>" + dnum + "</strong> 天 <strong>" + hnum + "</strong> 小时 <strong>" + mnum + "</strong> 分 <strong>" + snum + "</strong> 秒！❤️";
+        }var now = new Date();setInterval("createTime('2020/08/02 00:00:00')", 250,"");</script><br></span><div class="size-small"><span>❤️感谢 <strong><span id="busuanzi_value_site_uv">99+</span></strong> 小伙伴的 <strong><span id="busuanzi_value_site_pv">99+</span></strong> 次光临！❤️</span></div></p></div><div class="level-end"><div class="field has-addons"><p class="control"><a class="button is-transparent is-large" target="_blank" rel="noopener" title="Creative Commons" href="https://creativecommons.org/"><i class="fab fa-creative-commons"></i></a></p><p class="control"><a class="button is-transparent is-large" target="_blank" rel="noopener" title="Attribution 4.0 International" href="https://creativecommons.org/licenses/by/4.0/"><i class="fab fa-creative-commons-by"></i></a></p><p class="control"><a class="button is-transparent is-large" target="_blank" rel="noopener" title="Download on GitHub" href="https://github.com/zhi666"><i class="fab fa-github"></i></a></p></div><div class="sideMusic"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/aplayer/dist/APlayer.min.css"><script src="/js/APlayer.min.js"></script><script src="https://cdn.jsdelivr.net/npm/meting@2/dist/Meting.min.js"></script><meting-js style="width: auto;height: 2000px;" server="netease" type="playlist" id="2364053447" theme="#2980b9" loop="all" autoplay="false" order="list" storageName="aplayer-setting" lrctype="0" list-max-height="400px" fixed="true"></meting-js></div></div></div></div></footer><script src="https://cdnjs.loli.net/ajax/libs/moment.js/2.22.2/moment-with-locales.min.js"></script><script>moment.locale("zh-CN");</script><script>var IcarusThemeSettings = {
+            site: {
+                url: 'https://yc6.cool',
+                external_link: {"enable":true,"exclude":[]}
+            },
+            article: {
+                highlight: {
+                    clipboard: true,
+                    fold: 'unfolded'
+                }
+            }
+        };</script><script src="https://cdnjs.loli.net/ajax/libs/clipboard.js/2.0.4/clipboard.min.js" defer></script><script src="/js/animation.js"></script><a id="back-to-top" title="回到顶端" href="javascript:;"><i class="fas fa-chevron-up"></i></a><script src="/js/back-to-top.js" defer></script><!--!--><!--!--><script src="https://cdnjs.loli.net/ajax/libs/lightgallery/1.6.12/js/lightgallery-all.min.js" defer></script><script src="https://cdnjs.loli.net/ajax/libs/justifiedGallery/3.7.0/js/jquery.justifiedGallery.min.js" defer></script><!--!--><!--!--><!--!--><script src="/js/toc.js" defer></script><script src="/js/main.js" defer></script><script>$.getScript('/js/comment-issue-data.js',function(){loadIssueData('1b861f81e9a79ee6028d','cc629aff090aa9c60d5e13ddf7fcfce14f00a478','zhi666','issue_database',false);})</script><link rel="stylesheet" href="/css/insight.css"><div class="searchbox ins-search"><div class="searchbox-container ins-search-container"><div class="searchbox-input-wrapper"><input class="searchbox-input ins-search-input" type="text" placeholder="想要查找什么..."><span class="searchbox-close ins-close ins-selectable"><i class="fa fa-times-circle"></i></span></div><div class="searchbox-result-wrapper ins-section-wrapper"><div class="ins-section-container"></div></div></div></div><script>(function (window) {
+            var INSIGHT_CONFIG = {
+                TRANSLATION: {
+                    POSTS: '文章',
+                    PAGES: '页面',
+                    CATEGORIES: '分类',
+                    TAGS: '标签',
+                    UNTITLED: '(无标题)',
+                },
+                CONTENT_URL: '/content.json',
+            };
+            window.INSIGHT_CONFIG = INSIGHT_CONFIG;
+        })(window);</script><script src="/js/insight.js" defer></script></body></html>

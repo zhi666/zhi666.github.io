@@ -1,0 +1,465 @@
+<!doctype html>
+<html lang="zh"><head><meta charset="utf-8"><meta name="generator" content="Hexo 4.2.0"><meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"><meta><meta name="keywords" content="[object Object]"><meta name="description" content="进程管理进程 -  正在运行的程序PID     进程唯一标识符 (是16位正整数 0-65535)(2^15"><meta name="author" content="zhi666"><title>linux进程管理 - 逸尘秀</title><meta description="进程管理进程 -  正在运行的程序PID     进程唯一标识符 (是16位正整数 0-65535)(2^15 &amp;#x3D; 65535 无符号的短整型 short int) PPID    父进程的PID"><meta property="og:type" content="article"><meta property="og:title" content="linux进程管理"><meta property="og:url" content="https://yc6.cool/2020/08/03/linux%E8%BF%9B%E7%A8%8B%E7%AE%A1%E7%90%86/"><meta property="og:site_name" content="逸尘秀"><meta property="og:description" content="进程管理进程 -  正在运行的程序PID     进程唯一标识符 (是16位正整数 0-65535)(2^15 &amp;#x3D; 65535 无符号的短整型 short int) PPID    父进程的PID"><meta property="og:locale" content="zh_CN"><meta property="article:published_time" content="2020-08-03T08:50:42.000Z"><meta property="article:modified_time" content="2023-11-01T02:25:44.569Z"><meta property="article:author" content="zhi666"><meta property="article:tag" content="linux"><meta property="twitter:card" content="summary"><meta property="twitter:image" content="https://yc6.cool/img/avatar.png"><script type="application/ld+json">{"@context":"https://schema.org","@type":"BlogPosting","mainEntityOfPage":{"@type":"WebPage","@id":"https://yc6.cool/2020/08/03/linux%E8%BF%9B%E7%A8%8B%E7%AE%A1%E7%90%86/"},"headline":"linux进程管理","image":["https://yc6.cool/img/avatar.png"],"datePublished":"2020-08-03T08:50:42.000Z","dateModified":"2023-11-01T02:25:44.569Z","author":{"@type":"Person","name":"zhi666"},"description":"进程管理进程 -  正在运行的程序PID     进程唯一标识符 (是16位正整数 0-65535)(2^15 &#x3D; 65535 无符号的短整型 short int) PPID    父进程的PID"}</script><link rel="alternative" href="/atom.xml" title="逸尘秀" type="application/atom+xml"><link rel="icon" href="/img/favicon.png"><link rel="stylesheet" href="https://cdnjs.loli.net/ajax/libs/font-awesome/5.12.0/css/all.min.css"><link rel="stylesheet" href="https://fonts.loli.net/css?family=Ubuntu:400,600|Source+Code+Pro|Monda:300,300italic,400,400italic,700,700italic|Roboto Slab:300,300italic,400,400italic,700,700italic|Microsoft YaHei:300,300italic,400,400italic,700,700italic|PT Mono:300,300italic,400,400italic,700,700italic&amp;amp;subset=latin,latin-ext|Inconsolata|Itim|Lobster.css"><link rel="stylesheet" href="https://cdnjs.loli.net/ajax/libs/highlight.js/9.12.0/styles/atom-one-dark.min.css"><style>body>.footer,body>.navbar,body>.section{opacity:0}</style><!--!--><!--!--><script src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js" defer></script><link rel="stylesheet" href="https://cdnjs.loli.net/ajax/libs/lightgallery/1.6.12/css/lightgallery.min.css"><link rel="stylesheet" href="https://cdnjs.loli.net/ajax/libs/justifiedGallery/3.7.0/css/justifiedGallery.min.css"><!--!--><!--!--><script src="https://cdnjs.loli.net/ajax/libs/pace/1.0.2/pace.min.js"></script><link rel="stylesheet" href="/css/style.css"><script src="https://cdnjs.loli.net/ajax/libs/jquery/3.3.1/jquery.min.js"></script><script src="/js/globalUtils.js"></script><link rel="stylesheet" href="/live2d/waifu.css"><script type="text/javascript" async src="/live2d/autoload.js"></script></head><body class="is-3-column has-navbar-fixed-top"><nav class="navbar navbar-main is-fixed-top"><div class="container"><div class="navbar-brand justify-content-center"><a class="navbar-item navbar-logo" href="/"><img src="/img/logo.png" alt="逸尘秀" height="28"></a></div><div class="navbar-menu"><div class="navbar-start"><a class="navbar-item" href="/">首页</a><a class="navbar-item" href="/archives">归档</a><a class="navbar-item" href="/categories">分类</a><a class="navbar-item" href="/tags">标签</a><a class="navbar-item" href="/media">影音</a><a class="navbar-item" href="/album">相册</a><a class="navbar-item" href="/friend">友链</a><a class="navbar-item" href="/self-talking">碎碎念</a><a class="navbar-item" href="/message">留言</a><a class="navbar-item" href="/about">关于</a></div><div class="navbar-end"><a class="navbar-item" target="_blank" rel="noopener" title="Download on GitHub" href="https://github.com/zhi666"><i class="fab fa-github"></i></a><a class="navbar-item search" title="搜索" href="javascript:;"><i class="fas fa-search"></i></a><a class="navbar-item" id="night-nav" title="Night Mode" href="javascript:;"><i class="fas fa-moon" id="night-icon"></i></a></div></div></div></nav><script type="text/javascript" src="/js/theme-setting.js"></script><section class="section"><div class="container"><div class="columns"><div class="column order-2 column-main is-8-tablet is-8-desktop is-9-widescreen"><div class="card"><article class="card-content article" role="article"><div class="article-meta size-small is-uppercase level is-mobile"><div class="level-left"><i class="far fa-calendar-plus"> </i>2020-08-03  <a class="commentCountImg" href="/2020/08/03/linux%E8%BF%9B%E7%A8%8B%E7%AE%A1%E7%90%86/#comment-container"><span class="display-none-class">f81beb756572814eff7b02a4d304548b</span><i class="far fa-comment-dots"></i> <span class="commentCount" id="f81beb756572814eff7b02a4d304548b">99+</span>  </a><span class="level-item"><i class="far fa-clock"> </i>34 分钟  <i class="fas fa-pencil-alt"> </i>5.1 k</span><span class="level-item" id="busuanzi_container_page_pv"><i class="far fa-eye"></i>&nbsp;&nbsp;<span id="busuanzi_value_page_pv">0</span>次访问</span></div></div><h1 class="title is-3 is-size-4-mobile">linux进程管理</h1><div class="content"><h1 id="进程管理"><a href="#进程管理" class="headerlink" title="进程管理"></a>进程管理</h1><h3 id="进程-正在运行的程序"><a href="#进程-正在运行的程序" class="headerlink" title="进程 -  正在运行的程序"></a>进程 -  正在运行的程序</h3><pre><code>PID     进程唯一标识符 (是16位正整数 0-65535)(2^15 = 65535 无符号的短整型 short int)
+PPID    父进程的PID</code></pre>
+<a id="more"></a>
+<h3 id="软件-gt-至少有一个程序-gt-至少有一个进程-gt-至少有一个线程"><a href="#软件-gt-至少有一个程序-gt-至少有一个进程-gt-至少有一个线程" class="headerlink" title="软件 -&gt; 至少有一个程序 -&gt; 至少有一个进程 -&gt; 至少有一个线程"></a>软件 -&gt; 至少有一个程序 -&gt; 至少有一个进程 -&gt; 至少有一个线程</h3><pre><code>ELF可执行文件主要分段(PPP1):
+    readelf -h /bin/cp  查看可执行文件的elf头
+    readelf -l /bin/cp  查看可执行文件的elf头详细信息
+
+    BSS         存储未初始化全局变量
+    DATA        存储初始化的全局变量
+    RODATA      存储常量
+    TEXT        存储指令集
+
+程序运行的过程：
+    建立虚拟空间（分配一个页目录）-&gt;
+    建立虚拟空间与可执行文件映射（页目录项指向磁盘的程序） -&gt;
+    跳到程序入口 -&gt; 缺页异常-&gt; 在内存中寻找空闲页，将对应的页换入 -&gt;
+    建立映射 -&gt; 开始执行。
+
+
+进程独立虚拟内存空间, 实现进程间隔离
+
+进程之间通讯(内核提供) IPC
+    信号            异常通知
+    管道            数据通信(基于I/O)
+    套接字          数据通信(多应用于网络 协议)
+    消息队列        数据通信(队列)
+    共享内存        数据通信(将虚拟地址映射同一块物理地址)
+    信号量(信号灯)  并发处理
+
+进程和线程
+    进程独立内存空间, 会产生进程间通讯
+    线程独立栈空间, 依赖进程空间</code></pre>
+<hr>
+<h1 id="进程列表命令"><a href="#进程列表命令" class="headerlink" title="进程列表命令"></a>进程列表命令</h1><h3 id="top-文本任务管理器"><a href="#top-文本任务管理器" class="headerlink" title="top     文本任务管理器"></a>top     文本任务管理器</h3><pre><code>    ?       帮助
+    q       退出
+    k(小写)       结束进程 然后输入对应的进程pid号就可以结束对应的进程了。
+    空格    实时刷新
+
+    S  时间on 或off
+    z, y 切换高亮显示，z排序字段默认CPU y运行任务。
+    z，b。 切换：“ z”颜色/单色； &#39;b&#39;粗体/反向（仅当&#39;x&#39;或&#39;y&#39;时）
+    d或者s 设置实时更新时间间隔，默认3秒。
+    W 写入配置文件。就是保存当前的设置。
+    Y  检查其他输出。
+
+    截取两帧数据到top.txt文件中(PPP2)
+        top -d 0.5 -b -n 2 &gt; /tmp/top.txt</code></pre>
+<p><img src="https://s1.ax1x.com/2020/08/03/aaKSne.png" alt="aaKSne.png"></p>
+<ul>
+<li><strong>第一行：系统运行时间和平均负载</strong></li>
+</ul>
+<p>当前时间、系统已运行时间、当前登录用户的数量、最近5、10、15分钟内的平均负载</p>
+<ul>
+<li><strong>第二行：任务</strong></li>
+</ul>
+<p>任务的总数、运行中(running)的任务、休眠(sleeping)中的任务、停止(stopped)的任务、僵尸状态(zombie)的任务</p>
+<ul>
+<li><strong>第三行：cpu状态</strong></li>
+</ul>
+<table>
+<thead>
+<tr>
+<th>字段</th>
+<th>字段释义</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>us</td>
+<td>user： 运行(未调整优先级的) 用户进程的CPU时间</td>
+</tr>
+<tr>
+<td>sy</td>
+<td>system: 运行内核进程的CPU时间</td>
+</tr>
+<tr>
+<td>ni</td>
+<td>niced：运行已调整优先级的用户进程的CPU时间</td>
+</tr>
+<tr>
+<td>id</td>
+<td>idle:空闲时间</td>
+</tr>
+<tr>
+<td>wa</td>
+<td>IO wait: 用于等待IO完成的CPU时间</td>
+</tr>
+<tr>
+<td>hi</td>
+<td>处理硬件中断的CPU时间</td>
+</tr>
+<tr>
+<td>si</td>
+<td>处理软件中断的CPU时间</td>
+</tr>
+<tr>
+<td>st</td>
+<td>这个虚拟机被hypervisor偷去的CPU时间（译注：如果当前处于一个hypervisor下的vm，实际上hypervisor也是要消耗一部分CPU处理时间的）</td>
+</tr>
+</tbody></table>
+<ul>
+<li><strong>第四行：内存</strong></li>
+</ul>
+<p>全部可用内存(total)、空闲内存(free)、已使用内存(used) 、缓冲内存(buff/cache)</p>
+<ul>
+<li><strong>第五行：swap</strong></li>
+</ul>
+<p>全部、已使用、空闲和缓冲交换空间</p>
+<ul>
+<li><strong>第七行至N行：各进程任务的的状态监控</strong></li>
+</ul>
+<table>
+<thead>
+<tr>
+<th>字段</th>
+<th>释义</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>PID</td>
+<td>进程ID，进程的唯一标识符</td>
+</tr>
+<tr>
+<td>USER</td>
+<td>进程所有者的实际用户名</td>
+</tr>
+<tr>
+<td>PR</td>
+<td>进程的调度优先级。这个字段的一些值是’rt’。这意味这这些进程运行在实时态。</td>
+</tr>
+<tr>
+<td>NI</td>
+<td>进程的nice值（优先级）。越小的值意味着越高的优先级。负值表示高优先级，正值表示低优先级</td>
+</tr>
+<tr>
+<td>VIRT</td>
+<td><strong>virtual memory usage 虚拟内存</strong>,进程使用的虚拟内存。进程使用的虚拟内存总量，单位kb。VIRT=SWAP+RES1、进程“需要的”虚拟内存大小，包括进程使用的库、代码、数据等 2、假如进程申请100m的内存，但实际只使用了10m，那么它会增长100m，而不是实际的使用量</td>
+</tr>
+<tr>
+<td>RES</td>
+<td>**resident memory usage 常驻内存,**驻留内存大小。驻留内存是任务使用的非交换物理内存大小。进程使用的、未被换出的物理内存大小，单位kb。RES=CODE+DATA1、进程当前使用的内存大小，但不包括swap out 2、包含其他进程的共享 3、如果申请100m的内存，实际使用10m，它只增长10m，与VIRT相反 4、关于库占用内存的情况，它只统计加载的库文件所占内存大小</td>
+</tr>
+<tr>
+<td>SHR</td>
+<td><strong>SHR：shared memory 共享内存</strong>1、除了自身进程的共享内存，也包括其他进程的共享内存 2、虽然进程只使用了几个共享库的函数，但它包含了整个共享库的大小 3、计算某个进程所占的物理内存大小公式：RES – SHR 4、swap out后，它将会降下来</td>
+</tr>
+<tr>
+<td>S</td>
+<td>这个是进程的状态。它有以下不同的值:D - 不可中断的睡眠态。R – 运行态S – 睡眠态T – 被跟踪或已停止Z – 僵尸态</td>
+</tr>
+<tr>
+<td>%CPU</td>
+<td>自从上一次更新时到现在任务所使用的CPU时间百分比。%CPU显示的是进程占用一个核的百分比，而不是整个cpu（N核）的百分比，有时候可能大于100，那是因为该进程启用了多线程占用了多个核心，所以有时候我们看该值得时候会超过100%，但不会超过总核数*100</td>
+</tr>
+<tr>
+<td>%MEM</td>
+<td>进程使用的可用物理内存百分比</td>
+</tr>
+<tr>
+<td>TIME+</td>
+<td>任务启动后到现在所使用的全部CPU时间，精确到百分之一秒</td>
+</tr>
+<tr>
+<td>COMMAND</td>
+<td>运行进程所使用的命令。进程名称（命令名/命令行）</td>
+</tr>
+</tbody></table>
+<p><strong>交互命令</strong></p>
+<p><strong>Z</strong>:改变颜色；</p>
+<ol>
+<li>S 设置摘要数据颜色(就是最上面的信息颜色)。 M 设置消息提示的颜色 H 设置头部一行的颜色  T 设置主体的颜色<br>   “ a”或“ w”来提交和更改另一个，切换颜色搭配的模板。</li>
+</ol>
+<p><strong>B</strong>：加粗     <strong>E/e</strong> 设置界面 B设置头部信息粗体显示(默认粗体) E/e(设置后缀信息m/g/t/p)默认是不带任何后缀。</p>
+<p><strong>t</strong>:显示和隐藏任务/cpu信息；m:内存信息</p>
+<p><strong>1</strong>：监控每个逻辑CPU的状况；</p>
+<p><strong>f/F</strong>      f” /“ F”添加/删除/排序/排序<br>        进入排序界面，前面有*表示会在界面显示的信息，按d或者空格可以切换显示信息或不显示。<br>        按-&gt;左键可以选中然后可以修改显示的顺序，然后敲回车就可以了。s是设置排序，默认是按照cpu排序的。</p>
+<p><strong>R</strong>:正常排序/反向排序；</p>
+<p><strong>s</strong>：设置刷新的时间——–常用</p>
+<p><strong>i</strong>：忽略闲置和僵死进程。这是一个开关式命令。</p>
+<p><strong>r</strong>:重新安排一个进程的优先级别。系统提示用户输入需要改变的进程PID以及需要设置的进程优先级值。输入一个正值将使优先级降低，反之则可以使该进程拥有更高的优先权。默认值是10。</p>
+<p><strong>c</strong>:切换显示命令名称和完整命令行。</p>
+<p><strong>M</strong>:根据驻留内存大小进行排序。————-常用</p>
+<p><strong>P</strong>:根据CPU使用百分比大小进行排序。———–常用</p>
+<p><strong>H</strong>:显示线程</p>
+<p><strong>l，t，m</strong>:  切换摘要：’l’加载平均值； “ t”任务/ CPU统计信息； ‘m’内存信息，切换信息显示方式</p>
+<p><strong>L</strong> : 查找相关应用信息。搜索</p>
+<p><strong>u/U</strong>：输入用户，显示用户的任务  如: nginx 会查出nginx相关进程。</p>
+<h3 id="ps-列表进程-PPP3"><a href="#ps-列表进程-PPP3" class="headerlink" title="ps      列表进程(PPP3)"></a>ps      列表进程(PPP3)</h3><pre><code>    ps          列出当前终端运行的程序
+    ps -aux     列出所有进程信息(BSD)
+    ps -ef      列出所有进程信息
+    ps -e -o pid,comm,ppid       自定义显示字段
+    ...
+
+    ps -aux和ps -ef的区别
+        1. -ef是System V展示风格，而aux是BSD风格。
+
+            ps -aux
+            USER  PID %CPU %MEM    VSZ   RSS  TTY   STAT START TIME  COMMAND
+            root    1  0.0  0.1 193832  6904  ?     Ss   9月28 0:12  /usr/lib/systemd/systemd --switched-root --system--deserialize 22
+
+            字段含义：
+            USER：    用户名称
+            PID：     进程号
+            %CPU：    进程占用CPU的百分比
+            %MEM：    进程占用物理内存的百分比
+            VSZ：     进程占用的虚拟内存大小（单位：KB）
+            RSS：     进程占用的物理内存大小（单位：KB）
+            TTY：     终端名称（缩写），若为？，则代表此进程与终端无关，因为它们是由系统启动的
+            STAT：    进程状态
+            START：   进程的启动时间
+            TIME：    CPU时间，即进程使用CPU的总时间
+            COMMAND： 启动进程所用的命令和参数，如果过长会被截断显示
+
+            ps -ef
+            UID   PID  PPID  C STIME TTY      TIME   CMD
+            root    1     0  0 9月28 ?    00:00:12   /usr/lib/systemd/systemd --switched-root --system --deserialize 22
+
+            字段含义：
+            UID：   用户ID
+            PID：   进程ID
+            PPID：  父进程ID
+            C：     CPU用于计算执行优先级的因子。数值越大，表明进程是CPU密集型运算，执行优先级会降低；数值越小，表明进程是I/O密集型运算，执行优先级会提高
+            STIME： 进程启动的时间
+            TTY：   完整的终端名称
+            TIME：  CPU时间
+            CMD：   完整的启动进程所用的命令和参数
+
+            2. COMMADN列如果过长，aux会截断显示，而ef不会
+
+            总结：
+                如果想查看进程的CPU占用率和内存占用率，可以使用aux
+                如果想查看进程的父进程ID和完整的COMMAND命令，可以使用ef</code></pre>
+<p><strong>pstree  打印进程树</strong></p>
+<pre><code>    pstree -p   带PID的进程树
+
+pgrep   按进程名查找进程
+    pgrep vim
+    pgrep -u root</code></pre>
+<hr>
+<h1 id="进程控制-信号机制的发信号"><a href="#进程控制-信号机制的发信号" class="headerlink" title="进程控制(信号机制的发信号)"></a>进程控制(信号机制的发信号)</h1><p><strong>信号源</strong></p>
+<pre><code>    kill -l  
+    列出全部信号名称
+
+说明：
+
+只有第9种信号(SIGKILL)才可以无条件终止进程，其他信号进程都有权利忽略。 下面是常用的信号：
+
+HUP    1    终端断线
+
+INT     2    中断（同 Ctrl + C）
+
+QUIT    3    退出（同 Ctrl + \）
+
+TERM   15    终止
+
+KILL    9    强制终止
+
+CONT   18    继续（与STOP相反， fg/bg命令）
+
+STOP    19    暂停（同 Ctrl + Z）</code></pre>
+<p><strong>终止操作</strong></p>
+<pre><code>    kill -15 PID</code></pre>
+<p><strong>杀死进程</strong></p>
+<pre><code>    kill -9 PID
+
+终止和杀死的区别
+    当进程在进行一个关键性操作的时候， 15不能立即杀死他， 需要这个进程先处理玩自己的事情才能杀掉
+    而这个时候还是想杀死这个进程的话， 就可以使用9号信号， 9号信号是必杀信号
+
+捕捉信号
+    trap 操作 信号源
+
+    9和19不能捕捉
+
+通过进程名杀死进程
+    杀死进程名带有关键词的进程
+        pkill -9 关键词
+
+    杀死对应进程名的进程
+        pkill -9 -x 进程名
+
+    杀死对应root用户的所有进程
+        pkill -u root
+
+  Linux Shell脚本实现根据进程名杀死进程
+  ps -ef |grep check-domain.sh |grep -v grep |awk &#39;{print $2}&#39; | xargs kill -9</code></pre>
+<hr>
+<h2 id="进程状态"><a href="#进程状态" class="headerlink" title="进程状态"></a>进程状态</h2><p>在unix/linux中，正常情况下，子进程是通过父进程创建的，子进程再创建新的进程。<br>    子进程的结束和父进程的运行是一个异步过程,即父进程永远无法预测子进程到底什么时候结束。<br>    当一个进程完成它的工作终止之后，它的父进程需要调用wait()或者waitpid()系统调用取得子进程的终止状态。</p>
+<pre><code>R       运行状态
+S       睡眠状态
+D       不可中断睡眠状态
+Z       僵尸进程</code></pre>
+<h3 id="孤儿进程"><a href="#孤儿进程" class="headerlink" title="孤儿进程"></a>孤儿进程</h3><pre><code>    一个父进程退出，而它的一个或多个子进程还在运行，那么那些子进程将成为孤儿进程。孤儿进程将被init进程(进程号为1)所收养，并由init进程对它们完成状态收集工作。</code></pre>
+<h3 id="僵尸进程"><a href="#僵尸进程" class="headerlink" title="僵尸进程"></a>僵尸进程</h3><pre><code>    一个进程使用fork创建子进程，如果子进程退出工作状态，而父进程并没有调用wait()或waitpid()获取子进程的状态信息，那么子进程的进程描述符仍然保存在系统中。
+
+进程的正常结束： 子进程要给父进程返回进程状态
+
+问题及危害：
+    linux提供了一种机制可以保证只要父进程想知道子进程结束时的状态信息，就可以得到。
+
+    这种机制就是:
+        在每个进程退出的时候,内核释放该进程所有的资源,包括打开的文件,占用的内存等。
+        但是仍然为其保留一定的信息(PID,  运行时间， 退出状态等)，
+        直到父进程通过wait / waitpid来取时才释放。
+
+    这样就导致了问题：
+    如果父进程不调用wait / waitpid的话，那么保留的那段信息就不会释放，其进程号就会一直被占用，
+        但是系统所能使用的进程号是有限的，如果大量的产生僵死进程，将因为没有可用的进程号而导致系统不能产生新的进程.
+    此即为僵尸进程的危害，应当避免。
+
+    孤儿进程是没有父进程的进程，收集孤儿进程的退出信息的这个重任就落到了init进程身上，
+    init进程就好像是一个民政局，专门负责处理孤儿进程的善后工作。每当出现一个孤儿进程的时候，
+        内核就把孤儿进程的父进程设置为init，而init进程会循环地wait()它的已经退出的子进程。
+    这样，当一个孤儿进程凄凉地结束了其生命周期的时候，init进程就会出面处理它的一切善后工作。
+    因此孤儿进程并不会有什么危害。
+
+任何一个子进程(init除外)在exit()之后，并非马上就消失掉，而是留下一个称为僵尸进程(Zombie)的数据结构，等待父进程处理。
+这是每个子进程在结束时都要经过的阶段。如果子进程在exit()之后，父进程没有来得及处理，
+    这时用ps命令就能看到子进程的状态是“Z”。如果父进程能及时处理，可能用ps命令就来不及看到子进程的僵尸状态，但这并不等于子进程不经过僵尸状态。
+如果父进程在子进程结束之前退出，则子进程将由init接管。init将会以父进程的身份对僵尸状态的子进程进行处理。
+
+
+    杀死僵尸进程， 只需要将僵尸进程父进程干掉就可以了,
+    僵尸进程这个时候就被init(1号进程)接管， 成为这个子进程的父进程，这个僵尸进程就变成了孤儿进程。
+
+    查看是否有僵尸进程的简略方法：
+        ps -aux | grep Z
+        ps -A -o stat,ppid,pid,cmd | grep -e &#39;^[Zz]&#39;</code></pre>
+<hr>
+<h2 id="进程优先级-NI"><a href="#进程优先级-NI" class="headerlink" title="进程优先级(NI)"></a>进程优先级(NI)</h2><pre><code>进程优先级范围: -20 到 19, 数值越小, 优先级越高
+普通用户只能将进程优先级数值调大， 不能调小
+
+查看进程优先级: ps -el / top / ps -eo pid,ni,comm
+
+nice        指定运行程序的进程优先级(PPP5)
+    nince -n 19 tar -xf mysql.tar.bz2
+
+renice      更改正在运行程序的进程优先级(PPP6)
+    sudo renice -19 PID
+
+占用cpu一个核心: nice -n 0 cat /dev/urandom &gt; /dev/null
+
+查看进程优先级设置的变化: time nice -n -20 head -c 1m /dev/urandom &gt; /dev/null</code></pre>
+<hr>
+<h2 id="进程组"><a href="#进程组" class="headerlink" title="进程组"></a>进程组</h2><pre><code>进程组包含一个或多个进程, 用于进程分组, 方便管理进程
+每个进程都会所属一个进程组, 默认与父进程同属一个组
+
+进程组也有唯一标识符(pgrp), 进程组组长PID即是进程组ID
+创建进程组的人即是进程组组长, 进程组组长不能再创建进程组
+
+由于进程组ID与进程组组长的PID一致，操作组长进程直接操作PID即可, 操作进程组在PID前面加负(-)号
+
+    给进程组长发信号:   kill -9  1023
+    给进程组发信号:     kill -9 -1023
+    给本进程组发信号:   kill -9  0
+    给所有进程发信号:   kill -9 -1</code></pre>
+<hr>
+<p>会话<br>    一个会话包含一个进程组或多个进程组<br>    一个会话对应一个控制终端(输入输出)<br>    一个会话包含进程组分为前台进程组和后台进程组<br>    使用控制终端的进程组即是前台进程组， 其它全为后台进程组<br>    会话与进程组一样，都唯一标识符， 也有管理者(会长)<br>    进程组组长不能创建会话</p>
+<h1 id="作业管理"><a href="#作业管理" class="headerlink" title="作业管理"></a>作业管理</h1><pre><code>    一个程序正在运行的时候， 可以把这个程序放到后台去运行，不占前台的资源
+    ps          查看当前会话所有进程组
+
+    jobs        查看当前会话的所有后台进程组(任务)
+        jobs -l     列出后台进程组带PID显示
+        jobs -s        只列出暂停的jobs
+        jobs -r        只列出运行的jobs
+
+    ctrl + z    将前台进程组切换到后台停止, 在终端运行无效果
+    ctrl + c    再终端运行的话会把当前终端运行的任务停止
+    ctrl + d    在终端运行的时候会关闭当前终端
+
+    gedit &amp;     将gedit进程切换到后台
+
+    fg          将后台进程组切换到前台运行(默认将最后的后台进程组调到前台)
+        fg 2    将ID为2的后台进程组调到前台运行
+
+    bg          将后台进程组停止状态改为运行状态
+        bg 2    将jobs列表ID对应2的后台进程组停止状态改为运行状态
+
+    vncview &amp;                   在后台运行vnc，不会占前台终端的资源
+
+后台复制大文件
+    生成指定大小的文件
+        head -c 500M /dev/zero &gt; swapfile
+
+        dd if=/dev/zero of=./swapfile bs=100M count=5
+
+     cp /soft/* /test/ -rf
+        如果你要做一个大文件的拷贝，不加后台符号这个终端就只能等它拷完才能用
+
+    但这里还考虑一个问题，如果它还没有拷完，而我不小心把这个终端关了,
+    那么这个程序也会停止，造成没拷完的情况
+    所以把要做的事锁定到后台，在前面加一个nohup命令就可以了,
+    在后面加一个&amp;号也是可以的</code></pre>
+<h2 id="nohup-命令"><a href="#nohup-命令" class="headerlink" title="nohup  命令"></a>nohup  命令</h2><p>nohup  cp /soft/* /test/ -rf &amp;<br>把复制的终端关闭，再开一个终端查看，用jobs -l也是看不到这个job<br> (因为换了终端)，但是拷贝仍在继续)<br>cp /soft/* /test/ -rf &amp;<br>所以可以加一个后台符号让它在后台拷就行</p>
+<p>&amp;是指在后台运行，但当用户推出(挂起)的时候，命令自动也跟着退出<br> &amp;的意思是在后台运行，  ./a.out &amp; 的时候， 即使你用ctrl C,  那么a.out照样运行（因为对SIGINT信号免疫）。 但是要注意， 如果你直接关掉shell后， 那么， a.out进程同样消失。 可见， &amp;的后台并不硬（因为对SIGHUP信号不免疫）。</p>
+<p>nohup的意思是忽略SIGHUP信号， 所以当运行nohup ./a.out的时候， 关闭shell, 那么a.out进程还是存在的（对SIGHUP信号免疫）。<br>但是如果你直接在shell中用Ctrl C, 那么, a.out进程也是会消失的（因为对SIGINT信号不免疫）</p>
+<p>那么，我们可以巧妙的吧他们结合起来用就是</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">nohup COMMAND &amp;</span><br></pre></td></tr></table></figure>
+
+
+<p>这样就能使命令永久的在后台执行</p>
+</div><ul class="post-copyright"><li><strong>本文标题：</strong><a href="https://yc6.cool/2020/08/03/linux进程管理/">linux进程管理</a></li><li><strong>本文作者：</strong><a href="https://yc6.cool">yichen</a></li><li><strong>本文链接：</strong><a href="https://yc6.cool/2020/08/03/linux进程管理/">https://yc6.cool/2020/08/03/linux进程管理/</a></li><li><strong>版权声明：</strong><span>本博客所有文章除特别声明外，均采用 <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/deed.zh" rel="external nofollow" target="_blank">CC BY-NC-SA 4.0</a> 许可协议。转载请注明出处！</span></li></ul><div><div class="recommend-post"><span class="is-size-6 has-text-grey has-mr-7"># 相关文章</span><br><span>  1.<a class="is-size-6" href="/2020/08/05/sed_%E7%9A%84%E5%B8%B8%E7%94%A8%E5%91%BD%E4%BB%A4%E7%9A%84%E4%BD%BF%E7%94%A8/" target="_blank">sed的常用命令的使用</a><br></span><span>  2.<a class="is-size-6" href="/2020/08/04/linux%E4%B8%8B%E7%9A%84%E7%9B%AE%E5%BD%95%E4%BB%8B%E7%BB%8D/" target="_blank">linux根下目录文件介绍</a><br></span><span>  3.<a class="is-size-6" href="/2020/08/03/vim%E4%BD%BF%E7%94%A8/" target="_blank">vim的使用</a><br></span><span>  4.<a class="is-size-6" href="/2020/08/03/linux%E4%B8%AD%E4%B8%A2%E5%A4%B1grub.cfg%E5%BC%95%E5%AF%BC%E6%96%87%E4%BB%B6%E4%BF%AE%E5%A4%8D/" target="_blank">linux中丢失grub.cfg引导文件修复</a><br></span><span>  5.<a class="is-size-6" href="/2020/08/03/linux%E7%B3%BB%E7%BB%9F%E7%AE%A1%E7%90%86/" target="_blank">linux系统管理</a><br></span><span>  6.<a class="is-size-6" href="/2020/08/03/linux%E7%A3%81%E7%9B%98%E7%AE%A1%E7%90%86/" target="_blank">linux磁盘管理</a><br></span><span>  7.<a class="is-size-6" href="/2020/08/03/%E7%A3%81%E7%9B%98%E5%91%BD%E4%BB%A4lvm/" target="_blank">磁盘命令lvm</a><br></span><span>  8.<a class="is-size-6" href="/2020/08/03/linux%E8%BD%AF%E4%BB%B6%E7%AE%A1%E7%90%86/" target="_blank">linux软件管理</a><br></span></div><div class="recommend-post"><span class="is-size-6 has-text-grey has-mr-7"># 推荐文章</span><br><span>  1.<a class="is-size-6" href="/2020/08/04/docker%E4%BD%BF%E7%94%A8/" target="_blank">docker的使用</a><br></span><span>  2.<a class="is-size-6" href="/2020/08/03/mysql%E5%9F%BA%E7%A1%80/" target="_blank">mysql基础</a><br></span><span>  3.<a class="is-size-6" href="/2020/08/03/nginx%E5%9F%BA%E7%A1%80/" target="_blank">nginx基础</a><br></span><span>  4.<a class="is-size-6" href="/2020/08/04/python3%E5%9F%BA%E7%A1%80%E7%9F%A5%E8%AF%86%E9%87%8D%E7%82%B9/" target="_blank">python3基础知识重点</a><br></span><span>  5.<a class="is-size-6" href="/2023/05/07/Linux%E6%9C%8D%E5%8A%A1%E5%99%A8%E7%B3%BB%E7%BB%9F%E7%9B%91%E6%8E%A7/" target="_blank">Prometheus监控linux</a><br></span><span>  6.<a class="is-size-6" href="/2023/05/10/Prometheus%E4%BD%BF%E7%94%A8%E9%82%AE%E7%AE%B1%E6%8E%A5%E6%94%B6%E5%91%8A%E8%AD%A6%E9%80%9A%E7%9F%A5/" target="_blank">Prometheus使用邮件接收告警通知</a><br></span></div></div><link rel="stylesheet" href="https://cdnjs.loli.net/ajax/libs/social-share.js/1.0.16/css/share.min.css"><div class="social-share"></div><script src="https://cdnjs.loli.net/ajax/libs/social-share.js/1.0.16/js/social-share.min.js"></script></article></div><div class="card"><div class="card-content"><h3 class="menu-label has-text-centered">喜欢这篇文章？打赏一下作者吧</h3><div class="buttons is-centered"><a class="button is-info donate"><span class="icon is-small"><i class="fab fa-alipay"></i></span><span>支付宝</span><span class="qrcode"><img src="https://yichenxiu.com/tupian/tubiao/alipay1.jpg" alt="支付宝"></span></a><a class="button is-success donate"><span class="icon is-small"><i class="fab fa-weixin"></i></span><span>微信</span><span class="qrcode"><img src="https://i.328888.xyz/2023/03/05/dZXCk.jpeg" alt="微信"></span></a></div></div></div><nav class="post-navigation mt-4 level is-mobile"><div class="level-start"><a class="article-nav-prev level level-item link-muted" href="/2020/08/03/linux_shell%E7%BC%96%E7%A8%8B/"><i class="level-item fas fa-chevron-left"></i><span class="level-item">linux_shell编程</span></a></div><div class="level-end"><a class="article-nav-next level level-item link-muted" href="/2020/08/03/linux_IP%E7%BD%91%E7%BB%9C/"><span class="level-item">linux_IP网络</span><i class="level-item fas fa-chevron-right"></i></a></div></nav><div class="card"><div class="card-content"><h3 class="title is-5">评论</h3><div id="comment-container"></div><link rel="stylesheet" href="https://cdnjs.loli.net/ajax/libs/gitalk/1.6.0/gitalk.css"><script> $.getScript('/js/gitalk.min.js', function () { 
+            var gitalk = new Gitalk({
+            language:'zh-CN',
+            id: 'f81beb756572814eff7b02a4d304548b',
+            repo: 'issue_database',
+            owner: 'zhi666',
+            clientID: '1b861f81e9a79ee6028d',
+            clientSecret: 'cc629aff090aa9c60d5e13ddf7fcfce14f00a478',
+            admin: ["zhi666"],
+            createIssueManually: true,
+            distractionFreeMode: true,
+            perPage: 10,
+            pagerDirection: 'last',
+            proxy: 'https://cors-anywhere.azm.workers.dev/https://github.com/login/oauth/access_token',
+            
+            enableHotKey: true,
+            isLocked: false
+        })
+        gitalk.render('comment-container')});</script></div></div></div><div class="column column-left is-4-tablet is-4-desktop is-4-widescreen  order-1 is-sticky"><!--!--><div class="card widget"><div class="card-content"><nav class="level"><div class="level-item has-text-centered flex-shrink-1"><div><figure class="image is-128x128 mx-auto mb-2"><img class="is-rounded" src="/img/toudong.jpg" alt="逸尘秀"></figure><p class="title is-size-4 is-block line-height-inherit">逸尘秀</p><p class="is-size-6 is-block">只此一生 ， 必须快乐 ！</p><p class="is-size-6 is-flex justify-content-center"><i class="fas fa-map-marker-alt mr-1"></i><span>深圳</span></p></div></div></nav><nav class="level is-mobile"><div class="level-item has-text-centered is-marginless"><div><p class="heading">文章</p><a href="/archives"><p class="title">136</p></a></div></div><div class="level-item has-text-centered is-marginless"><div><p class="heading">分类</p><a href="/categories"><p class="title">17</p></a></div></div><div class="level-item has-text-centered is-marginless"><div><p class="heading">标签</p><a href="/tags"><p class="title">55</p></a></div></div></nav><div class="level"><a class="level-item button is-primary is-rounded" href="https://weibo.com/u/6155656382" target="_blank" rel="noopener">关注我</a></div><div class="level is-mobile"><a class="level-item button is-transparent is-white is-marginless" target="_blank" rel="noopener" title="Github" href="https://github.com/zhi666"><i class="fab fa-github"></i></a><a class="level-item button is-transparent is-white is-marginless" target="_blank" rel="noopener" title="Weibo" href="https://weibo.com/u/6155656382"><i class="fab fa-weibo"></i></a><a class="level-item button is-transparent is-white is-marginless" target="_blank" rel="noopener" title="Email" href="mailto:1378373724@qq.com"><i class="fa fa-envelope"></i></a><a class="level-item button is-transparent is-white is-marginless" target="_blank" rel="noopener" title="Next" href="https://zhi666.github.io/remove.io"><i class="fab fa-dribbble"></i></a><a class="level-item button is-transparent is-white is-marginless" target="_blank" rel="noopener" title="RSS" href="/atom.xml"><i class="fas fa-rss"></i></a></div><div><hr><p id="hitokoto">:D 一言句子获取中...</p><script type="text/javascript" defer>function getYiyan(){
+                                $.getJSON("https://v1.hitokoto.cn/", function (data) {
+                                if(data){
+                                    $('#hitokoto').html("");
+                                    $('#hitokoto').append("<strong style='color: #3273dc;'>"+data.hitokoto+"</strong>"+
+                                    "<p>"+"来源《"+data.from+"》</p><p>提供者-"+data.creator+"</p>");
+                                }});}
+                                $(function (){getYiyan();$('#hitokoto').click(function(){getYiyan();})});</script></div></div></div><div class="card widget"><div class="card-content"><h3 class="menu-label">最新评论</h3><span class="body_hot_comment">加载中，最新评论有1分钟缓存...</span></div></div><div class="card widget"><div class="card-content"><h3 class="menu-label">最新文章</h3><article class="media"><div class="media-content size-small"><p><time dateTime="2023-11-01T02:25:44.578Z">2023-11-01</time></p><p class="title is-6"><a class="link-muted" href="/2023/11/01/selenlium%E6%89%B9%E9%87%8F%E6%B7%BB%E5%8A%A0dns%E5%9F%9F%E5%90%8D/">批量添加dns域名解析</a></p><p class="is-uppercase"><i class="fas fa-folder-open has-text-grey"> </i><a class="link-muted" href="/categories/python/">python</a></p></div></article><article class="media"><div class="media-content size-small"><p><time dateTime="2023-05-17T01:45:36.000Z">2023-05-17</time></p><p class="title is-6"><a class="link-muted" href="/2023/05/17/Kubernetes%E9%AB%98%E5%8F%AF%E7%94%A8%E9%9B%86%E7%BE%A4%E4%BA%8C%E8%BF%9B%E5%88%B6%E9%83%A8%E7%BD%B2/">Kubernetes高可用集群二进制部署</a></p><p class="is-uppercase"><i class="fas fa-folder-open has-text-grey"> </i><a class="link-muted" href="/categories/linux3/">linux3</a></p></div></article><article class="media"><div class="media-content size-small"><p><time dateTime="2023-05-10T06:25:36.000Z">2023-05-10</time></p><p class="title is-6"><a class="link-muted" href="/2023/05/10/Prometheus%E4%BD%BF%E7%94%A8%E6%89%8B%E6%9C%BA%E7%94%B5%E8%AF%9D_%E7%9F%AD%E4%BF%A1%E6%8E%A5%E6%94%B6%E5%91%8A%E8%AD%A6%E9%80%9A%E7%9F%A5/">Prometheus使用手机电话_短信接收告警通知</a></p><p class="is-uppercase"><i class="fas fa-folder-open has-text-grey"> </i><a class="link-muted" href="/categories/linux2/">linux2</a></p></div></article><article class="media"><div class="media-content size-small"><p><time dateTime="2023-05-10T06:22:36.000Z">2023-05-10</time></p><p class="title is-6"><a class="link-muted" href="/2023/05/10/Prometheus%E4%BD%BF%E7%94%A8%E4%BC%81%E4%B8%9A%E5%BE%AE%E4%BF%A1%E6%8E%A5%E6%94%B6%E5%91%8A%E8%AD%A6%E9%80%9A%E7%9F%A5/">Prometheus使用企业微信接收告警通知</a></p><p class="is-uppercase"><i class="fas fa-folder-open has-text-grey"> </i><a class="link-muted" href="/categories/linux2/">linux2</a></p></div></article><article class="media"><div class="media-content size-small"><p><time dateTime="2023-05-10T06:20:36.000Z">2023-05-10</time></p><p class="title is-6"><a class="link-muted" href="/2023/05/10/Prometheus%E4%BD%BF%E7%94%A8%E4%BC%81%E4%B8%9A%E9%92%89%E9%92%89%E5%91%8A%E8%AD%A6%E9%80%9A%E7%9F%A5/">Prometheus使用企业钉钉接收告警通知</a></p><p class="is-uppercase"><i class="fas fa-folder-open has-text-grey"> </i><a class="link-muted" href="/categories/linux2/">linux2</a></p></div></article></div></div><div class="card widget"><div class="card-content"><div class="menu"><h3 class="menu-label">分类</h3><ul class="menu-list"><li><a class="level is-mobile is-marginless" href="/categories/English/"><span class="level-start"><span class="level-item">English</span></span><span class="level-end"><span class="level-item tag">1</span></span></a></li><li><a class="level is-mobile is-marginless" href="/categories/HTML/"><span class="level-start"><span class="level-item">HTML</span></span><span class="level-end"><span class="level-item tag">4</span></span></a></li><li><a class="level is-mobile is-marginless" href="/categories/JS/"><span class="level-start"><span class="level-item">JS</span></span><span class="level-end"><span class="level-item tag">2</span></span></a></li><li><a class="level is-mobile is-marginless" href="/categories/html/"><span class="level-start"><span class="level-item">html</span></span><span class="level-end"><span class="level-item tag">1</span></span></a></li><li><a class="level is-mobile is-marginless" href="/categories/linux1/"><span class="level-start"><span class="level-item">linux1</span></span><span class="level-end"><span class="level-item tag">15</span></span></a></li><li><a class="level is-mobile is-marginless" href="/categories/linux2/"><span class="level-start"><span class="level-item">linux2</span></span><span class="level-end"><span class="level-item tag">33</span></span></a></li><li><a class="level is-mobile is-marginless" href="/categories/linux3/"><span class="level-start"><span class="level-item">linux3</span></span><span class="level-end"><span class="level-item tag">27</span></span></a></li><li><a class="level is-mobile is-marginless" href="/categories/python/"><span class="level-start"><span class="level-item">python</span></span><span class="level-end"><span class="level-item tag">12</span></span></a></li><li><a class="level is-mobile is-marginless" href="/categories/web/"><span class="level-start"><span class="level-item">web</span></span><span class="level-end"><span class="level-item tag">1</span></span></a></li><li><a class="level is-mobile is-marginless" href="/categories/work/"><span class="level-start"><span class="level-item">work</span></span><span class="level-end"><span class="level-item tag">7</span></span></a></li><a class="level is-mobile is-marginless" href="/categories/"><span class="level-start"><span class="level-item">查看全部&gt;&gt;</span></span></a></ul></div></div></div><div class="card widget"><div class="card-content"><div class="menu"><h3 class="menu-label">归档</h3><ul class="menu-list"><li><a class="level is-mobile is-marginless" href="/archives/2023/11/"><span class="level-start"><span class="level-item">十一月 2023</span></span><span class="level-end"><span class="level-item tag">5</span></span></a></li><li><a class="level is-mobile is-marginless" href="/archives/2023/05/"><span class="level-start"><span class="level-item">五月 2023</span></span><span class="level-end"><span class="level-item tag">13</span></span></a></li><li><a class="level is-mobile is-marginless" href="/archives/2023/04/"><span class="level-start"><span class="level-item">四月 2023</span></span><span class="level-end"><span class="level-item tag">2</span></span></a></li><li><a class="level is-mobile is-marginless" href="/archives/2023/02/"><span class="level-start"><span class="level-item">二月 2023</span></span><span class="level-end"><span class="level-item tag">1</span></span></a></li><li><a class="level is-mobile is-marginless" href="/archives/2022/06/"><span class="level-start"><span class="level-item">六月 2022</span></span><span class="level-end"><span class="level-item tag">3</span></span></a></li><a class="level is-mobile is-marginless" href="/archives/"><span class="level-start"><span class="level-item">查看全部&gt;&gt;</span></span></a></ul></div></div></div><div class="card widget"><div class="card-content"><div class="menu"><h3 class="menu-label">标签</h3><div class="field is-grouped is-grouped-multiline"><div class="control"><a class="tags has-addons" href="/tags/linux/"><span class="tag">linux</span><span class="tag is-grey-lightest">18</span></a></div><div class="control"><a class="tags has-addons" href="/tags/docker/"><span class="tag">docker</span><span class="tag is-grey-lightest">16</span></a></div><div class="control"><a class="tags has-addons" href="/tags/Prometheus/"><span class="tag">Prometheus</span><span class="tag is-grey-lightest">14</span></a></div><div class="control"><a class="tags has-addons" href="/tags/html/"><span class="tag">html</span><span class="tag is-grey-lightest">14</span></a></div><div class="control"><a class="tags has-addons" href="/tags/python/"><span class="tag">python</span><span class="tag is-grey-lightest">12</span></a></div><div class="control"><a class="tags has-addons" href="/tags/web/"><span class="tag">web</span><span class="tag is-grey-lightest">12</span></a></div><div class="control"><a class="tags has-addons" href="/tags/nginx/"><span class="tag">nginx</span><span class="tag is-grey-lightest">9</span></a></div><div class="control"><a class="tags has-addons" href="/tags/mysql/"><span class="tag">mysql</span><span class="tag is-grey-lightest">7</span></a></div><div class="control"><a class="tags has-addons" href="/tags/%E5%AE%B9%E5%99%A8/"><span class="tag">容器</span><span class="tag is-grey-lightest">7</span></a></div><div class="control"><a class="tags has-addons" href="/tags/%E6%95%B0%E6%8D%AE%E5%BA%93/"><span class="tag">数据库</span><span class="tag is-grey-lightest">7</span></a></div><div class="control"><a class="tags has-addons" href="/tags/%E7%A7%91%E5%AD%A6%E4%B8%8A%E7%BD%91/"><span class="tag">科学上网</span><span class="tag is-grey-lightest">6</span></a></div><div class="control"><a class="tags has-addons" href="/tags/work/"><span class="tag">work</span><span class="tag is-grey-lightest">5</span></a></div><div class="control"><a class="tags has-addons" href="/tags/%E8%87%AA%E5%8A%A8%E5%8C%96/"><span class="tag">自动化</span><span class="tag is-grey-lightest">5</span></a></div><div class="control"><a class="tags has-addons" href="/tags/%E5%8D%9A%E5%AE%A2/"><span class="tag">博客</span><span class="tag is-grey-lightest">4</span></a></div><div class="control"><a class="tags has-addons" href="/tags/%E5%B7%A5%E4%BD%9C/"><span class="tag">工作</span><span class="tag is-grey-lightest">4</span></a></div><div class="control"><a class="tags has-addons" href="/tags/%E5%B7%A5%E5%85%B7/"><span class="tag">工具</span><span class="tag is-grey-lightest">4</span></a></div><div class="control"><a class="tags has-addons" href="/tags/ssl/"><span class="tag">ssl</span><span class="tag is-grey-lightest">3</span></a></div><div class="control"><a class="tags has-addons" href="/tags/%E6%96%87%E4%BB%B6%E7%B3%BB%E7%BB%9F/"><span class="tag">文件系统</span><span class="tag is-grey-lightest">3</span></a></div><div class="control"><a class="tags has-addons" href="/tags/%E6%97%A5%E5%BF%97/"><span class="tag">日志</span><span class="tag is-grey-lightest">3</span></a></div><div class="control"><a class="tags has-addons" href="/tags/%E6%97%A5%E5%BF%97%E5%8A%A0%E5%AF%86/"><span class="tag">日志加密</span><span class="tag is-grey-lightest">3</span></a></div></div><div class="field is-grouped is-grouped-multiline"><a class="tags has-addons" href="/tags/"><span class="tag">查看全部&gt;&gt;</span></a></div></div></div></div><div class="card widget"><div class="card-content"><div class="menu"><h3 class="menu-label">订阅更新</h3><form action="https://feedburner.google.com/fb/a/mailverify" method="post" target="popupwindow" onsubmit="window.open(&#039;https://feedburner.google.com/fb/a/mailverify?uri=zhi666FeedsId&#039;,&#039;popupwindow&#039;,&#039;scrollbars=yes,width=550,height=520&#039;);return true"><input type="hidden" value="zhi666FeedsId" name="uri"><input type="hidden" name="loc" value="en_US"><div class="field has-addons"><div class="control has-icons-left is-expanded"><input class="input" name="email" type="email" placeholder="Email"><span class="icon is-small is-left"><i class="fas fa-envelope"></i></span></div><div class="control"><input class="button is-primary" type="submit" value="订阅"></div></div><p class="help">输入邮箱开始订阅，更博后邮件通知！</p></form></div></div></div></div></div></div></section><footer class="footer"><div class="container"><div class="level"><div class="level-start"><a class="footer-logo is-block mb-2" href="/"><img src="/img/logo.png" alt="逸尘秀" height="28"></a><p class="size-small"><span>&copy; 2023 yichen</span>  Powered by <a href="https://hexo.io/" target="_blank">Hexo</a> &amp; <a href="https://github.com/ppoffice/hexo-theme-icarus" target="_blank">Icarus</a>,Modify by <a href="https://github.com/removeif/hexo-theme-amazing" target="_blank">removeif</a> <br><span>© 版权说明：[本网站所有内容均收集于互联网或自己创作,<br />&nbsp;&nbsp;&nbsp;&nbsp;方便于网友与自己学习交流，如有侵权，请<a href="/message" target="_blank">留言</a>，立即处理]<br /></span><span><span id="statistic-times">loading...</span><script>function createTime(time) {
+            var n = new Date(time);
+            now.setTime(now.getTime() + 250),
+                days = (now - n) / 1e3 / 60 / 60 / 24,
+                dnum = Math.floor(days),
+                hours = (now - n) / 1e3 / 60 / 60 - 24 * dnum,
+                hnum = Math.floor(hours),
+            1 == String(hnum).length && (hnum = "0" + hnum),
+                minutes = (now - n) / 1e3 / 60 - 1440 * dnum - 60 * hnum,
+                mnum = Math.floor(minutes),
+            1 == String(mnum).length && (mnum = "0" + mnum),
+                seconds = (now - n) / 1e3 - 86400 * dnum - 3600 * hnum - 60 * mnum,
+                snum = Math.round(seconds),
+            1 == String(snum).length && (snum = "0" + snum),
+                document.getElementById("statistic-times").innerHTML = "❤️本站自 <strong>"+time.split(" ")[0].replace(/\//g,".")+"</strong> 已运行 <strong>" + dnum + "</strong> 天 <strong>" + hnum + "</strong> 小时 <strong>" + mnum + "</strong> 分 <strong>" + snum + "</strong> 秒！❤️";
+        }var now = new Date();setInterval("createTime('2020/08/02 00:00:00')", 250,"");</script><br></span><div class="size-small"><span>❤️感谢 <strong><span id="busuanzi_value_site_uv">99+</span></strong> 小伙伴的 <strong><span id="busuanzi_value_site_pv">99+</span></strong> 次光临！❤️</span></div></p></div><div class="level-end"><div class="field has-addons"><p class="control"><a class="button is-transparent is-large" target="_blank" rel="noopener" title="Creative Commons" href="https://creativecommons.org/"><i class="fab fa-creative-commons"></i></a></p><p class="control"><a class="button is-transparent is-large" target="_blank" rel="noopener" title="Attribution 4.0 International" href="https://creativecommons.org/licenses/by/4.0/"><i class="fab fa-creative-commons-by"></i></a></p><p class="control"><a class="button is-transparent is-large" target="_blank" rel="noopener" title="Download on GitHub" href="https://github.com/zhi666"><i class="fab fa-github"></i></a></p></div><div class="sideMusic"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/aplayer/dist/APlayer.min.css"><script src="/js/APlayer.min.js"></script><script src="https://cdn.jsdelivr.net/npm/meting@2/dist/Meting.min.js"></script><meting-js style="width: auto;height: 2000px;" server="netease" type="playlist" id="2364053447" theme="#2980b9" loop="all" autoplay="false" order="list" storageName="aplayer-setting" lrctype="0" list-max-height="400px" fixed="true"></meting-js></div></div></div></div></footer><script src="https://cdnjs.loli.net/ajax/libs/moment.js/2.22.2/moment-with-locales.min.js"></script><script>moment.locale("zh-CN");</script><script>var IcarusThemeSettings = {
+            site: {
+                url: 'https://yc6.cool',
+                external_link: {"enable":true,"exclude":[]}
+            },
+            article: {
+                highlight: {
+                    clipboard: true,
+                    fold: 'unfolded'
+                }
+            }
+        };</script><script src="https://cdnjs.loli.net/ajax/libs/clipboard.js/2.0.4/clipboard.min.js" defer></script><script src="/js/animation.js"></script><a id="back-to-top" title="回到顶端" href="javascript:;"><i class="fas fa-chevron-up"></i></a><script src="/js/back-to-top.js" defer></script><!--!--><!--!--><script src="https://cdnjs.loli.net/ajax/libs/lightgallery/1.6.12/js/lightgallery-all.min.js" defer></script><script src="https://cdnjs.loli.net/ajax/libs/justifiedGallery/3.7.0/js/jquery.justifiedGallery.min.js" defer></script><!--!--><!--!--><!--!--><script src="/js/toc.js" defer></script><script src="/js/main.js" defer></script><script>$.getScript('/js/comment-issue-data.js',function(){loadIssueData('1b861f81e9a79ee6028d','cc629aff090aa9c60d5e13ddf7fcfce14f00a478','zhi666','issue_database',false);})</script><link rel="stylesheet" href="/css/insight.css"><div class="searchbox ins-search"><div class="searchbox-container ins-search-container"><div class="searchbox-input-wrapper"><input class="searchbox-input ins-search-input" type="text" placeholder="想要查找什么..."><span class="searchbox-close ins-close ins-selectable"><i class="fa fa-times-circle"></i></span></div><div class="searchbox-result-wrapper ins-section-wrapper"><div class="ins-section-container"></div></div></div></div><script>(function (window) {
+            var INSIGHT_CONFIG = {
+                TRANSLATION: {
+                    POSTS: '文章',
+                    PAGES: '页面',
+                    CATEGORIES: '分类',
+                    TAGS: '标签',
+                    UNTITLED: '(无标题)',
+                },
+                CONTENT_URL: '/content.json',
+            };
+            window.INSIGHT_CONFIG = INSIGHT_CONFIG;
+        })(window);</script><script src="/js/insight.js" defer></script></body></html>

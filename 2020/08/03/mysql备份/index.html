@@ -1,0 +1,605 @@
+<!doctype html>
+<html lang="zh"><head><meta charset="utf-8"><meta name="generator" content="Hexo 4.2.0"><meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"><meta><meta name="keywords" content="[object Object]"><meta name="description" content="mysql备份讲解1.1 备份的作用
+论数据的重要性
+1.2 如何实现备份？都有哪些方法可以实现数据的备份？
+bin-log
+使用二进制日志的方式进行备份，主要实现过程通过实现mysql的主从备份即可"><meta name="author" content="zhi666"><title>mysql备份 - 逸尘秀</title><meta description="mysql备份讲解1.1 备份的作用 论数据的重要性 1.2 如何实现备份？都有哪些方法可以实现数据的备份？ bin-log 使用二进制日志的方式进行备份，主要实现过程通过实现mysql的主从备份即可"><meta property="og:type" content="article"><meta property="og:title" content="mysql备份"><meta property="og:url" content="https://yc6.cool/2020/08/03/mysql%E5%A4%87%E4%BB%BD/"><meta property="og:site_name" content="逸尘秀"><meta property="og:description" content="mysql备份讲解1.1 备份的作用 论数据的重要性 1.2 如何实现备份？都有哪些方法可以实现数据的备份？ bin-log 使用二进制日志的方式进行备份，主要实现过程通过实现mysql的主从备份即可"><meta property="og:locale" content="zh_CN"><meta property="article:published_time" content="2020-08-03T09:56:36.000Z"><meta property="article:modified_time" content="2023-11-01T02:25:44.573Z"><meta property="article:author" content="zhi666"><meta property="article:tag" content="数据库"><meta property="article:tag" content="mysql"><meta property="twitter:card" content="summary"><meta property="twitter:image" content="https://yc6.cool/img/avatar.png"><script type="application/ld+json">{"@context":"https://schema.org","@type":"BlogPosting","mainEntityOfPage":{"@type":"WebPage","@id":"https://yc6.cool/2020/08/03/mysql%E5%A4%87%E4%BB%BD/"},"headline":"mysql备份","image":["https://yc6.cool/img/avatar.png"],"datePublished":"2020-08-03T09:56:36.000Z","dateModified":"2023-11-01T02:25:44.573Z","author":{"@type":"Person","name":"zhi666"},"description":"mysql备份讲解1.1 备份的作用 论数据的重要性 1.2 如何实现备份？都有哪些方法可以实现数据的备份？ bin-log 使用二进制日志的方式进行备份，主要实现过程通过实现mysql的主从备份即可"}</script><link rel="alternative" href="/atom.xml" title="逸尘秀" type="application/atom+xml"><link rel="icon" href="/img/favicon.png"><link rel="stylesheet" href="https://cdnjs.loli.net/ajax/libs/font-awesome/5.12.0/css/all.min.css"><link rel="stylesheet" href="https://fonts.loli.net/css?family=Ubuntu:400,600|Source+Code+Pro|Monda:300,300italic,400,400italic,700,700italic|Roboto Slab:300,300italic,400,400italic,700,700italic|Microsoft YaHei:300,300italic,400,400italic,700,700italic|PT Mono:300,300italic,400,400italic,700,700italic&amp;amp;subset=latin,latin-ext|Inconsolata|Itim|Lobster.css"><link rel="stylesheet" href="https://cdnjs.loli.net/ajax/libs/highlight.js/9.12.0/styles/atom-one-dark.min.css"><style>body>.footer,body>.navbar,body>.section{opacity:0}</style><!--!--><!--!--><script src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js" defer></script><link rel="stylesheet" href="https://cdnjs.loli.net/ajax/libs/lightgallery/1.6.12/css/lightgallery.min.css"><link rel="stylesheet" href="https://cdnjs.loli.net/ajax/libs/justifiedGallery/3.7.0/css/justifiedGallery.min.css"><!--!--><!--!--><script src="https://cdnjs.loli.net/ajax/libs/pace/1.0.2/pace.min.js"></script><link rel="stylesheet" href="/css/style.css"><script src="https://cdnjs.loli.net/ajax/libs/jquery/3.3.1/jquery.min.js"></script><script src="/js/globalUtils.js"></script><link rel="stylesheet" href="/live2d/waifu.css"><script type="text/javascript" async src="/live2d/autoload.js"></script></head><body class="is-3-column has-navbar-fixed-top"><nav class="navbar navbar-main is-fixed-top"><div class="container"><div class="navbar-brand justify-content-center"><a class="navbar-item navbar-logo" href="/"><img src="/img/logo.png" alt="逸尘秀" height="28"></a></div><div class="navbar-menu"><div class="navbar-start"><a class="navbar-item" href="/">首页</a><a class="navbar-item" href="/archives">归档</a><a class="navbar-item" href="/categories">分类</a><a class="navbar-item" href="/tags">标签</a><a class="navbar-item" href="/media">影音</a><a class="navbar-item" href="/album">相册</a><a class="navbar-item" href="/friend">友链</a><a class="navbar-item" href="/self-talking">碎碎念</a><a class="navbar-item" href="/message">留言</a><a class="navbar-item" href="/about">关于</a></div><div class="navbar-end"><a class="navbar-item" target="_blank" rel="noopener" title="Download on GitHub" href="https://github.com/zhi666"><i class="fab fa-github"></i></a><a class="navbar-item search" title="搜索" href="javascript:;"><i class="fas fa-search"></i></a><a class="navbar-item" id="night-nav" title="Night Mode" href="javascript:;"><i class="fas fa-moon" id="night-icon"></i></a></div></div></div></nav><script type="text/javascript" src="/js/theme-setting.js"></script><section class="section"><div class="container"><div class="columns"><div class="column order-2 column-main is-8-tablet is-8-desktop is-9-widescreen"><div class="card"><article class="card-content article" role="article"><div class="article-meta size-small is-uppercase level is-mobile"><div class="level-left"><i class="far fa-calendar-plus"> </i>2020-08-03  <a class="commentCountImg" href="/2020/08/03/mysql%E5%A4%87%E4%BB%BD/#comment-container"><span class="display-none-class">c9cf5138dc15277d5b0e3811bfafbd37</span><i class="far fa-comment-dots"></i> <span class="commentCount" id="c9cf5138dc15277d5b0e3811bfafbd37">99+</span>  </a><span class="level-item"><i class="far fa-clock"> </i>1 小时  <i class="fas fa-pencil-alt"> </i>8.3 k</span><span class="level-item" id="busuanzi_container_page_pv"><i class="far fa-eye"></i>&nbsp;&nbsp;<span id="busuanzi_value_page_pv">0</span>次访问</span></div></div><h1 class="title is-3 is-size-4-mobile">mysql备份</h1><div class="content"><h1 id="mysql备份讲解"><a href="#mysql备份讲解" class="headerlink" title="mysql备份讲解"></a>mysql备份讲解</h1><p><strong>1.1 备份的作用</strong></p>
+<p>论数据的重要性</p>
+<p>1.2 如何实现备份？都有哪些方法可以实现数据的备份？</p>
+<p>bin-log</p>
+<p>使用二进制日志的方式进行备份，主要实现过程通过实现mysql的主从备份即可</p>
+<a id="more"></a>
+<p>备注：建议将bin-log实时备份至远程服务器中，以防机器故障而导致日志丢失</p>
+<p> <strong>mysqldump</strong> </p>
+<p>mydumper</p>
+<p><strong>Xtrabackup</strong>  </p>
+<h1 id="1-mysqldump"><a href="#1-mysqldump" class="headerlink" title="1.mysqldump"></a>1.mysqldump</h1><p><strong>一、mysqldump 简介</strong></p>
+<p><code>mysqldump</code> 是 <code>MySQL</code> 自带的逻辑备份工具。</p>
+<p>它的备份原理是通过协议连接到 <code>MySQL</code> 数据库，将需要备份的数据查询出来，将查询出的数据转换成对应的<code>insert</code> 语句，当我们需要还原这些数据时，只要执行这些 <code>insert</code> 语句，即可将对应的数据还原。</p>
+<p>常用参数说明：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line">--version, -V       输出mysqldump版本信息并退出</span><br><span class="line">--help				显示帮助信息并退出</span><br><span class="line"></span><br><span class="line">--password, -p		连接数据库密码</span><br><span class="line"></span><br><span class="line">--user, -u		连接数据库的用户名</span><br><span class="line"></span><br><span class="line">--port, -P		连接数据库端口号</span><br><span class="line"></span><br><span class="line">--protocol		使用的连接协议，例如：tcp udp socket</span><br><span class="line"></span><br><span class="line">mysqldump  -uroot -p  -B m2 --protocol&#x3D;tcp</span><br></pre></td></tr></table></figure>
+
+<p><strong>二、备份命令</strong></p>
+<p><strong>2.1 命令格式</strong></p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">mysqldump [选项] 数据库名 [表名] &gt; 脚本名</span><br></pre></td></tr></table></figure>
+
+<p>或</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">mysqldump [选项] --数据库名 [选项 表名] &gt; 脚本名</span><br></pre></td></tr></table></figure>
+
+<p>或</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">mysqldump [选项] --all-databases [选项]  &gt; 脚本名</span><br></pre></td></tr></table></figure>
+
+<p><strong>命令格式：</strong></p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">mysqldump -uroot -p -A &gt;&#x2F;mysqlback&#x2F;mysql_all.sql</span><br></pre></td></tr></table></figure>
+
+<p>作用：</p>
+<p>将<strong>数据库所有内容</strong>备份至/root下，并设置文件名为mysql_all.sql</p>
+<p><strong>2.2 选项说明</strong></p>
+<table>
+<thead>
+<tr>
+<th>参数名</th>
+<th>缩写</th>
+<th>含义</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>–host</td>
+<td>-h</td>
+<td>服务器IP地址</td>
+</tr>
+<tr>
+<td>–port</td>
+<td>-P</td>
+<td>服务器端口号</td>
+</tr>
+<tr>
+<td>–user</td>
+<td>-u</td>
+<td>MySQL 用户名</td>
+</tr>
+<tr>
+<td>–pasword</td>
+<td>-p</td>
+<td>MySQL 密码</td>
+</tr>
+<tr>
+<td>–databases</td>
+<td>-B</td>
+<td>指定要备份的数据库</td>
+</tr>
+<tr>
+<td>–all-databases</td>
+<td>-A</td>
+<td>备份mysql服务器上的所有数据库</td>
+</tr>
+<tr>
+<td>–compact</td>
+<td></td>
+<td>压缩模式，产生更少的输出</td>
+</tr>
+<tr>
+<td>–comments</td>
+<td>-i</td>
+<td>添加注释信息</td>
+</tr>
+<tr>
+<td>–complete-insert</td>
+<td>-c</td>
+<td>输出完成的插入语句</td>
+</tr>
+<tr>
+<td>–lock-tables</td>
+<td>-l</td>
+<td>备份前，锁定所有数据库表</td>
+</tr>
+<tr>
+<td>–no-create-db/–no-create-info</td>
+<td></td>
+<td>禁止生成创建数据库语句</td>
+</tr>
+<tr>
+<td>–force</td>
+<td>-f</td>
+<td>当出现错误时仍然继续备份操作</td>
+</tr>
+<tr>
+<td>–default-character-set</td>
+<td></td>
+<td>指定默认字符集</td>
+</tr>
+<tr>
+<td>–add-locks</td>
+<td></td>
+<td>备份数据库表时锁定数据库表(默认开启)</td>
+</tr>
+<tr>
+<td>–where</td>
+<td>-w</td>
+<td>导出时，在后方添加条件语句，只导出符合条件的数据</td>
+</tr>
+<tr>
+<td>–xml</td>
+<td>-x</td>
+<td>导出时，将数据格式转换为XML</td>
+</tr>
+<tr>
+<td>–flush-logs</td>
+<td>-F</td>
+<td>开始导出之前刷新bin-log日志。</td>
+</tr>
+</tbody></table>
+<p>备注：如果一次导出多个库，将会多次刷新bin-log，只有在同时使用–lock-all-tables或者–master-data才不会出现类似情况</p>
+<p><strong>2.3 实例</strong></p>
+<p>备份所有数据库：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">mysqldump -uroot -p --all-databases &gt; /backup/mysqldump/all.db</span><br></pre></td></tr></table></figure>
+
+<p>备份指定数据库：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">mysqldump -uroot -p -B test &gt; /backup/mysqldump/test.db</span><br></pre></td></tr></table></figure>
+
+<p>备份指定数据库指定表(多个表以空格间隔)</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">mysqldump -uroot -p  mysql db event &gt; /backup/mysqldump/<span class="number">2</span>table.db</span><br></pre></td></tr></table></figure>
+
+<p>备份指定数据库排除某些表</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">mysqldump -uroot -p test --ignore-table=test.t1 --ignore-table=test.t2 &gt; /backup/mysqldump/test2.db</span><br></pre></td></tr></table></figure>
+
+<p>导出复合条件的库</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">mysqldump  -uroot -p    -B db_name --where&#x3D;&quot;user&#x3D;&#39;root&#39;&quot;</span><br></pre></td></tr></table></figure>
+
+
+
+<p><strong>三、还原命令</strong></p>
+<p><strong>3.1 系统行命令</strong></p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">mysqladmin -uroot -p create db_name </span><br><span class="line">mysql -uroot -p  db_name &lt; /backup/mysqldump/db_name.db</span><br><span class="line"></span><br><span class="line">注：在导入备份数据库前，db_name如果没有，是需要创建的； 而且与db_name.db中数据库名是一样的才可以导入。</span><br></pre></td></tr></table></figure>
+
+<p><strong>3.2 soure 方法</strong></p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">mysql &gt; use db_name</span><br><span class="line">mysql &gt; source /backup/mysqldump/db_name.db</span><br></pre></td></tr></table></figure>
+
+<h3 id="增量备份"><a href="#增量备份" class="headerlink" title="增量备份"></a>增量备份</h3><p>以上备份均为全备方式，如果要实现增量备份，最简单的方法是通过mysqldump配合bin-log来实现 </p>
+<p>实现原理：通过mysqldump命令中配合使用–flush-logs -F参数，每次全备后都刷新一次bin-log</p>
+<p>在全备后新的操作都将被记录到新的bin-log中，故而实现增量备份</p>
+<p> 过程如下：</p>
+<p>先开启 log-bin=mysql-bin </p>
+<p>server-id=1    然后重启，</p>
+<p>第一次全备：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">mkdir &#x2F;myback</span><br><span class="line"></span><br><span class="line">mysql &gt; create database m2;		创建测试库</span><br><span class="line"></span><br><span class="line">mysql &gt; create table m2.a (id int(2),name char(10),sex char(1));</span><br><span class="line"></span><br><span class="line">mysql &gt; insert into m2.a values (1,&#39;zhangsan&#39;,&#39;f&#39;),(2,&#39;lisi&#39;,&#39;m&#39;);	插入两条数据</span><br><span class="line"></span><br><span class="line">mysql &gt; select * from m2.a;</span><br></pre></td></tr></table></figure>
+
+<p> 第一次全备 然后有新的binlog日志了</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">mysqldump -uroot -p -B m2 -F &gt;&#x2F;myback&#x2F;all.sql</span><br></pre></td></tr></table></figure>
+
+<p>然后再次插入数据</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">mysql &gt;insert into m2.a  values (3,&#39;wangwu&#39;,&#39;f&#39;);</span><br><span class="line"></span><br><span class="line">mysql &gt; select * from m2.a;</span><br></pre></td></tr></table></figure>
+
+<p>将最新的log-bin备份</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">cp &#x2F;var&#x2F;lib&#x2F;mysql-bin.000002 &#x2F;myback</span><br></pre></td></tr></table></figure>
+
+<p>删除测试库</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">drop database m2;</span><br></pre></td></tr></table></figure>
+
+<p>恢复全备</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">mysql  -p  &lt;&#x2F;myback&#x2F;all.sql</span><br></pre></td></tr></table></figure>
+
+<p>查看</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">mysql &gt;  select * from m2.a;</span><br></pre></td></tr></table></figure>
+
+<p>恢复增备</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">mysqlbinlog &#x2F;myback&#x2F;mysql-bin.000002 |mysql -p</span><br></pre></td></tr></table></figure>
+
+<p>再次查看</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">myslq -e -p select * from m2.a;</span><br></pre></td></tr></table></figure>
+
+<p>也可以直接通过备份bin-log来实现全量和增量备份，通过下列命令可以从指定位置恢复：</p>
+<p>1、通过bin-log起始位置恢复</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">mysqlbinlog --start-position&#x3D;4 --stop-position&#x3D;798 mysql_bin.000001|mysql -uroot -p</span><br></pre></td></tr></table></figure>
+
+<p>2、通过bin-log中记录时间恢复</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">mysqlbinlog --start-datetime&#x3D;&#39;2018-09-20 00:00:00&#39; --stop-datetime&#x3D;&#39;2018-09-31 12:00:00&#39; mysql_bin.000001|mysql -uroot -p</span><br></pre></td></tr></table></figure>
+
+<h1 id="2-mydumper备份"><a href="#2-mydumper备份" class="headerlink" title="2.mydumper备份"></a>2.mydumper备份</h1><p>Mydumper是一个针对MySQL和Drizzle的高性能多线程备份和恢复工具。 </p>
+<p>官网</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">https:&#x2F;&#x2F;launchpad.net&#x2F;mydumper</span><br><span class="line">https:&#x2F;&#x2F;github.com&#x2F;maxbube&#x2F;mydumper</span><br></pre></td></tr></table></figure>
+
+
+
+<p><strong>Mydumper主要特性：</strong></p>
+<ul>
+<li><p>轻量级C语言写的</p>
+</li>
+<li><p>多线程备份，备份后会生成多个备份文件</p>
+</li>
+<li><p>事务性和非事务性表一致的快照(适用于0.2.2以上版本)</p>
+</li>
+<li><p>快速的文件压缩</p>
+</li>
+<li><p>支持导出binlog</p>
+</li>
+<li><p>多线程恢复(适用于0.2.1以上版本)</p>
+</li>
+<li><p>以守护进程的工作方式，定时快照和连续二进制日志(适用于0.5.0以上版本)</p>
+</li>
+<li><p>开源 (GNU GPLv3)</p>
+</li>
+</ul>
+<h3 id="1、mydumper安装"><a href="#1、mydumper安装" class="headerlink" title="1、mydumper安装"></a>1、mydumper安装</h3><p>安装依赖</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"></span><br><span class="line">yum install glib2-devel mysql-devel zlib-devel glibc zlib pcre make pcre-devel openssl-devel gcc gcc-c++   cmake -y</span><br></pre></td></tr></table></figure>
+
+<p>下载源码包</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">0.97版本</span><br><span class="line">git clone https:&#x2F;&#x2F;github.com&#x2F;maxbube&#x2F;mydumper.git  #这个最新的编译会报错</span><br><span class="line"></span><br><span class="line">wget https:&#x2F;&#x2F;launchpad.net&#x2F;mydumper&#x2F;0.9&#x2F;0.9.1&#x2F;+download&#x2F;mydumper-0.9.1.tar.gz</span><br><span class="line"># 这个需要先解压。编译过程都一样。</span><br></pre></td></tr></table></figure>
+
+<p>开始编译安装</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line">cd mydumper&#x2F;</span><br><span class="line">mkdir bin </span><br><span class="line">cd bin&#x2F;</span><br><span class="line"></span><br><span class="line">开始编译</span><br><span class="line">pwd</span><br><span class="line">&#x2F;root&#x2F;mydumper&#x2F;bin</span><br><span class="line"></span><br><span class="line">cmake ..&#x2F;</span><br><span class="line"></span><br><span class="line">make &amp;&amp; make install </span><br><span class="line"></span><br><span class="line">ls .&#x2F;</span><br><span class="line">#安装完成后生成两个二进制文件mydumper和myloader位于&#x2F;usr&#x2F;local&#x2F;bin目录下</span><br></pre></td></tr></table></figure>
+
+<p>在当前目录看到这两个文件就表示搞定了，创建软连接或者设置环境变量</p>
+<h3 id="2-1、mydumper常用参数说明"><a href="#2-1、mydumper常用参数说明" class="headerlink" title="2.1、mydumper常用参数说明"></a>2.1、mydumper常用参数说明</h3><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br></pre></td><td class="code"><pre><span class="line">-B, --database              要备份的数据库，不指定则备份所有库</span><br><span class="line">-T, --tables-list           需要备份的表，名字用逗号隔开</span><br><span class="line">-o, --outputdir             备份文件输出的目录</span><br><span class="line">-s, --statement-size        生成的insert语句的字节数，默认1000000</span><br><span class="line">-r, --rows                  将表按行分块时，指定的块行数，指定这个选项会关闭 --chunk-filesize</span><br><span class="line">-F, --chunk-filesize        将表按大小分块时，指定的块大小，单位是 MB</span><br><span class="line">-c, --compress              压缩输出文件</span><br><span class="line">-e, --build-empty-files     如果表数据是空，还是产生一个空文件（默认无数据则只有表结构文件）</span><br><span class="line">-x, --regex                 是同正则表达式匹配 &#39;db.table&#39;</span><br><span class="line">-i, --ignore-engines        忽略的存储引擎，用都厚分割</span><br><span class="line">-m, --no-schemas            不备份表结构</span><br><span class="line">-k, --no-locks              不使用临时共享只读锁，使用这个选项会造成数据不一致</span><br><span class="line">--less-locking              减少对InnoDB表的锁施加时间（这种模式的机制下文详解）</span><br><span class="line">-l, --long-query-guard      设定阻塞备份的长查询超时时间，单位是秒，默认是60秒（超时后默认mydumper将会退出）</span><br><span class="line">--kill-long-queries         杀掉长查询 (不退出)</span><br><span class="line">-b, --binlogs               导出binlog</span><br><span class="line">-D, --daemon                启用守护进程模式，守护进程模式以某个间隔不间断对数据库进行备份</span><br><span class="line">-I, --snapshot-interval     dump快照间隔时间，默认60s，需要在daemon模式下</span><br><span class="line">-L, --logfile               使用的日志文件名(mydumper所产生的日志), 默认使用标准输出</span><br><span class="line">--tz-utc                    跨时区是使用的选项，不解释了</span><br><span class="line">--skip-tz-utc               同上</span><br><span class="line">--use-savepoints            使用savepoints来减少采集metadata所造成的锁时间，需要 SUPER 权限</span><br><span class="line">--success-on-1146           Not increment error count and Warning instead of Critical in case of table doesn&#39;t exist</span><br><span class="line">-h, --host                  连接的主机名</span><br><span class="line">-u, --user                  备份所使用的用户</span><br><span class="line">-p, --password              密码</span><br><span class="line">-P, --port                  端口</span><br><span class="line">-S, --socket                使用socket通信时的socket文件</span><br><span class="line">-t, --threads               开启的备份线程数，默认是4</span><br><span class="line">-C, --compress-protocol     压缩与mysql通信的数据</span><br><span class="line">-V, --version               显示版本号</span><br><span class="line">-v, --verbose               输出信息模式, 0 &#x3D; silent, 1 &#x3D; errors, 2 &#x3D; warnings, 3 &#x3D; info, 默认为 2</span><br></pre></td></tr></table></figure>
+
+<p>注意：该命令**-u** 选项和后面的用户名必须<strong>有一个以上空格</strong>，否则将会报错</p>
+<h3 id="2-2-myloader-参数解释"><a href="#2-2-myloader-参数解释" class="headerlink" title="2.2 myloader 参数解释"></a>2.2 myloader 参数解释</h3><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line">-d, --directory                   备份文件的文件夹</span><br><span class="line">-q, --queries-per-transaction     每次事物执行的查询数量，默认是1000</span><br><span class="line">-o, --overwrite-tables            如果要恢复的表存在，则先drop掉该表，使用该参数，需要备份时候要备份表结构</span><br><span class="line">-B, --database                    需要还原的数据库</span><br><span class="line">-e, --enable-binlog               启用还原数据的二进制日志</span><br><span class="line">-h, --host                        主机</span><br><span class="line">-u, --user                        还原的用户</span><br><span class="line">-p, --password                    密码</span><br><span class="line">-P, --port                        端口</span><br><span class="line">-S, --socket                      socket文件</span><br><span class="line">-t, --threads                     还原所使用的线程数，默认是4</span><br><span class="line">-C, --compress-protocol           压缩协议</span><br><span class="line">-V, --version                     显示版本</span><br><span class="line">-v, --verbose                     输出模式, 0 &#x3D; silent, 1 &#x3D; errors, 2 &#x3D; warnings, 3 &#x3D; info, 默认为2</span><br></pre></td></tr></table></figure>
+
+<p><strong>备份 yichen 库</strong> 到 /data/backup/mysql 文件夹中</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"> mydumper -u root -p &#39;123.Shui!!&#39;  -P 3306 -h 127.0.0.1 -B yichen  -o &#x2F;data&#x2F;backup&#x2F;mysql&#x2F;</span><br><span class="line"> </span><br><span class="line"> tree &#x2F;data&#x2F;backup&#x2F;mysql&#x2F;</span><br><span class="line">&#x2F;data&#x2F;backup&#x2F;mysql&#x2F;</span><br><span class="line">├── fan-schema-create.sql</span><br><span class="line">├── fan.user-schema.sql</span><br><span class="line">├── fan.user.sql</span><br><span class="line">└── metadata</span><br></pre></td></tr></table></figure>
+
+
+
+<p>从上面可以可以看出</p>
+<p><strong>备份所生成的文件</strong><br>目录中包含一个metadata文件</p>
+<ul>
+<li><ul>
+<li>记录了备份数据库在备份时间点的二进制日志文件名，日志的写入位置，</li>
+<li>如果是在从库进行备份，还会记录备份时同步至主库的二进制日志文件及写入位置<br>每个表有两个备份文件：</li>
+<li>database.table-schema.sql 表结构文件</li>
+<li>database.table.sql 表数据文件</li>
+</ul>
+</li>
+</ul>
+<p><strong>恢复 beta 库</strong></p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"># 删除 beta 库</span><br><span class="line">mysql&gt; drop database yichen;</span><br><span class="line"></span><br><span class="line"># myloader 恢复</span><br><span class="line">myloader -u root -p &#39;123.Shui!!&#39; -h 127.0.0.1 -B yichen -d &#x2F;data&#x2F;backup&#x2F;mysql&#x2F;</span><br><span class="line"></span><br><span class="line"># 验证</span><br><span class="line">mysql -p  -e  &#39;show databases;&#39;</span><br><span class="line"></span><br><span class="line">已经恢复了。</span><br></pre></td></tr></table></figure>
+
+<h3 id="备份原理"><a href="#备份原理" class="headerlink" title="备份原理"></a>备份原理</h3><p>1、主线程 FLUSH TABLES WITH READ LOCK, 施加全局只读锁，保证数据的一致性<br>2、读取当前时间点的二进制日志文件名和日志写入的位置并记录在metadata文件中，以供即使点恢复使用<br>3、N个（线程数可以指定，默认是4）dump线程把事务隔离级别改为可重复读 并开启读一致的事物<br>4、dump non-InnoDB tables, 首先导出非事物引擎的表<br>5、主线程 UNLOCK TABLES 非事物引擎备份完后，释放全局只读锁<br>6、dump InnoDB tables, 基于事物导出InnoDB表<br>7、事物结束</p>
+<h1 id="3-xtrabackup-备份恢复"><a href="#3-xtrabackup-备份恢复" class="headerlink" title="3.xtrabackup 备份恢复"></a>3.xtrabackup 备份恢复</h1><p>　MySQL冷备、mysqldump、MySQL热拷贝都无法实现对数据库进行增量备份。在实际生产环境中增量备份是非常实用的，如果数据大于50G或100G，存储空间足够的情况下，可以每天进行完整备份，如果每天产生的数据量较大，需要定制数据备份策略。例如每周实用完整备份，周一到周六实用增量备份。而Percona-Xtrabackup就是为了实现增量备份而出现的一款主流备份工具，xtrabackup有2个工具，分别是xtrabakup、innobakupe。8.0只有xtrabkup了。</p>
+<p>　　Percona-xtrabackup是 Percona公司开发的一个用于MySQL数据库物理热备的备份工具，支持MySQL、Percona server和MariaDB，开源免费，是目前较为受欢迎的主流备份工具。xtrabackup只能备份innoDB和xtraDB两种数据引擎的表，而不能备份MyISAM数据表。</p>
+<p>xtrabackup和innobackupex两者间的区别：</p>
+<p>xtrabackup可以对innodb表进行热备份（不对表加锁，备份期间数据可读写），但不能对myisam表进行备份；</p>
+<p>innobackupex可以同时对上面两者进行备份，但针对myisam表依旧不能进行热备份（必须加锁后方能备份）</p>
+<p>重要</p>
+<p>版本8.0.6中添加了对MyRocks存储引擎的支持。</p>
+<p><em>Percona XtraBackup</em> 8.0不支持TokuDB存储引擎。</p>
+<p><strong>二、Xtrabackup优点</strong></p>
+<p>（1）备份速度快，物理备份可靠</p>
+<p>（2）备份过程不会打断正在执行的事务（无需锁表）</p>
+<p>（3）能够基于压缩等功能节约磁盘空间和流量</p>
+<p>（4）自动备份校验</p>
+<p>（5）还原速度快</p>
+<p>（6）可以流传将备份传输到另外一台机器上</p>
+<p>（7）在不增加服务器负载的情况备份数据</p>
+<p>官方文档</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">https:&#x2F;&#x2F;www.percona.com&#x2F;doc&#x2F;percona-xtrabackup&#x2F;8.0&#x2F;index.html</span><br></pre></td></tr></table></figure>
+
+
+
+<p>下载地址(mysql8.0之前的最好下载2.4的版本。)</p>
+<p><strong>2.4的安装</strong></p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line">cd &#x2F;root&#x2F; &amp;&amp; wget https:&#x2F;&#x2F;www.percona.com&#x2F;downloads&#x2F;XtraBackup&#x2F;Percona-XtraBackup-2.4.4&#x2F;binary&#x2F;tarball&#x2F;percona-xtrabackup-2.4.4-Linux-x86_64.tar.gz</span><br><span class="line"></span><br><span class="line">    tar zxf percona-xtrabackup-2.4.4-Linux-x86_64.tar.gz</span><br><span class="line"></span><br><span class="line">   cd percona-xtrabackup-2.4.4-Linux-x86_64&#x2F; &amp;&amp; cp bin&#x2F;* &#x2F;usr&#x2F;bin&#x2F;</span><br><span class="line"></span><br><span class="line">   yum -y install perl-DBI perl-DBD-MySQL perl-Time-HiRes perl-IO-Socket-SSL perl-TermReadKey.x86_64 perl-Digest-MD5 </span><br><span class="line"></span><br><span class="line">   cd &#x2F;root&#x2F; &amp;&amp; wget  https:&#x2F;&#x2F;www.percona.com&#x2F;downloads&#x2F;percona-toolkit&#x2F;2.2.19&#x2F;RPM&#x2F;percona-toolkit-2.2.19-1.noarch.rpm</span><br><span class="line"></span><br><span class="line">   rpm -vih percona-toolkit-2.2.19-1.noarch.rpm</span><br></pre></td></tr></table></figure>
+
+<p><strong>8.0的安装</strong></p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">https:&#x2F;&#x2F;www.percona.com&#x2F;downloads&#x2F;Percona-XtraBackup-LATEST&#x2F;</span><br><span class="line"></span><br><span class="line">wget https:&#x2F;&#x2F;www.percona.com&#x2F;downloads&#x2F;Percona-XtraBackup-LATEST&#x2F;Percona-XtraBackup-8.0.13&#x2F;binary&#x2F;tarball&#x2F;percona-xtrabackup-8.0.13-Linux-x86_64.el8.libgcrypt183.tar.gz</span><br></pre></td></tr></table></figure>
+
+<p>安装依赖</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">yum install libaio libaio-devel -y	</span><br><span class="line">yum install -y  perl-DBI perl-DBD-MySQL perl-Time-HiRes perl-IO-Socket-SSL perl-TermReadKey.x86_64 perl-Digest-MD5</span><br></pre></td></tr></table></figure>
+
+<p>可以通过yum源来安装</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">yum install https:&#x2F;&#x2F;repo.percona.com&#x2F;yum&#x2F;percona-release-latest.noarch.rpm</span><br></pre></td></tr></table></figure>
+
+<ol>
+<li><p>启用存储库： <code>percona-release enable-only tools release</code></p>
+<p>如果<em>打算</em>将<em>Percona XtraBackup</em>与上游MySQL Server结合使用，则只需启用<code>tools</code> 存储库：。<code>percona-release enable-only tools</code></p>
+</li>
+<li><p>通过运行以下命令安装<em>Percona XtraBackup</em>： <code>yum install percona-xtrabackup-80</code></p>
+</li>
+</ol>
+<p>警告</p>
+<p>在CentOS 6上<code>libev</code>安装<em>Percona XtraBackup</em>之前，请确保已安装软件包。对于此操作系统，<code>libev</code>可从<a href="https://fedoraproject.org/wiki/EPEL">EPEL</a>存储库中获得该 软件包。</p>
+<p>为了能够进行压缩备份，请安装<code>qpress</code>软件包：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">yum install qpress</span><br></pre></td></tr></table></figure>
+
+<h3 id="1-Xtrabackup-常用参数"><a href="#1-Xtrabackup-常用参数" class="headerlink" title="1.Xtrabackup 常用参数"></a>1.Xtrabackup 常用参数</h3><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br></pre></td><td class="code"><pre><span class="line">-H, --host&#x3D;name     该选项表示备份数据库的地址默认是本地</span><br><span class="line">--user：				该选项表示备份账号</span><br><span class="line">-p, --password：		该选项表示备份的密码</span><br><span class="line">-P, --port 			指定端口</span><br><span class="line">--databases         指定数据库</span><br><span class="line">--incremental       创建增量备份</span><br><span class="line"></span><br><span class="line">--defaults-file		指定mysql主配置文件路径，备份参数会从配置文件中自动读取（datadir basedir等）</span><br><span class="line">    </span><br><span class="line">--defaults-extra-file	使用该参数时，不只是读取主配置文件，还会读取这里指定的配置文件</span><br><span class="line">     </span><br><span class="line">--target-dir	指定备份存放路径，如不指定，则备份到当前目录下的xtrabackup_backupfiles目录</span><br><span class="line">     </span><br><span class="line">--backup		备份到--target-dir指定路径（必选），如不选则不备份，只打印过程</span><br><span class="line">     </span><br><span class="line">--prepare		实施对备份文件进行恢复前的准备(生成InnoDB log file)</span><br><span class="line">     </span><br><span class="line">--print-param	打印备份或恢复时需要的参数</span><br><span class="line">     </span><br><span class="line">--suspend-at-end	在备份目录中生成一个xtrabackup_suspended文件，将xtrabackup进程挂起，不停地将数据文件的变化同步到备份文件，直到用户手工删除xtrabackup_suspended文件</span><br><span class="line">     </span><br><span class="line">--tables		备份指定的表--tables&#x3D;table_name</span><br><span class="line">     </span><br><span class="line">--datadir		MySQL数据目录路径，一般不用指定</span><br><span class="line">     </span><br><span class="line">--incremental-basedir	该选项指定为前一次全备份或增量备份的目录，与--incremental同时使用</span><br><span class="line">    </span><br><span class="line">--incremental-lsn	增量备份时，指定to_lsn位置</span><br></pre></td></tr></table></figure>
+
+<p>xtarbackup备份命令格式：</p>
+<p><strong>备份</strong>：</p>
+<h4 id="Xtrabackup全备"><a href="#Xtrabackup全备" class="headerlink" title="Xtrabackup全备"></a>Xtrabackup全备</h4><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">xtrabackup --defaults-file&#x3D;&#x2F;etc&#x2F;my.cnf --backup --target-dir&#x3D;&#x2F;data&#x2F;backup&#x2F;mysql&#x2F; -uroot --port&#x3D;3306 -S &#x2F;usr&#x2F;local&#x2F;mysql&#x2F;data&#x2F;mysql.sock -p&#39;123.Shui!!&#39;	</span><br><span class="line"></span><br><span class="line">将数据库全备至&#x2F;data&#x2F;backup&#x2F;mysql&#x2F;目录</span><br><span class="line">可以不指定-S  默认会去my.cnf文件找。</span><br><span class="line"></span><br><span class="line">xtrabackup --defaults-file&#x3D;&#x2F;etc&#x2F;my.cnf --backup --target-dir&#x3D;&#x2F;data&#x2F;backup&#x2F;mysql&#x2F; -u root -P 3306 -p&#39;123.Shui!!&#39;</span><br></pre></td></tr></table></figure>
+
+<p>备份好会生成相关文件</p>
+<p>全备完成</p>
+<p>各文件说明：</p>
+<p> (1)xtrabackup_checkpoints   备份类型（如完全或增量）、备份状态（如是否已经为 prepared 状态）和 LSN(日志序列号)范围信息； 每个 InnoDB 页(通常为 16k 大小)都会包含一个日志序列号，即 LSN。LSN 是整个数据库</p>
+<p>系统的系统版本号，每个页面相关的 LSN 能够表明此页面最近是如何发生改变的。</p>
+<p> (2)xtrabackup_binlog_info    mysql 服务器当前正在使用的二进制日志文件及至备份 这一刻为止二进制日志事件的位置。 </p>
+<p>(3) xtrabackup_binlog_pos_innodb   二进制日志文件及用于InnoDB或XtraDB表的二进 制日志文件的当前 position。</p>
+<p>(4)   xtrabackup_binary     备份中用到的 xtrabackup 的可执行文件； </p>
+<p>(5)backup-my.cnf       备份命令用到的配置选项信息； 在使用 innobackupex 进行备份时，还可以使用–no-timestamp 选项来阻止命令自动创建 一个以时间命名的目录；如此一来，innobackupex 命令将会创建一个 BACKUP-DIR 目录 来存储备份数据 注意：相关选项说明： 其中， –user 指定连接数据库的用户名， –password 指定连接数据库的密码， –defaults-file 指定数据库的配置文件，innobackupex 要从其中获取 datadir 等信息；–database 指定要 备份的数据库，这里指定的数据库只对 MyISAM 表有效，对于 InnoDB 数据来说都是全 备（所有数据库中的 InnoDB 数据都进行了备份，不是只备份指定的数据库，恢复时也 一样）；/opt/mysqlbackup/full 是备份文件的存放位置。 </p>
+<p> <strong>注意：备份数据库的用户需要具有相应权限，如果要使用一个最小权限的用户进行备份， 则可基于如下命令创建此类用户：</strong></p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">create user &#39;bkpuser&#39;@&#39;localhost&#39; identified mysql_native_password by &#39;123.shui!!@#&#39;;</span><br><span class="line"></span><br><span class="line">grant reload,lock tables,replication client, process on *.* to &#39;bkpuser&#39;@&#39;localhost&#39;;</span><br><span class="line">flush privileges;</span><br></pre></td></tr></table></figure>
+
+<p><strong>全备恢复</strong> </p>
+<p>模拟数据丢失环境</p>
+<p>停止</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">systemctl stop mysqld</span><br><span class="line"></span><br><span class="line">rm &#x2F;usr&#x2F;local&#x2F;mysql&#x2F;data&#x2F;* -rf</span><br></pre></td></tr></table></figure>
+
+<p>如果尝试使用这些数据文件启动InnoDB，它将检测到损坏并停止工作，以避免在损坏的数据上运行。该<a href="https://www.percona.com/doc/percona-xtrabackup/8.0/xtrabackup_bin/xbk_option_reference.html#cmdoption-prepare"><code>--prepare</code></a>步骤可以使文件在单个时刻完美地保持一致，因此您可以在文件上运行 <em>InnoDB</em>。</p>
+<p>该<em>准备</em>步骤使用这种“嵌入式InnoDB的”对复制的数据文件执行崩溃恢复，使用复制的日志文件。该<code>prepare</code>步骤的使用非常简单：您只需使用选项运行<strong>xtrabackup</strong><a href="https://www.percona.com/doc/percona-xtrabackup/8.0/xtrabackup_bin/xbk_option_reference.html#cmdoption-prepare"><code>--prepare</code></a>并告诉它要准备的目录，例如，准备先前进行的备份运行：</p>
+<p><strong>恢复前准备</strong>（初始化备份目录）</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">xtrabackup --prepare --target-dir&#x3D;&#x2F;data&#x2F;backup&#x2F;mysql&#x2F;</span><br></pre></td></tr></table></figure>
+
+<p><strong>恢复备份</strong></p>
+<p>警告</p>
+<p>必须先<a href="https://www.percona.com/doc/percona-xtrabackup/8.0/backup_scenarios/full_backup.html#preparing-a-backup">准备好</a>备份，然后才能还原它。</p>
+<p>为方便起见，<strong>xtrabackup</strong>二进制文件具有将<a href="https://www.percona.com/doc/percona-xtrabackup/8.0/xtrabackup_bin/xbk_option_reference.html#cmdoption-copy-back"><code>--copy-back</code></a> 备份复制到服务器的数据<a href="https://www.percona.com/doc/percona-xtrabackup/8.0/glossary.html#term-datadir">目录</a>的选项：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">xtrabackup   --datadir&#x3D;&#x2F;usr&#x2F;local&#x2F;mysql&#x2F;data  --copy-back --target-dir &#x3D;&#x2F;data&#x2F;backup&#x2F;mysql&#x2F;</span><br></pre></td></tr></table></figure>
+
+<p>如果您不想保存备份，则可以使用 <a href="https://www.percona.com/doc/percona-xtrabackup/8.0/xtrabackup_bin/xbk_option_reference.html#cmdoption-move-back"><code>--move-back</code></a>将备份数据移动到<a href="https://www.percona.com/doc/percona-xtrabackup/8.0/glossary.html#term-datadir">datadir的选项</a>。</p>
+<p><strong>如果不想使用以上任何选项，则可以另外使用 rsync或cp来还原文件。</strong></p>
+<p><strong>注意</strong></p>
+<p>恢复备份之前，<a href="https://www.percona.com/doc/percona-xtrabackup/8.0/glossary.html#term-datadir">datadir</a>必须为空。同样重要的是要注意，在执行还原之前需要关闭MySQL服务器。您不能还原到正在运行的mysqld实例的数据<a href="https://www.percona.com/doc/percona-xtrabackup/8.0/glossary.html#term-datadir">目录</a>（导入部分备份时除外）。</p>
+<p>可用于还原备份的<strong>rsync</strong>命令示例如下所示：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"> rsync -avrP &#x2F;data&#x2F;backup&#x2F;mysql&#x2F; &#x2F;usr&#x2F;local&#x2F;mysql&#x2F;data&#x2F;</span><br><span class="line">或者</span><br><span class="line"></span><br><span class="line">\cp -a &#x2F;data&#x2F;backup&#x2F;mysql&#x2F;* &#x2F;usr&#x2F;local&#x2F;mysql&#x2F;data&#x2F;</span><br><span class="line"></span><br><span class="line">在cp指令前面加反斜杠可以不弹出是否覆盖的询问而直接覆盖！</span><br></pre></td></tr></table></figure>
+
+<p>您应该检查恢复的文件是否具有正确的所有权和权限。</p>
+<p>由于将保留文件的属性，因此在大多数情况下，<code>mysql</code>在启动数据库服务器之前，您需要将文件的所有权更改为，因为它们将由创建备份的用户拥有：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">chown -R mysql:mysql &#x2F;usr&#x2F;local&#x2F;mysql&#x2F;data&#x2F;</span><br></pre></td></tr></table></figure>
+
+<p>现在，数据已还原，您可以启动服务器。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">systemctl start mysqld</span><br></pre></td></tr></table></figure>
+
+
+
+<h4 id="增量备份-1"><a href="#增量备份-1" class="headerlink" title="增量备份"></a>增量备份</h4><p>要进行增量备份，请像往常一样从完整备份开始。该 <strong>xtrabackup</strong>二进制写入一个名为<code>xtrabackup_checkpoints</code>到备份的目标目录。该文件包含一行，显示 <code>to_lsn</code>，这是备份结束时数据库的<a href="https://www.percona.com/doc/percona-xtrabackup/8.0/glossary.html#term-lsn">LSN</a>。 使用以下命令<a href="https://www.percona.com/doc/percona-xtrabackup/8.0/backup_scenarios/full_backup.html#full-backup">创建完整备份</a>：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"></span><br><span class="line">xtrabackup  --backup --target-dir&#x3D;&#x2F;data&#x2F;backup&#x2F;mysql&#x2F; -u root -P 3306 -p&#39;123.Shui!!&#39;</span><br></pre></td></tr></table></figure>
+
+<p>查看xtrabackup_checkpoints文件</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">cat &#x2F;data&#x2F;backup&#x2F;mysql&#x2F;xtrabackup_checkpoints </span><br><span class="line"></span><br><span class="line">backup_type &#x3D; full-backuped  类型是全备</span><br><span class="line">from_lsn &#x3D; 0				本次备份开始点</span><br><span class="line">to_lsn &#x3D; 18566199			本次备份结束点</span><br><span class="line">last_lsn &#x3D; 18566209			下次备份开始点</span><br><span class="line">flushed_lsn &#x3D; 0</span><br></pre></td></tr></table></figure>
+
+<p><strong>第一次增量备份</strong></p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">增量备份时两个参数的说明：</span><br><span class="line">--target-dir			指定增备目录（需要备份到哪儿）</span><br><span class="line"></span><br><span class="line">--incremental-basedir		指定上一次备份目录（第一次增量备份时，该参数&#x3D;全备目录；</span><br><span class="line">第二次增量备份时，该参数&#x3D;第一次增量备份目录）</span><br></pre></td></tr></table></figure>
+
+
+
+<p>现在您已拥有完整备份，您可以基于它进行增量备份。使用以下命令：(先模拟新插入数据)</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">xtrabackup --backup --target-dir&#x3D;&#x2F;data&#x2F;backup&#x2F;mysqlinc&#x2F;inc1  --incremental-basedir&#x3D;&#x2F;data&#x2F;backup&#x2F;mysql&#x2F;  -uroot -p&#39;123.Shui!!&#39;</span><br><span class="line"></span><br><span class="line">新指定的目录不存在，会自动创建。</span><br></pre></td></tr></table></figure>
+
+<p>查看新的xtrabackup_checkpoints文件</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">cat &#x2F;data&#x2F;backup&#x2F;mysqlinc&#x2F;inc1&#x2F;xtrabackup_checkpoints </span><br><span class="line"></span><br><span class="line">backup_type &#x3D; incremental   备份类型是增量备份</span><br><span class="line">from_lsn &#x3D; 18566199			上次备份的结束位置</span><br><span class="line">to_lsn &#x3D; 18567314			本次备份结束的位置</span><br><span class="line">last_lsn &#x3D; 18569708			最后的位置</span><br><span class="line">flushed_lsn &#x3D; 0</span><br></pre></td></tr></table></figure>
+
+<p><code>from_lsn</code>是备份的开始LSN，对于增量备份，它必须<code>to_lsn</code>与先前/基本备份的相同（如果是最后一个检查点）。</p>
+<p><strong>第二次增量备份</strong></p>
+<p>现在可以使用此目录作为另一个增量备份的基础：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">xtrabackup --backup --target-dir&#x3D;&#x2F;data&#x2F;backup&#x2F;mysqlinc&#x2F;inc2 \</span><br><span class="line">--incremental-basedir&#x3D;&#x2F;data&#x2F;backup&#x2F;mysqlinc&#x2F;inc1  -uroot -p&#39;123.Shui!!&#39;</span><br></pre></td></tr></table></figure>
+
+<p>此文件夹还包含<code>xtrabackup_checkpoints</code>：查看信息</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"> cat &#x2F;data&#x2F;backup&#x2F;mysqlinc&#x2F;inc2&#x2F;xtrabackup_checkpoints </span><br><span class="line"></span><br><span class="line">backup_type &#x3D; incremental</span><br><span class="line">from_lsn &#x3D; 18567314      来自上次备份的结束位置。</span><br><span class="line">to_lsn &#x3D; 18570792</span><br><span class="line">last_lsn &#x3D; 18573267</span><br><span class="line">flushed_lsn &#x3D; 0</span><br></pre></td></tr></table></figure>
+
+<p><strong>全量恢复（全备+增备）</strong></p>
+<p>模拟数据丢失环境</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">systemctl stop mysqld</span><br><span class="line">rm &#x2F;usr&#x2F;local&#x2F;mysql&#x2F;data&#x2F;* -rf</span><br></pre></td></tr></table></figure>
+
+<p><strong>恢复前准备</strong>（初始化备份目录）</p>
+<p>增量备份的步骤与完全备份的步骤不同。在完全备份中，执行两种类型的操作以使数据库保持一致：已提交的事务相对于数据文件从日志文件中重放，未提交的事务被回滚。准备增量备份时，必须跳过未提交事务的回滚，因为在备份时未提交的事务可能正在进行中，并且很有可能将在下一次增量备份中提交。您应该使用该 <a href="https://www.percona.com/doc/percona-xtrabackup/8.0/xtrabackup_bin/xbk_option_reference.html#cmdoption-apply-log-only"><code>--apply-log-only</code></a>选项来防止回滚阶段。</p>
+<p>警告</p>
+<p><strong>如果不使用该</strong> <strong>选项阻止回滚阶段，则增量备份将无用</strong>。事务回滚后，不能再应用增量备份。<a href="https://www.percona.com/doc/percona-xtrabackup/8.0/xtrabackup_bin/xbk_option_reference.html#cmdoption-apply-log-only"><code>--apply-log-only</code></a></p>
+<p>从创建的完整备份开始，您可以准备它，然后将增量差异应用于它。回想一下，您有以下备份：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">&#x2F;data&#x2F;backup&#x2F;mysql</span><br><span class="line">&#x2F;data&#x2F;backup&#x2F;mysqlinc&#x2F;inc1</span><br><span class="line">&#x2F;data&#x2F;backup&#x2F;mysqlinc&#x2F;inc2</span><br></pre></td></tr></table></figure>
+
+<p>要准备基本备份，您需要<a href="https://www.percona.com/doc/percona-xtrabackup/8.0/xtrabackup_bin/xbk_option_reference.html#cmdoption-prepare"><code>--prepare</code></a>照常运行，但要防止回滚阶段：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">xtrabackup --prepare --apply-log-only --target-dir&#x3D;&#x2F;data&#x2F;backup&#x2F;mysql</span><br></pre></td></tr></table></figure>
+
+<p>输出应以类似于以下内容的文本结尾：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">Shutdown completed; log sequence number 18566229</span><br><span class="line">Number of pools: 1</span><br><span class="line">200721 14:10:03 completed OK!</span><br></pre></td></tr></table></figure>
+
+<p>日志序列号应与<code>to_lsn</code>您先前看到的基本备份的序列号匹配。</p>
+<p>要将第一个增量备份应用于完整备份，请运行以下命令：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">xtrabackup --prepare --apply-log-only --target-dir&#x3D;&#x2F;data&#x2F;backup&#x2F;mysql --incremental-dir&#x3D;&#x2F;data&#x2F;backup&#x2F;mysqlinc&#x2F;inc1</span><br></pre></td></tr></table></figure>
+
+<p><em>Percona XtraBackup</em>不支持使用相同的增量备份目录来准备备份的两个副本。不要<a href="https://www.percona.com/doc/percona-xtrabackup/8.0/xtrabackup_bin/xbk_option_reference.html#cmdoption-prepare"><code>--prepare</code></a>使用相同的增量备份目录（–incremental-dir的值）运行超过一次。</p>
+<p>准备第二个增量备份是一个类似的过程：将增量应用到（已修改的）基础备份，您将及时将其数据前滚到第二个增量备份的点：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">xtrabackup --prepare --target-dir&#x3D;&#x2F;data&#x2F;backup&#x2F;mysql \</span><br><span class="line">--incremental-dir&#x3D;&#x2F;data&#x2F;backup&#x2F;mysqlinc&#x2F;inc2</span><br></pre></td></tr></table></figure>
+
+<p>注意</p>
+<p><a href="https://www.percona.com/doc/percona-xtrabackup/8.0/xtrabackup_bin/xbk_option_reference.html#cmdoption-apply-log-only"><code>--apply-log-only</code></a>合并除最后一个以外的所有增量时应使用。这就是为什么上一行不包含该 <a href="https://www.percona.com/doc/percona-xtrabackup/8.0/xtrabackup_bin/xbk_option_reference.html#cmdoption-apply-log-only"><code>--apply-log-only</code></a>选项的原因。即使<a href="https://www.percona.com/doc/percona-xtrabackup/8.0/xtrabackup_bin/xbk_option_reference.html#cmdoption-apply-log-only"><code>--apply-log-only</code></a>在最后一步中使用了，备份仍将保持一致，但在这种情况下，服务器将执行回滚阶段。</p>
+<p>一旦准备好增量备份就与<a href="https://www.percona.com/doc/percona-xtrabackup/8.0/backup_scenarios/full_backup.html#full-backup">完整备份</a>相同，可以用相同的方式<a href="https://www.percona.com/doc/percona-xtrabackup/8.0/backup_scenarios/full_backup.html#restoring-a-backup">还原</a>它们。</p>
+<p><strong>拷贝全备目录下所有内容到数据目录中（此时的全备目录已经拥有全量数据）</strong></p>
+<p>用于还原备份的<strong>rsync</strong>命令示例如下所示：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"> rsync -avrP &#x2F;data&#x2F;backup&#x2F;mysql&#x2F; &#x2F;usr&#x2F;local&#x2F;mysql&#x2F;data&#x2F;</span><br><span class="line">或者</span><br><span class="line"></span><br><span class="line">\cp -a &#x2F;data&#x2F;backup&#x2F;mysql&#x2F;* &#x2F;usr&#x2F;local&#x2F;mysql&#x2F;data&#x2F;</span><br><span class="line"></span><br><span class="line">在cp指令前面加反斜杠可以不弹出是否覆盖的询问而直接覆盖！</span><br></pre></td></tr></table></figure>
+
+<p>授权</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">chown -R mysql:mysql &#x2F;usr&#x2F;local&#x2F;mysql&#x2F;data&#x2F;</span><br></pre></td></tr></table></figure>
+
+<p>现在，数据已还原，可以启动服务器查看。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">systemctl start mysqld</span><br></pre></td></tr></table></figure>
+
+<p>增量恢复完成</p>
+<p><strong>公司备份实战</strong></p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">创建备份目录</span><br><span class="line">mkdir &#x2F;mysqlbackup&#x2F;&#123;wanquan,zengliang&#125; -p</span><br><span class="line"></span><br><span class="line">xtrabackup --backup --target-dir&#x3D;&#x2F;mysqlbackup&#x2F;wanquan&#x2F;$(date &quot;+%Y-%m-%d&quot;) -u root -P 3306 -H 192.168.224.11 -p&#39;123.Shui!!&#39;</span><br></pre></td></tr></table></figure>
+
+<p>现在可以使用此目录作为另一个增量备份的基础：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">xtrabackup --backup --target-dir&#x3D;&#x2F;mysqlbackup&#x2F;zengliang&#x2F;$(date &quot;+%Y-%m-%d&quot;)  --incremental-basedir&#x3D;&#x2F;mysqlbackup&#x2F;wanquan&#x2F;&#96;ls &#x2F;mysqlbackup&#x2F;wanquan&#x2F;&#96;  -uroot -H 192.168.224.11 -p&#39;123.Shui!!&#39;</span><br></pre></td></tr></table></figure>
+
+<p>第二次增量备份</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">xtrabackup --backup --target-dir&#x3D;&#x2F;mysqlbackup&#x2F;zengliang&#x2F;$(date &quot;+%Y-%m-%d&quot;)  --incremental-basedir&#x3D;&#x2F;mysqlbackup&#x2F;zengliang&#x2F;$(date &quot;+%Y-%m-%d&quot;)  -uroot -H 192.168.224.11 -p&#39;123.Shui!!&#39;</span><br></pre></td></tr></table></figure>
+
+<p><strong>备份脚本</strong></p>
+<p><code>vim mysqlbackup.sh</code> </p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br></pre></td><td class="code"><pre><span class="line">#!&#x2F;bin&#x2F;bash</span><br><span class="line">yum -y install wget lrzsz &gt;&gt;&#x2F;dev&#x2F;null</span><br><span class="line">#今天</span><br><span class="line">Date_today&#x3D;$(date &quot;+%w&quot;)</span><br><span class="line">#昨天</span><br><span class="line">Yester_day&#x3D;$(date &quot;+%w&quot; -d &#39;1 day ago&#39;)</span><br><span class="line">#七天前</span><br><span class="line">Sevendays_ago&#x3D;$(date &quot;+%w&quot; -d &#39;7 day ago&#39;)</span><br><span class="line">#今天星期几</span><br><span class="line">week&#x3D;&#96;date +%w&#96;</span><br><span class="line">mysqluser&#x3D;&quot;root&quot;</span><br><span class="line">mysqlpass&#x3D;&quot;123.Shui!!&quot;</span><br><span class="line">mysqlcon&#x3D;&#x2F;etc&#x2F;my.cnf</span><br><span class="line">host&#x3D;&quot;192.168.224.11&quot;</span><br><span class="line"></span><br><span class="line">first&#x3D;&#96;date &quot;+%Y-%m-%d&quot;&#96;</span><br><span class="line"></span><br><span class="line">if [ $first &#x3D; 2020-07-21 ];then</span><br><span class="line">	yum install https:&#x2F;&#x2F;repo.percona.com&#x2F;yum&#x2F;percona-release-latest.noarch.rpm 2&amp;&gt;&#x2F;dev&#x2F;null</span><br><span class="line">  </span><br><span class="line">	percona-release enable-only tools release</span><br><span class="line">	yum install -y  percona-xtrabackup-80 qpress 1&gt; &#x2F;dev&#x2F;null</span><br><span class="line"></span><br><span class="line">	</span><br><span class="line">	mkdir -p &#x2F;mysqlbackup&#x2F;&#123;wanquan,zengliang&#125;</span><br><span class="line"></span><br><span class="line">fi</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">#判断今天是不是周日 如果是周日进行全量备份</span><br><span class="line"></span><br><span class="line">if [ $week -eq 0 ];then</span><br><span class="line"></span><br><span class="line">    rm -rf &#x2F;mysqlbackup&#x2F;wanquan&#x2F;$Sevendays_ago &gt;&gt;&#x2F;dev&#x2F;null </span><br><span class="line"></span><br><span class="line"></span><br><span class="line">    xtrabackup --backup --default-file&#x3D;$&#123;mysqlcon&#125; --target-dir&#x3D;&#x2F;mysqlbackup&#x2F;wanquan&#x2F;$Date_today  --user&#x3D;$&#123;mysqluser&#125;  --host&#x3D;$&#123;host&#125; --password&#x3D;$&#123;mysqlpass&#125; 1&gt;&#x2F;dev&#x2F;null</span><br><span class="line">    if [ $? -eq 0 ];then</span><br><span class="line"></span><br><span class="line">         rm -rf &#x2F;mysqlbackup&#x2F;zengliang&#x2F;*</span><br><span class="line"></span><br><span class="line">    fi</span><br><span class="line"></span><br><span class="line">else</span><br><span class="line"></span><br><span class="line">    dir&#x3D;&#96;ls &#x2F;mysqlbackup&#x2F;zengliang&#x2F; | wc -l | awk &#39;&#123;print $1&#125;&#39;&#96;</span><br><span class="line">#判断是否有目录，没有就进行第一次增量备份。</span><br><span class="line">        if [ $dir -eq 0 ];then</span><br><span class="line">     xtrabackup --backup --default-file&#x3D;$&#123;mysqlcon&#125; --target-dir&#x3D;&#x2F;mysqlbackup&#x2F;zengliang&#x2F;$Date_today --incremental-basedir&#x3D;&#x2F;mysqlbackup&#x2F;wanquan&#x2F;&#96;ls &#x2F;mysqlbackup&#x2F;wanquan&#x2F;&#96;  --user&#x3D;$&#123;mysqluser&#125;  --host&#x3D;$&#123;host&#125; --password&#x3D;$&#123;mysqlpass&#125; 1&gt;&#x2F;dev&#x2F;null</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">	else</span><br><span class="line">     </span><br><span class="line">     xtrabackup --backup --default-file&#x3D;$&#123;mysqlcon&#125; --target-dir&#x3D;&#x2F;mysqlbackup&#x2F;zengliang&#x2F;$Date_today --incremental-basedir&#x3D;&#x2F;mysqlbackup&#x2F;zengliang&#x2F;$&#123;Yester_day&#125;  --user&#x3D;$&#123;mysqluser&#125;  --host&#x3D;$&#123;host&#125; --password&#x3D;$&#123;mysqlpass&#125; 1&gt;&#x2F;dev&#x2F;null</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">	fi</span><br><span class="line"></span><br><span class="line">fi</span><br></pre></td></tr></table></figure>
+
+<p>先修改/etc/my.cnf 文件，打开log-bin=mysql-bin</p>
+<p>​          server-id=1</p>
+<p>开始访问定时任务每天早上8点进行备份</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">crontab -e</span><br><span class="line"></span><br><span class="line"> 00 8 * * *   &#x2F;usr&#x2F;bin&#x2F;sh  &#x2F;root&#x2F;mysqlbackup.sh</span><br><span class="line"></span><br><span class="line">#每天8点钟执行这个脚本做备份</span><br></pre></td></tr></table></figure>
+
+<p>模拟周二数据删除后恢复</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">systemctl stop mysqld</span><br><span class="line"></span><br><span class="line">rm &#x2F;usr&#x2F;local&#x2F;mysql&#x2F;data&#x2F;* -rf</span><br></pre></td></tr></table></figure>
+
+<p><strong>恢复前准备</strong>（初始化备份目录）</p>
+<p>初始化全备</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">xtrabackup --prepare --apply-log-only --target-dir&#x3D;&#x2F;mysqlbackup&#x2F;wanquan&#x2F;0&#x2F;</span><br></pre></td></tr></table></figure>
+
+<p>初始化周一的增量备份</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">xtrabackup --prepare --apply-log-only --target-dir&#x3D;&#x2F;mysqlbackup&#x2F;wanquan&#x2F;0&#x2F; --incremental-dir&#x3D;&#x2F;mysqlbackup&#x2F;zengliang&#x2F;1</span><br></pre></td></tr></table></figure>
+
+<p>初始化周二的增量备份</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">xtrabackup --prepare  --target-dir&#x3D;&#x2F;mysqlbackup&#x2F;wanquan&#x2F;0&#x2F; --incremental-dir&#x3D;&#x2F;mysqlbackup&#x2F;zengliang&#x2F;2</span><br></pre></td></tr></table></figure>
+
+<p><strong>拷贝全备目录下所有内容到数据目录中（此时的全备目录已经拥有全量数据）</strong></p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">cp -a &#x2F;mysqlbackup&#x2F;wanquan&#x2F;0&#x2F;* &#x2F;usr&#x2F;local&#x2F;mysql&#x2F;data&#x2F;</span><br></pre></td></tr></table></figure>
+
+<p><strong>授权</strong></p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">chown -R mysql:mysql &#x2F;usr&#x2F;local&#x2F;mysql&#x2F;data&#x2F;</span><br></pre></td></tr></table></figure>
+
+<p><strong>启动</strong></p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">systemctl start mysqld</span><br></pre></td></tr></table></figure>
+
+<p>此时数据已经恢复成功。</p>
+<h3 id="2-innobackupex-常用参数-2-4版本"><a href="#2-innobackupex-常用参数-2-4版本" class="headerlink" title="2.innobackupex 常用参数(2.4版本)"></a>2.innobackupex 常用参数(2.4版本)</h3><p>mysql不能高于5.7版本。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br></pre></td><td class="code"><pre><span class="line">--apply-log 	恢复时，通过xtrabackup_logfile在备份目录中创建一个备份（恢复备份时必选）</span><br><span class="line"></span><br><span class="line">--copy-back		从备份目录中以拷贝的形式恢复到数据目录中</span><br><span class="line">  </span><br><span class="line">--move-back		从备份目录中以移动的形式恢复到数据目录中</span><br><span class="line"> </span><br><span class="line">--defaults-file	指定mysql主配置文件路径</span><br><span class="line">   </span><br><span class="line">--remote-host	使用ssh将备份文件拷贝至远程服务器上</span><br><span class="line">   </span><br><span class="line">--stream		备份时启用打包</span><br><span class="line">  </span><br><span class="line">--compress		备份时启用压缩</span><br><span class="line">  	</span><br><span class="line">--tables		指定要备份的表</span><br><span class="line"></span><br><span class="line">--databases		指定要备份的库</span><br><span class="line">  </span><br><span class="line">--uncompress	解压以压缩方式备份的备份文件</span><br><span class="line"> </span><br><span class="line">--incremental			创建一个增量备份，在增量备份时使用</span><br><span class="line"> </span><br><span class="line">--incremental-basedir	增量备份时，指定全量备份的路径，以确定全量备份的终止位置</span><br><span class="line"> </span><br><span class="line">--incremental-dir		将增量备份与全量备份合并后放入新的目录</span><br><span class="line"></span><br><span class="line">--incremental-lsn		增量备份时，指定增量备份的起点</span><br><span class="line"> </span><br><span class="line">--no-lock				备份时，关闭自动锁表功能</span><br><span class="line"> </span><br><span class="line">--safe-slave-backup		备份时，先停止slave进程</span><br><span class="line"></span><br><span class="line">--no-timestamp			备份时，不自动创建以日期和时间的目录</span><br></pre></td></tr></table></figure>
+
+<p>使用案例：</p>
+<p>备份最好不要用root用户，需要新建用户</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">create user &#39;backup_mysql&#39;@&#39;%&#39; identified with mysql_native_password by &#39;123.Shui!!@#&#39;; </span><br><span class="line"></span><br><span class="line">grant select,process,reload,super on *.* to &#39;backup_mysql&#39;@&#39;%&#39; ;</span><br></pre></td></tr></table></figure>
+
+
+
+<p><strong>开始备份</strong>  </p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">mkdir &#x2F;mysqlbackup&#x2F;&#123;wanquan,zengliang&#125; -p</span><br></pre></td></tr></table></figure>
+
+
+
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">innobackupex --defaults-file&#x3D;&#x2F;etc&#x2F;my.cnf --user&#x3D;backup_mysql --password&#x3D;123.Shui!!@# &#x2F;mysqlbackup&#x2F;wanquan&#x2F;$(date &quot;+%Y-%m-%d&quot;) --no-timestamp</span><br></pre></td></tr></table></figure>
+
+<p>$(date “+%Y-%m-%d”) #表示已今天日期命名 这样备份会多创建一个目录，所以需要加一个参数 –no-timestamp  告诉innobackupex不要创建一个时间戳目录来存储备份</p>
+<p>停止数据库</p>
+<p>测试，删除一个表或库，模拟误操作或者直接删除数据库数据目录</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">rm &#x2F;usr&#x2F;local&#x2F;mysql&#x2F;data&#x2F;*  -rf</span><br></pre></td></tr></table></figure>
+
+<p>恢复前准备（初始化数据）</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">innobackupex --defaults-file&#x3D;&#x2F;etc&#x2F;my.cnf --apply-log &#x2F;mysqlbackup&#x2F;wanquan&#x2F;$(ls &#x2F;mysqlbackup&#x2F;wanquan&#x2F;)</span><br></pre></td></tr></table></figure>
+
+
+
+<p>恢复数据到数据目录中；–datadir 指定数据目录位置，如果配置文件中有指定，则不需要在此指定</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">innobackupex --defaults-file&#x3D;&#x2F;etc&#x2F;my.cnf --copy-back --datadir&#x3D;&#x2F;usr&#x2F;local&#x2F;mysql&#x2F;data  &#x2F;mysqlbackup&#x2F;wanquan&#x2F;$(ls &#x2F;mysqlbackup&#x2F;wanquan&#x2F;)</span><br></pre></td></tr></table></figure>
+
+<p>给目录授权</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">chown -R mysql.mysql &#x2F;usr&#x2F;local&#x2F;mysql&#x2F;data&#x2F;</span><br></pre></td></tr></table></figure>
+
+<p>启动数据库</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">systemctl start mysqld</span><br></pre></td></tr></table></figure>
+
+<p>全备及全备恢复完成！</p>
+<p><strong>innobackupex 增量备份</strong>    </p>
+<p>已经初始化的全备目录的数据不能再做为增量备份的基础数据，下面需要增量备份，所以这里需要重新备份，</p>
+<p>全备</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">innobackupex --defaults-file&#x3D;&#x2F;etc&#x2F;my.cnf --user&#x3D;backup_mysql --password&#x3D;123.Shui!!@# &#x2F;mysqlbackup&#x2F;wanquan&#x2F;$(date &quot;+%Y-%m-%d&quot;) --no-timestamp</span><br></pre></td></tr></table></figure>
+
+<p>新增数据</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">mysql -p -e &#39;create database b; use b;create table b1 (id int);show tables;&#39;</span><br></pre></td></tr></table></figure>
+
+<p>第一次增量备份</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">innobackupex --incremental &#x2F;mysqlbackup&#x2F;zengliang&#x2F;$(date &quot;+%Y-%m-%d&quot;) --incremental-basedir&#x3D;&#x2F;mysqlbackup&#x2F;wanquan&#x2F;&#96;ls &#x2F;mysqlbackup&#x2F;wanquan&#x2F;&#96; --user&#x3D;backup_mysql --password&#x3D;123.Shui!!@#  --no-timestamp</span><br></pre></td></tr></table></figure>
+
+<p>–incremental-basedir   指定全量备份目录，因为增量备份需要知道前一次全量是到哪里结束的</p>
+<p>–incremental       指定增量备份的目录，会在指定目录下创建一个以当前日期和时间命名的</p>
+<p>再次新增数据</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">创建C 库</span><br><span class="line">mysql -p -e &#39;create database c; use c;create table c1 (id int);show tables;&#39;</span><br></pre></td></tr></table></figure>
+
+<p>第二次增量备份 </p>
+<p>目录日期不一样，还有–incremental=basedir= 指定的目录是第一次增量备份的目录</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">innobackupex --incremental &#x2F;mysqlbackup&#x2F;zengliang&#x2F;$(date &quot;+%Y-%m-%d-%H&quot;) --incremental-basedir&#x3D;&#x2F;mysqlbackup&#x2F;zengliang&#x2F;&#96;ls &#x2F;mysqlbackup&#x2F;zengliang&#x2F;&#96; --user&#x3D;backup_mysql --password&#x3D;123.Shui!!@#  --no-timestamp</span><br></pre></td></tr></table></figure>
+
+<p>增量备份完成！</p>
+<p><strong>增量备份恢复</strong></p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">systemctl stop mysqld </span><br><span class="line">rm &#x2F;usr&#x2F;local&#x2F;mysql&#x2F;data&#x2F;*  -rf</span><br></pre></td></tr></table></figure>
+
+<p>初始化全备目录</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">innobackupex --apply-log --redo-only &#x2F;mysqlbackup&#x2F;wanquan&#x2F;&#96;ls &#x2F;mysqlbackup&#x2F;wanquan&#x2F;&#96;</span><br></pre></td></tr></table></figure>
+
+<p>查看有多少增量备份目录</p>
+<p>ls /mysqlbackup/zengliang/</p>
+<p>初始化第一次增备目录</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">innobackupex --apply-log --redo-only &#x2F;mysqlbackup&#x2F;wanquan&#x2F;&#96;ls &#x2F;mysqlbackup&#x2F;wanquan&#x2F;&#96; --incremental-dir&#x3D;&#x2F;mysqlbackup&#x2F;zengliang&#x2F;2019-10-16</span><br></pre></td></tr></table></figure>
+
+<p>把增量备份的数据整合到全备了</p>
+<p>初始化第二次增备目录（注意：这一步不需要加 –redo-only 选项）最后一次不需要加</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">innobackupex --apply-log &#x2F;mysqlbackup&#x2F;wanquan&#x2F;&#96;ls &#x2F;mysqlbackup&#x2F;wanquan&#x2F;&#96; --incremental-dir&#x3D;&#x2F;mysqlbackup&#x2F;zengliang&#x2F;2019-10-17-23</span><br></pre></td></tr></table></figure>
+
+<p>开始完整恢复</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">innobackupex --copy-back &#x2F;mysqlbackup&#x2F;wanquan&#x2F;&#96;ls &#x2F;mysqlbackup&#x2F;wanquan&#x2F;&#96;</span><br></pre></td></tr></table></figure>
+
+<p>过程：先将两次增量备份所备份的数据整合到全备目录中，然后进行一次性恢复</p>
+<p>重新授权</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">chown -R mysql.mysql &#x2F;usr&#x2F;local&#x2F;mysql&#x2F;data&#x2F;</span><br></pre></td></tr></table></figure>
+
+<p>启动数据库</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">systemctl start mysqld</span><br></pre></td></tr></table></figure>
+
+<p>至此，innobackupex 增量备份与恢复完成！</p>
+</div><ul class="post-copyright"><li><strong>本文标题：</strong><a href="https://yc6.cool/2020/08/03/mysql备份/">mysql备份</a></li><li><strong>本文作者：</strong><a href="https://yc6.cool">yichen</a></li><li><strong>本文链接：</strong><a href="https://yc6.cool/2020/08/03/mysql备份/">https://yc6.cool/2020/08/03/mysql备份/</a></li><li><strong>版权声明：</strong><span>本博客所有文章除特别声明外，均采用 <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/deed.zh" rel="external nofollow" target="_blank">CC BY-NC-SA 4.0</a> 许可协议。转载请注明出处！</span></li></ul><div><div class="recommend-post"><span class="is-size-6 has-text-grey has-mr-7"># 相关文章</span><br><span>  1.<a class="is-size-6" href="/2023/05/10/Prometheus%E4%BD%BF%E7%94%A8%E6%89%8B%E6%9C%BA%E7%94%B5%E8%AF%9D_%E7%9F%AD%E4%BF%A1%E6%8E%A5%E6%94%B6%E5%91%8A%E8%AD%A6%E9%80%9A%E7%9F%A5/" target="_blank">Prometheus使用手机电话_短信接收告警通知</a><br></span><span>  2.<a class="is-size-6" href="/2023/05/10/Prometheus%E4%BD%BF%E7%94%A8%E4%BC%81%E4%B8%9A%E5%BE%AE%E4%BF%A1%E6%8E%A5%E6%94%B6%E5%91%8A%E8%AD%A6%E9%80%9A%E7%9F%A5/" target="_blank">Prometheus使用企业微信接收告警通知</a><br></span><span>  3.<a class="is-size-6" href="/2023/05/10/Prometheus%E4%BD%BF%E7%94%A8%E4%BC%81%E4%B8%9A%E9%92%89%E9%92%89%E5%91%8A%E8%AD%A6%E9%80%9A%E7%9F%A5/" target="_blank">Prometheus使用企业钉钉接收告警通知</a><br></span><span>  4.<a class="is-size-6" href="/2023/05/10/Prometheus%E4%BD%BF%E7%94%A8%E9%82%AE%E7%AE%B1%E6%8E%A5%E6%94%B6%E5%91%8A%E8%AD%A6%E9%80%9A%E7%9F%A5/" target="_blank">Prometheus使用邮件接收告警通知</a><br></span><span>  5.<a class="is-size-6" href="/2023/05/09/%E5%9F%BA%E4%BA%8E_Consul_%E7%9A%84%E6%9C%8D%E5%8A%A1%E5%8F%91%E7%8E%B0/" target="_blank">Prometheus基于Consul服务发现</a><br></span><span>  6.<a class="is-size-6" href="/2023/05/09/%E6%9C%8D%E5%8A%A1%E5%8F%91%E7%8E%B0&amp;%E5%9F%BA%E4%BA%8E%E6%96%87%E4%BB%B6%E7%9A%84%E6%9C%8D%E5%8A%A1%E5%8F%91%E7%8E%B0/" target="_blank">Prometheus服务发现</a><br></span><span>  7.<a class="is-size-6" href="/2023/05/08/Prometheus%E7%9B%91%E6%8E%A7domain%E5%9F%9F%E5%90%8D/" target="_blank">Prometheus监控domain域名</a><br></span><span>  8.<a class="is-size-6" href="/2023/05/08/pushgateway/" target="_blank">Prometheus的Pushgateway工具</a><br></span></div><div class="recommend-post"><span class="is-size-6 has-text-grey has-mr-7"># 推荐文章</span><br><span>  1.<a class="is-size-6" href="/2020/08/04/docker%E4%BD%BF%E7%94%A8/" target="_blank">docker的使用</a><br></span><span>  2.<a class="is-size-6" href="/2020/08/03/mysql%E5%9F%BA%E7%A1%80/" target="_blank">mysql基础</a><br></span><span>  3.<a class="is-size-6" href="/2020/08/03/nginx%E5%9F%BA%E7%A1%80/" target="_blank">nginx基础</a><br></span><span>  4.<a class="is-size-6" href="/2020/08/04/python3%E5%9F%BA%E7%A1%80%E7%9F%A5%E8%AF%86%E9%87%8D%E7%82%B9/" target="_blank">python3基础知识重点</a><br></span><span>  5.<a class="is-size-6" href="/2023/05/07/Linux%E6%9C%8D%E5%8A%A1%E5%99%A8%E7%B3%BB%E7%BB%9F%E7%9B%91%E6%8E%A7/" target="_blank">Prometheus监控linux</a><br></span><span>  6.<a class="is-size-6" href="/2023/05/10/Prometheus%E4%BD%BF%E7%94%A8%E9%82%AE%E7%AE%B1%E6%8E%A5%E6%94%B6%E5%91%8A%E8%AD%A6%E9%80%9A%E7%9F%A5/" target="_blank">Prometheus使用邮件接收告警通知</a><br></span></div></div><link rel="stylesheet" href="https://cdnjs.loli.net/ajax/libs/social-share.js/1.0.16/css/share.min.css"><div class="social-share"></div><script src="https://cdnjs.loli.net/ajax/libs/social-share.js/1.0.16/js/social-share.min.js"></script></article></div><div class="card"><div class="card-content"><h3 class="menu-label has-text-centered">喜欢这篇文章？打赏一下作者吧</h3><div class="buttons is-centered"><a class="button is-info donate"><span class="icon is-small"><i class="fab fa-alipay"></i></span><span>支付宝</span><span class="qrcode"><img src="https://yichenxiu.com/tupian/tubiao/alipay1.jpg" alt="支付宝"></span></a><a class="button is-success donate"><span class="icon is-small"><i class="fab fa-weixin"></i></span><span>微信</span><span class="qrcode"><img src="https://i.328888.xyz/2023/03/05/dZXCk.jpeg" alt="微信"></span></a></div></div></div><nav class="post-navigation mt-4 level is-mobile"><div class="level-start"><a class="article-nav-prev level level-item link-muted" href="/2020/08/03/xtrabackup8.0%E5%91%A8%E5%A2%9E%E9%87%8F%E5%A4%87%E4%BB%BD/"><i class="level-item fas fa-chevron-left"></i><span class="level-item">xtrabackup8.0周增量备份脚本</span></a></div><div class="level-end"><a class="article-nav-next level level-item link-muted" href="/2020/08/03/amoeba%E4%BB%A3%E7%90%86/"><span class="level-item">amoeba代理</span><i class="level-item fas fa-chevron-right"></i></a></div></nav><div class="card"><div class="card-content"><h3 class="title is-5">评论</h3><div id="comment-container"></div><link rel="stylesheet" href="https://cdnjs.loli.net/ajax/libs/gitalk/1.6.0/gitalk.css"><script> $.getScript('/js/gitalk.min.js', function () { 
+            var gitalk = new Gitalk({
+            language:'zh-CN',
+            id: 'c9cf5138dc15277d5b0e3811bfafbd37',
+            repo: 'issue_database',
+            owner: 'zhi666',
+            clientID: '1b861f81e9a79ee6028d',
+            clientSecret: 'cc629aff090aa9c60d5e13ddf7fcfce14f00a478',
+            admin: ["zhi666"],
+            createIssueManually: true,
+            distractionFreeMode: true,
+            perPage: 10,
+            pagerDirection: 'last',
+            proxy: 'https://cors-anywhere.azm.workers.dev/https://github.com/login/oauth/access_token',
+            
+            enableHotKey: true,
+            isLocked: false
+        })
+        gitalk.render('comment-container')});</script></div></div></div><div class="column column-left is-4-tablet is-4-desktop is-4-widescreen  order-1 is-sticky"><!--!--><div class="card widget"><div class="card-content"><nav class="level"><div class="level-item has-text-centered flex-shrink-1"><div><figure class="image is-128x128 mx-auto mb-2"><img class="is-rounded" src="/img/toudong.jpg" alt="逸尘秀"></figure><p class="title is-size-4 is-block line-height-inherit">逸尘秀</p><p class="is-size-6 is-block">只此一生 ， 必须快乐 ！</p><p class="is-size-6 is-flex justify-content-center"><i class="fas fa-map-marker-alt mr-1"></i><span>深圳</span></p></div></div></nav><nav class="level is-mobile"><div class="level-item has-text-centered is-marginless"><div><p class="heading">文章</p><a href="/archives"><p class="title">136</p></a></div></div><div class="level-item has-text-centered is-marginless"><div><p class="heading">分类</p><a href="/categories"><p class="title">17</p></a></div></div><div class="level-item has-text-centered is-marginless"><div><p class="heading">标签</p><a href="/tags"><p class="title">55</p></a></div></div></nav><div class="level"><a class="level-item button is-primary is-rounded" href="https://weibo.com/u/6155656382" target="_blank" rel="noopener">关注我</a></div><div class="level is-mobile"><a class="level-item button is-transparent is-white is-marginless" target="_blank" rel="noopener" title="Github" href="https://github.com/zhi666"><i class="fab fa-github"></i></a><a class="level-item button is-transparent is-white is-marginless" target="_blank" rel="noopener" title="Weibo" href="https://weibo.com/u/6155656382"><i class="fab fa-weibo"></i></a><a class="level-item button is-transparent is-white is-marginless" target="_blank" rel="noopener" title="Email" href="mailto:1378373724@qq.com"><i class="fa fa-envelope"></i></a><a class="level-item button is-transparent is-white is-marginless" target="_blank" rel="noopener" title="Next" href="https://zhi666.github.io/remove.io"><i class="fab fa-dribbble"></i></a><a class="level-item button is-transparent is-white is-marginless" target="_blank" rel="noopener" title="RSS" href="/atom.xml"><i class="fas fa-rss"></i></a></div><div><hr><p id="hitokoto">:D 一言句子获取中...</p><script type="text/javascript" defer>function getYiyan(){
+                                $.getJSON("https://v1.hitokoto.cn/", function (data) {
+                                if(data){
+                                    $('#hitokoto').html("");
+                                    $('#hitokoto').append("<strong style='color: #3273dc;'>"+data.hitokoto+"</strong>"+
+                                    "<p>"+"来源《"+data.from+"》</p><p>提供者-"+data.creator+"</p>");
+                                }});}
+                                $(function (){getYiyan();$('#hitokoto').click(function(){getYiyan();})});</script></div></div></div><div class="card widget"><div class="card-content"><h3 class="menu-label">最新评论</h3><span class="body_hot_comment">加载中，最新评论有1分钟缓存...</span></div></div><div class="card widget"><div class="card-content"><h3 class="menu-label">最新文章</h3><article class="media"><div class="media-content size-small"><p><time dateTime="2023-11-01T02:25:44.578Z">2023-11-01</time></p><p class="title is-6"><a class="link-muted" href="/2023/11/01/selenlium%E6%89%B9%E9%87%8F%E6%B7%BB%E5%8A%A0dns%E5%9F%9F%E5%90%8D/">批量添加dns域名解析</a></p><p class="is-uppercase"><i class="fas fa-folder-open has-text-grey"> </i><a class="link-muted" href="/categories/python/">python</a></p></div></article><article class="media"><div class="media-content size-small"><p><time dateTime="2023-05-17T01:45:36.000Z">2023-05-17</time></p><p class="title is-6"><a class="link-muted" href="/2023/05/17/Kubernetes%E9%AB%98%E5%8F%AF%E7%94%A8%E9%9B%86%E7%BE%A4%E4%BA%8C%E8%BF%9B%E5%88%B6%E9%83%A8%E7%BD%B2/">Kubernetes高可用集群二进制部署</a></p><p class="is-uppercase"><i class="fas fa-folder-open has-text-grey"> </i><a class="link-muted" href="/categories/linux3/">linux3</a></p></div></article><article class="media"><div class="media-content size-small"><p><time dateTime="2023-05-10T06:25:36.000Z">2023-05-10</time></p><p class="title is-6"><a class="link-muted" href="/2023/05/10/Prometheus%E4%BD%BF%E7%94%A8%E6%89%8B%E6%9C%BA%E7%94%B5%E8%AF%9D_%E7%9F%AD%E4%BF%A1%E6%8E%A5%E6%94%B6%E5%91%8A%E8%AD%A6%E9%80%9A%E7%9F%A5/">Prometheus使用手机电话_短信接收告警通知</a></p><p class="is-uppercase"><i class="fas fa-folder-open has-text-grey"> </i><a class="link-muted" href="/categories/linux2/">linux2</a></p></div></article><article class="media"><div class="media-content size-small"><p><time dateTime="2023-05-10T06:22:36.000Z">2023-05-10</time></p><p class="title is-6"><a class="link-muted" href="/2023/05/10/Prometheus%E4%BD%BF%E7%94%A8%E4%BC%81%E4%B8%9A%E5%BE%AE%E4%BF%A1%E6%8E%A5%E6%94%B6%E5%91%8A%E8%AD%A6%E9%80%9A%E7%9F%A5/">Prometheus使用企业微信接收告警通知</a></p><p class="is-uppercase"><i class="fas fa-folder-open has-text-grey"> </i><a class="link-muted" href="/categories/linux2/">linux2</a></p></div></article><article class="media"><div class="media-content size-small"><p><time dateTime="2023-05-10T06:20:36.000Z">2023-05-10</time></p><p class="title is-6"><a class="link-muted" href="/2023/05/10/Prometheus%E4%BD%BF%E7%94%A8%E4%BC%81%E4%B8%9A%E9%92%89%E9%92%89%E5%91%8A%E8%AD%A6%E9%80%9A%E7%9F%A5/">Prometheus使用企业钉钉接收告警通知</a></p><p class="is-uppercase"><i class="fas fa-folder-open has-text-grey"> </i><a class="link-muted" href="/categories/linux2/">linux2</a></p></div></article></div></div><div class="card widget"><div class="card-content"><div class="menu"><h3 class="menu-label">分类</h3><ul class="menu-list"><li><a class="level is-mobile is-marginless" href="/categories/English/"><span class="level-start"><span class="level-item">English</span></span><span class="level-end"><span class="level-item tag">1</span></span></a></li><li><a class="level is-mobile is-marginless" href="/categories/HTML/"><span class="level-start"><span class="level-item">HTML</span></span><span class="level-end"><span class="level-item tag">4</span></span></a></li><li><a class="level is-mobile is-marginless" href="/categories/JS/"><span class="level-start"><span class="level-item">JS</span></span><span class="level-end"><span class="level-item tag">2</span></span></a></li><li><a class="level is-mobile is-marginless" href="/categories/html/"><span class="level-start"><span class="level-item">html</span></span><span class="level-end"><span class="level-item tag">1</span></span></a></li><li><a class="level is-mobile is-marginless" href="/categories/linux1/"><span class="level-start"><span class="level-item">linux1</span></span><span class="level-end"><span class="level-item tag">15</span></span></a></li><li><a class="level is-mobile is-marginless" href="/categories/linux2/"><span class="level-start"><span class="level-item">linux2</span></span><span class="level-end"><span class="level-item tag">33</span></span></a></li><li><a class="level is-mobile is-marginless" href="/categories/linux3/"><span class="level-start"><span class="level-item">linux3</span></span><span class="level-end"><span class="level-item tag">27</span></span></a></li><li><a class="level is-mobile is-marginless" href="/categories/python/"><span class="level-start"><span class="level-item">python</span></span><span class="level-end"><span class="level-item tag">12</span></span></a></li><li><a class="level is-mobile is-marginless" href="/categories/web/"><span class="level-start"><span class="level-item">web</span></span><span class="level-end"><span class="level-item tag">1</span></span></a></li><li><a class="level is-mobile is-marginless" href="/categories/work/"><span class="level-start"><span class="level-item">work</span></span><span class="level-end"><span class="level-item tag">7</span></span></a></li><a class="level is-mobile is-marginless" href="/categories/"><span class="level-start"><span class="level-item">查看全部&gt;&gt;</span></span></a></ul></div></div></div><div class="card widget"><div class="card-content"><div class="menu"><h3 class="menu-label">归档</h3><ul class="menu-list"><li><a class="level is-mobile is-marginless" href="/archives/2023/11/"><span class="level-start"><span class="level-item">十一月 2023</span></span><span class="level-end"><span class="level-item tag">5</span></span></a></li><li><a class="level is-mobile is-marginless" href="/archives/2023/05/"><span class="level-start"><span class="level-item">五月 2023</span></span><span class="level-end"><span class="level-item tag">13</span></span></a></li><li><a class="level is-mobile is-marginless" href="/archives/2023/04/"><span class="level-start"><span class="level-item">四月 2023</span></span><span class="level-end"><span class="level-item tag">2</span></span></a></li><li><a class="level is-mobile is-marginless" href="/archives/2023/02/"><span class="level-start"><span class="level-item">二月 2023</span></span><span class="level-end"><span class="level-item tag">1</span></span></a></li><li><a class="level is-mobile is-marginless" href="/archives/2022/06/"><span class="level-start"><span class="level-item">六月 2022</span></span><span class="level-end"><span class="level-item tag">3</span></span></a></li><a class="level is-mobile is-marginless" href="/archives/"><span class="level-start"><span class="level-item">查看全部&gt;&gt;</span></span></a></ul></div></div></div><div class="card widget"><div class="card-content"><div class="menu"><h3 class="menu-label">标签</h3><div class="field is-grouped is-grouped-multiline"><div class="control"><a class="tags has-addons" href="/tags/linux/"><span class="tag">linux</span><span class="tag is-grey-lightest">18</span></a></div><div class="control"><a class="tags has-addons" href="/tags/docker/"><span class="tag">docker</span><span class="tag is-grey-lightest">16</span></a></div><div class="control"><a class="tags has-addons" href="/tags/Prometheus/"><span class="tag">Prometheus</span><span class="tag is-grey-lightest">14</span></a></div><div class="control"><a class="tags has-addons" href="/tags/html/"><span class="tag">html</span><span class="tag is-grey-lightest">14</span></a></div><div class="control"><a class="tags has-addons" href="/tags/python/"><span class="tag">python</span><span class="tag is-grey-lightest">12</span></a></div><div class="control"><a class="tags has-addons" href="/tags/web/"><span class="tag">web</span><span class="tag is-grey-lightest">12</span></a></div><div class="control"><a class="tags has-addons" href="/tags/nginx/"><span class="tag">nginx</span><span class="tag is-grey-lightest">9</span></a></div><div class="control"><a class="tags has-addons" href="/tags/mysql/"><span class="tag">mysql</span><span class="tag is-grey-lightest">7</span></a></div><div class="control"><a class="tags has-addons" href="/tags/%E5%AE%B9%E5%99%A8/"><span class="tag">容器</span><span class="tag is-grey-lightest">7</span></a></div><div class="control"><a class="tags has-addons" href="/tags/%E6%95%B0%E6%8D%AE%E5%BA%93/"><span class="tag">数据库</span><span class="tag is-grey-lightest">7</span></a></div><div class="control"><a class="tags has-addons" href="/tags/%E7%A7%91%E5%AD%A6%E4%B8%8A%E7%BD%91/"><span class="tag">科学上网</span><span class="tag is-grey-lightest">6</span></a></div><div class="control"><a class="tags has-addons" href="/tags/work/"><span class="tag">work</span><span class="tag is-grey-lightest">5</span></a></div><div class="control"><a class="tags has-addons" href="/tags/%E8%87%AA%E5%8A%A8%E5%8C%96/"><span class="tag">自动化</span><span class="tag is-grey-lightest">5</span></a></div><div class="control"><a class="tags has-addons" href="/tags/%E5%8D%9A%E5%AE%A2/"><span class="tag">博客</span><span class="tag is-grey-lightest">4</span></a></div><div class="control"><a class="tags has-addons" href="/tags/%E5%B7%A5%E4%BD%9C/"><span class="tag">工作</span><span class="tag is-grey-lightest">4</span></a></div><div class="control"><a class="tags has-addons" href="/tags/%E5%B7%A5%E5%85%B7/"><span class="tag">工具</span><span class="tag is-grey-lightest">4</span></a></div><div class="control"><a class="tags has-addons" href="/tags/ssl/"><span class="tag">ssl</span><span class="tag is-grey-lightest">3</span></a></div><div class="control"><a class="tags has-addons" href="/tags/%E6%96%87%E4%BB%B6%E7%B3%BB%E7%BB%9F/"><span class="tag">文件系统</span><span class="tag is-grey-lightest">3</span></a></div><div class="control"><a class="tags has-addons" href="/tags/%E6%97%A5%E5%BF%97/"><span class="tag">日志</span><span class="tag is-grey-lightest">3</span></a></div><div class="control"><a class="tags has-addons" href="/tags/%E6%97%A5%E5%BF%97%E5%8A%A0%E5%AF%86/"><span class="tag">日志加密</span><span class="tag is-grey-lightest">3</span></a></div></div><div class="field is-grouped is-grouped-multiline"><a class="tags has-addons" href="/tags/"><span class="tag">查看全部&gt;&gt;</span></a></div></div></div></div><div class="card widget"><div class="card-content"><div class="menu"><h3 class="menu-label">订阅更新</h3><form action="https://feedburner.google.com/fb/a/mailverify" method="post" target="popupwindow" onsubmit="window.open(&#039;https://feedburner.google.com/fb/a/mailverify?uri=zhi666FeedsId&#039;,&#039;popupwindow&#039;,&#039;scrollbars=yes,width=550,height=520&#039;);return true"><input type="hidden" value="zhi666FeedsId" name="uri"><input type="hidden" name="loc" value="en_US"><div class="field has-addons"><div class="control has-icons-left is-expanded"><input class="input" name="email" type="email" placeholder="Email"><span class="icon is-small is-left"><i class="fas fa-envelope"></i></span></div><div class="control"><input class="button is-primary" type="submit" value="订阅"></div></div><p class="help">输入邮箱开始订阅，更博后邮件通知！</p></form></div></div></div></div></div></div></section><footer class="footer"><div class="container"><div class="level"><div class="level-start"><a class="footer-logo is-block mb-2" href="/"><img src="/img/logo.png" alt="逸尘秀" height="28"></a><p class="size-small"><span>&copy; 2023 yichen</span>  Powered by <a href="https://hexo.io/" target="_blank">Hexo</a> &amp; <a href="https://github.com/ppoffice/hexo-theme-icarus" target="_blank">Icarus</a>,Modify by <a href="https://github.com/removeif/hexo-theme-amazing" target="_blank">removeif</a> <br><span>© 版权说明：[本网站所有内容均收集于互联网或自己创作,<br />&nbsp;&nbsp;&nbsp;&nbsp;方便于网友与自己学习交流，如有侵权，请<a href="/message" target="_blank">留言</a>，立即处理]<br /></span><span><span id="statistic-times">loading...</span><script>function createTime(time) {
+            var n = new Date(time);
+            now.setTime(now.getTime() + 250),
+                days = (now - n) / 1e3 / 60 / 60 / 24,
+                dnum = Math.floor(days),
+                hours = (now - n) / 1e3 / 60 / 60 - 24 * dnum,
+                hnum = Math.floor(hours),
+            1 == String(hnum).length && (hnum = "0" + hnum),
+                minutes = (now - n) / 1e3 / 60 - 1440 * dnum - 60 * hnum,
+                mnum = Math.floor(minutes),
+            1 == String(mnum).length && (mnum = "0" + mnum),
+                seconds = (now - n) / 1e3 - 86400 * dnum - 3600 * hnum - 60 * mnum,
+                snum = Math.round(seconds),
+            1 == String(snum).length && (snum = "0" + snum),
+                document.getElementById("statistic-times").innerHTML = "❤️本站自 <strong>"+time.split(" ")[0].replace(/\//g,".")+"</strong> 已运行 <strong>" + dnum + "</strong> 天 <strong>" + hnum + "</strong> 小时 <strong>" + mnum + "</strong> 分 <strong>" + snum + "</strong> 秒！❤️";
+        }var now = new Date();setInterval("createTime('2020/08/02 00:00:00')", 250,"");</script><br></span><div class="size-small"><span>❤️感谢 <strong><span id="busuanzi_value_site_uv">99+</span></strong> 小伙伴的 <strong><span id="busuanzi_value_site_pv">99+</span></strong> 次光临！❤️</span></div></p></div><div class="level-end"><div class="field has-addons"><p class="control"><a class="button is-transparent is-large" target="_blank" rel="noopener" title="Creative Commons" href="https://creativecommons.org/"><i class="fab fa-creative-commons"></i></a></p><p class="control"><a class="button is-transparent is-large" target="_blank" rel="noopener" title="Attribution 4.0 International" href="https://creativecommons.org/licenses/by/4.0/"><i class="fab fa-creative-commons-by"></i></a></p><p class="control"><a class="button is-transparent is-large" target="_blank" rel="noopener" title="Download on GitHub" href="https://github.com/zhi666"><i class="fab fa-github"></i></a></p></div><div class="sideMusic"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/aplayer/dist/APlayer.min.css"><script src="/js/APlayer.min.js"></script><script src="https://cdn.jsdelivr.net/npm/meting@2/dist/Meting.min.js"></script><meting-js style="width: auto;height: 2000px;" server="netease" type="playlist" id="2364053447" theme="#2980b9" loop="all" autoplay="false" order="list" storageName="aplayer-setting" lrctype="0" list-max-height="400px" fixed="true"></meting-js></div></div></div></div></footer><script src="https://cdnjs.loli.net/ajax/libs/moment.js/2.22.2/moment-with-locales.min.js"></script><script>moment.locale("zh-CN");</script><script>var IcarusThemeSettings = {
+            site: {
+                url: 'https://yc6.cool',
+                external_link: {"enable":true,"exclude":[]}
+            },
+            article: {
+                highlight: {
+                    clipboard: true,
+                    fold: 'unfolded'
+                }
+            }
+        };</script><script src="https://cdnjs.loli.net/ajax/libs/clipboard.js/2.0.4/clipboard.min.js" defer></script><script src="/js/animation.js"></script><a id="back-to-top" title="回到顶端" href="javascript:;"><i class="fas fa-chevron-up"></i></a><script src="/js/back-to-top.js" defer></script><!--!--><!--!--><script src="https://cdnjs.loli.net/ajax/libs/lightgallery/1.6.12/js/lightgallery-all.min.js" defer></script><script src="https://cdnjs.loli.net/ajax/libs/justifiedGallery/3.7.0/js/jquery.justifiedGallery.min.js" defer></script><!--!--><!--!--><!--!--><script src="/js/toc.js" defer></script><script src="/js/main.js" defer></script><script>$.getScript('/js/comment-issue-data.js',function(){loadIssueData('1b861f81e9a79ee6028d','cc629aff090aa9c60d5e13ddf7fcfce14f00a478','zhi666','issue_database',false);})</script><link rel="stylesheet" href="/css/insight.css"><div class="searchbox ins-search"><div class="searchbox-container ins-search-container"><div class="searchbox-input-wrapper"><input class="searchbox-input ins-search-input" type="text" placeholder="想要查找什么..."><span class="searchbox-close ins-close ins-selectable"><i class="fa fa-times-circle"></i></span></div><div class="searchbox-result-wrapper ins-section-wrapper"><div class="ins-section-container"></div></div></div></div><script>(function (window) {
+            var INSIGHT_CONFIG = {
+                TRANSLATION: {
+                    POSTS: '文章',
+                    PAGES: '页面',
+                    CATEGORIES: '分类',
+                    TAGS: '标签',
+                    UNTITLED: '(无标题)',
+                },
+                CONTENT_URL: '/content.json',
+            };
+            window.INSIGHT_CONFIG = INSIGHT_CONFIG;
+        })(window);</script><script src="/js/insight.js" defer></script></body></html>

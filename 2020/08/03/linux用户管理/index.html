@@ -1,0 +1,479 @@
+<!doctype html>
+<html lang="zh"><head><meta charset="utf-8"><meta name="generator" content="Hexo 4.2.0"><meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"><meta><meta name="keywords" content="[object Object]"><meta name="description" content="一. 用户管理1.用户分类    管理员          user id一定为0，务必唯一， root
+    系统用户        伪用户,user id 201-999,默认是不允许登录系统，用于给予
+                    某些服务运行时候所用的身份
+    普通用户        user id 1000-60000, 通过手动或者命令建立起来的用户，
+                    默认可以进行登录系统"><meta name="author" content="zhi666"><title>linux用户管理 - 逸尘秀</title><meta description="一. 用户管理1.用户分类    管理员          user id一定为0，务必唯一， root     系统用户        伪用户,user id 201-999,默认是不允许登录系统，用于给予                     某些服务运行时候所用的身份     普通用户        user id 1000-60000, 通过手动或者命令建立起来的用户，"><meta property="og:type" content="article"><meta property="og:title" content="linux用户管理"><meta property="og:url" content="https://yc6.cool/2020/08/03/linux%E7%94%A8%E6%88%B7%E7%AE%A1%E7%90%86/"><meta property="og:site_name" content="逸尘秀"><meta property="og:description" content="一. 用户管理1.用户分类    管理员          user id一定为0，务必唯一， root     系统用户        伪用户,user id 201-999,默认是不允许登录系统，用于给予                     某些服务运行时候所用的身份     普通用户        user id 1000-60000, 通过手动或者命令建立起来的用户，"><meta property="og:locale" content="zh_CN"><meta property="article:published_time" content="2020-08-03T03:49:42.000Z"><meta property="article:modified_time" content="2023-11-01T02:25:44.567Z"><meta property="article:author" content="zhi666"><meta property="article:tag" content="linux"><meta property="twitter:card" content="summary"><meta property="twitter:image" content="https://yc6.cool/img/avatar.png"><script type="application/ld+json">{"@context":"https://schema.org","@type":"BlogPosting","mainEntityOfPage":{"@type":"WebPage","@id":"https://yc6.cool/2020/08/03/linux%E7%94%A8%E6%88%B7%E7%AE%A1%E7%90%86/"},"headline":"linux用户管理","image":["https://yc6.cool/img/avatar.png"],"datePublished":"2020-08-03T03:49:42.000Z","dateModified":"2023-11-01T02:25:44.567Z","author":{"@type":"Person","name":"zhi666"},"description":"一. 用户管理1.用户分类    管理员          user id一定为0，务必唯一， root     系统用户        伪用户,user id 201-999,默认是不允许登录系统，用于给予                     某些服务运行时候所用的身份     普通用户        user id 1000-60000, 通过手动或者命令建立起来的用户，"}</script><link rel="alternative" href="/atom.xml" title="逸尘秀" type="application/atom+xml"><link rel="icon" href="/img/favicon.png"><link rel="stylesheet" href="https://cdnjs.loli.net/ajax/libs/font-awesome/5.12.0/css/all.min.css"><link rel="stylesheet" href="https://fonts.loli.net/css?family=Ubuntu:400,600|Source+Code+Pro|Monda:300,300italic,400,400italic,700,700italic|Roboto Slab:300,300italic,400,400italic,700,700italic|Microsoft YaHei:300,300italic,400,400italic,700,700italic|PT Mono:300,300italic,400,400italic,700,700italic&amp;amp;subset=latin,latin-ext|Inconsolata|Itim|Lobster.css"><link rel="stylesheet" href="https://cdnjs.loli.net/ajax/libs/highlight.js/9.12.0/styles/atom-one-dark.min.css"><style>body>.footer,body>.navbar,body>.section{opacity:0}</style><!--!--><!--!--><script src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js" defer></script><link rel="stylesheet" href="https://cdnjs.loli.net/ajax/libs/lightgallery/1.6.12/css/lightgallery.min.css"><link rel="stylesheet" href="https://cdnjs.loli.net/ajax/libs/justifiedGallery/3.7.0/css/justifiedGallery.min.css"><!--!--><!--!--><script src="https://cdnjs.loli.net/ajax/libs/pace/1.0.2/pace.min.js"></script><link rel="stylesheet" href="/css/style.css"><script src="https://cdnjs.loli.net/ajax/libs/jquery/3.3.1/jquery.min.js"></script><script src="/js/globalUtils.js"></script><link rel="stylesheet" href="/live2d/waifu.css"><script type="text/javascript" async src="/live2d/autoload.js"></script></head><body class="is-3-column has-navbar-fixed-top"><nav class="navbar navbar-main is-fixed-top"><div class="container"><div class="navbar-brand justify-content-center"><a class="navbar-item navbar-logo" href="/"><img src="/img/logo.png" alt="逸尘秀" height="28"></a></div><div class="navbar-menu"><div class="navbar-start"><a class="navbar-item" href="/">首页</a><a class="navbar-item" href="/archives">归档</a><a class="navbar-item" href="/categories">分类</a><a class="navbar-item" href="/tags">标签</a><a class="navbar-item" href="/media">影音</a><a class="navbar-item" href="/album">相册</a><a class="navbar-item" href="/friend">友链</a><a class="navbar-item" href="/self-talking">碎碎念</a><a class="navbar-item" href="/message">留言</a><a class="navbar-item" href="/about">关于</a></div><div class="navbar-end"><a class="navbar-item" target="_blank" rel="noopener" title="Download on GitHub" href="https://github.com/zhi666"><i class="fab fa-github"></i></a><a class="navbar-item search" title="搜索" href="javascript:;"><i class="fas fa-search"></i></a><a class="navbar-item" id="night-nav" title="Night Mode" href="javascript:;"><i class="fas fa-moon" id="night-icon"></i></a></div></div></div></nav><script type="text/javascript" src="/js/theme-setting.js"></script><section class="section"><div class="container"><div class="columns"><div class="column order-2 column-main is-8-tablet is-8-desktop is-9-widescreen"><div class="card"><article class="card-content article" role="article"><div class="article-meta size-small is-uppercase level is-mobile"><div class="level-left"><i class="far fa-calendar-plus"> </i>2020-08-03  <a class="commentCountImg" href="/2020/08/03/linux%E7%94%A8%E6%88%B7%E7%AE%A1%E7%90%86/#comment-container"><span class="display-none-class">1938164b450d00696d62e0a383956299</span><i class="far fa-comment-dots"></i> <span class="commentCount" id="1938164b450d00696d62e0a383956299">99+</span>  </a><span class="level-item"><i class="far fa-clock"> </i>32 分钟  <i class="fas fa-pencil-alt"> </i>4.9 k</span><span class="level-item" id="busuanzi_container_page_pv"><i class="far fa-eye"></i>&nbsp;&nbsp;<span id="busuanzi_value_page_pv">0</span>次访问</span></div></div><h1 class="title is-3 is-size-4-mobile">linux用户管理</h1><div class="content"><h1 id="一-用户管理"><a href="#一-用户管理" class="headerlink" title="一. 用户管理"></a>一. 用户管理</h1><h2 id="1-用户分类"><a href="#1-用户分类" class="headerlink" title="1.用户分类"></a>1.用户分类</h2><pre><code>    管理员          user id一定为0，务必唯一， root
+    系统用户        伪用户,user id 201-999,默认是不允许登录系统，用于给予
+                    某些服务运行时候所用的身份
+    普通用户        user id 1000-60000, 通过手动或者命令建立起来的用户，
+                    默认可以进行登录系统</code></pre>
+<a id="more"></a>
+<pre><code>    centos          /etc/login.defs
+        UID_MIN         1000
+        UID_MAX         60000
+        SYS_UID_MIN     201
+        SYS_UID_MAX     999
+
+        GID_MIN         1000
+        GID_MAX         60000
+        SYS_GID_MIN     201
+        SYS_GID_MAX     999
+
+        0-200           是系统自带的， 建议别修改
+        201-999         可以作为一些特殊服务运行时所用的身份
+        1000-60000      普通用户的uid取值范围
+
+        在未来，系统保留的uid值的范围可能会扩大，现在RHEL7官方文档中，
+        已经推荐使用5000为普通用户的起始uid。</code></pre>
+<p>ubuntu          /etc/adduser.conf</p>
+<pre><code>        FIRST_SYSTEM_UID=100
+        LAST_SYSTEM_UID=999
+        FIRST_SYSTEM_GID=100
+        LAST_SYSTEM_GID=999
+
+        FIRST_UID=1000
+        LAST_UID=29999
+        FIRST_GID=1000
+        LAST_GID=29999</code></pre>
+<h2 id="2-用户管理"><a href="#2-用户管理" class="headerlink" title="2.用户管理"></a>2.用户管理</h2><pre><code>    用户相关配置文件
+
+        /etc/passwd
+        /etc/shadow
+
+        vim /etc/passwd
+            root:x:0:0:root:/root:/bin/bash
+
+            第一列 root       :     用户名
+            第二列 x          :     密码    x代表密码存放在/etc/shadow里，
+                                        如果去掉x就代表此用户没有密码
+            第三列 0          :     uid 用户ID值操作系统是不认识用户名，只认uid
+            第四列 0          :     gid,用户组的ID
+            第五列 root       :     描述项，可以根据需要修改，也可为空
+            第六列 /root      :     指定家目录
+            第七列 /bin/bash  :     指定bash
+
+            如果用户的家目录所在的设备空间不足,需要移动该用户的家目录，一般步骤如下:
+            1. 预备一个有足够空间的存储设备,并作相应的挂载操作
+            2. 确保该用户已经登出
+            3. 把用户暂时禁用
+            4. 把用户的家目录移动(或者复制)到新的地方
+            5. 在/etc/passwd文件中对家目录作相应的修改
+            6. 重新启用该用户
+
+            练习
+                (1). 创建一个用户u1, 设置好密码
+                    sudo useradd u1
+                    sudo passwd u1
+                (2). 禁用u1用户
+                    sudo passwd -l u1
+                (3). 创建文件夹/u1, 把所属用户和所属用户组改成u1
+                    sudo chown u1:u1 /u1
+                (4). 把/home/u1里面的所有[隐藏]文件复制到/u1下面去
+                (5). 用sudo打开/etc/passwd文件, 修改u1的第6列的家目录
+                (5). 解锁u用户
+                    sudo passwd -u u1
+                (6). 登入u1, 看效果</code></pre>
+<p><strong>vim /etc/shadow 用于保存用户的密码信息，只有root有查看的权限</strong><br>​                root:!:17787:0:99999:7:::<br>​<br>​                第一列：用户名<br>​                第二列：真实的密码，经过加密的，以*或都!号开头的不能在登录页面登录<br>​                            删除之后登录的话就不需要密码了<br>​                第三列：上一次修改密码的时间，linux以1970年1月1日到现在的天数来算的<br>​                第四列：修改密码后几天内不允许再修改， 0代表不限制<br>​                            这个只能限制自己改自己的密码, sudo和root不在此列<br>​                第五列：多少天内必须修改密码，99999代表不限制<br>​                第六列：过期前几天给你一个警告信息<br>​                第七列: 密码过期后的宽限期,代表密码过期后是否还能修改密码后正常登录.为空,代表什么时候都可以修改密码然后正常登录. 如果密码过期了,宽限期也到了,用户就无法修改密码登录了,只能联系系统管理员.<br>​                第八列：这里可以写一个实际的账号过期天数，也是以1970年1月1日到现在来算的，多用于收费系统，详细信息查看man 5 shadow<br>​                第九列：保留，留着以后功能扩展</p>
+<hr>
+<pre><code>            当忘记了root密码，修改密码的方法：
+                1. 去登陆页面进grub页面去修改密码。
+                2. 还记得一个有所有的sudo权限的密码的话， 可以用命令：
+                    sudo su - root
+                    去登陆root账户， 这个时候需要的密码是当前的账户密码</code></pre>
+<hr>
+<pre><code>            密码过期后是否还能登录系统?
+            密码过期后就不能再通过密码来登录系统,但是仍然可以通过别的方式登录，比如：
+                su
+
+    用户命令相关配置文件,保存useradd/adduser命令创建用户使用的默认值
+
+        /etc/default/useradd
+        /etc/login.defs
+
+
+    用户相关命令(PPP1, PPP2, PPP3)
+        C 新建用户
+            useradd     命令行创建用户
+                useradd a             创建a用户
+                useradd -g u1 b      新建b用户并且把b用户添加进u1用户组
+            adduser     创建用户</code></pre>
+<hr>
+<pre><code>  在centos下面useradd和adduser是没有区别的，都是创建用户，且会创建家目录和邮箱，但是登陆的时候需要密码，且密码是不知道的，这个时候可以用sudo passwd username去修改密码，也可以去删除/etc/shadow下的第2列信息，再用su去登陆的时候就不需要密码了,但是在ubuntu下面的时候adduser是交互式的创建用户，会提示用户去输入密码， 注释等其他的一些信息</code></pre>
+<hr>
+<pre><code>        R 用户信息获取
+            id              查看当前登录用户信息
+            id 用户名       查看对应用户的用户信息</code></pre>
+<p><strong>D 删除用户</strong><br>userdel<br>userdel a             删除a用户<br>userdel -r a<br>*<em>删除a用户并且删除a的家目录和邮件目录(<em>强烈建议使用这个)</em></em></p>
+<p><strong>U 修改用户</strong><br>su              切换当前登录用户<br>   su - a      完全切换，不继承上一个用户的环境变量，即sbin目录下的命令用不了<br>   su   a      不完全切换，继承上一个用户的环境变量，可以用sbin目录下的命令</p>
+<h3 id="passwd-修改用户密码"><a href="#passwd-修改用户密码" class="headerlink" title="passwd          修改用户密码"></a>passwd          修改用户密码</h3><pre><code> passwd a              修改a用户密码
+ passwd -l a
+     临时关闭用户,或修改/etc/shadow第二个字段加*/!!
+ passwd -u a
+     释放临时关闭用户,或者删除/etc/passwd第二个字段的*/!!
+ usermod         修改用户信息
+    -u                      修改UID
+     sudo usermod -u 1004 u3
+       把u3用户的uid改为1004
+            ps: 这个uid可以不存在
+   -g                      修改GID
+      sudo usermod -g 1001 u3
+         把u3用户的gid改成1001
+            ps: 这个gid必须存在
+   -d                      修改家目录
+      sudo usermod -d /u1 u3
+          把u3用户的家目录改成/u1, 配置, 文件不会自动完成
+   -s                      指用bash
+   usermod -G u1 a            把a用户添加进u1用户组
+
+锁定用户密码 usermod -L，用户无法通过密码来登录，但是可以通过别的方式登录，比如ssh证书
+            解锁用户密码 usermod -U
+            设定账户过期日期 usermod -e &quot;2014-01-01&quot; &lt;name&gt;
+            清除账户过期日期 usermod -e &quot;&quot; &lt;username&gt;
+            设定账户的初始组 usermod -g &lt;group name&gt;
+            把用户添加进某个组或者某几个组 usermod -a -G g1,g2,g3 &lt;username&gt;
+            给用户改名 usermod -l &lt;new name&gt; &lt;current name&gt;</code></pre>
+<p>​    </p>
+<h3 id="sudo-授权"><a href="#sudo-授权" class="headerlink" title="sudo 授权"></a>sudo 授权</h3><pre><code>创建普通用户默认没有进行sudo授权, 所以登录不能使用sudo命令
+sudo 只能执行外部命令, 并且只能执行 secure_path 变量保存目录里的命令</code></pre>
+<p><strong>授权流程:</strong><br>                切换root登录(或者具有root权限的用户才能授权):<br>                    su root<br>                        或<br>                    sudo -i</p>
+<pre><code>            修改sudo配置
+                vim /etc/sudoers
+                    或
+                visudo
+
+            加入授权用户到配置文件
+                tom ALL=(ALL:ALL) ALL   在93行左右
+
+              给tom用户sudo授权
+
+                %tom ALL=(ALL:ALL) ALL
+                    给tom用户组sudo授权</code></pre>
+<p>​<br><strong>授权单个权限</strong><br>​         sudo 权限的表示格式<br>​          用户名 机器名=(目标用户名)  命令列表<br>​        soul    ALL=(root)             /bin/ls,/bin/cat</p>
+<p>   给用户u2分配权限,一部分命令不需要输入密码,一部分命令需要输入密码,可以分开几行来书写<br>        u2 ALL=(root)   NOPASSWD: /bin/cat<br>        u2 ALL=(root)   /bin/mkdir</p>
+<p><a href="https://imgchr.com/i/aUvWz6"><img src="https://s1.ax1x.com/2020/08/03/aUvWz6.png" alt="aUvWz6.png"></a></p>
+<h2 id="3-组管理-PPP5-PPP6"><a href="#3-组管理-PPP5-PPP6" class="headerlink" title="3.组管理(PPP5, PPP6)"></a>3.组管理(PPP5, PPP6)</h2><pre><code>    相关配置文件
+
+        /etc/group
+        /etc/gshadow
+
+        vim /etc/group
+            第一列：组名
+            第二列：密码，x代表密码在/etc/gshadow
+            第三列：gid
+            第四列：代表属于这个组的用户名
+
+        vim /etc/gshadow
+            第一列：组名
+            第二列：密码
+            第三列：组管理员
+            第四列：组成员
+
+    相关命令
+
+        groupadd                添加一新用户组
+            sudo groupadd g3    创建一个组g3
+        groupdel                删除一用户组
+            sudo groupdel g3    删除用户组g3
+                ps: 不能删除一个基本组, 要先删除这个用户, 才能删除这个用户的基本组
+        groupmod                修改用户组信息
+            sudo groupmod a1 -g 1003     把a1的gid修改为1003
+        gpasswd                 修改用户组密码
+            gpasswd a1          修改a1的组密码
+        gpasswd -a a root       把a用户放进root用户组
+        gpasswd -A a root       把a用户作为root用户组的管理员
+        gpasswd -A a,b root     把a, b用户作为root用户组的管理员
+        gpasswd -A &quot;&quot; root      清空root组的管理员
+        gpasswd -d a root       把a用户从root用户组里删除
+        gpasswd -M u1,u2 g1     把u1,u2用户添加到g1组里面
+        newgrp root             把当前用户临时添加进root用户组，重新登录失效
+        id                      显示用户的ID和组ID
+
+       -------------------------------------------------------------------------------
+        tips: 组管理可以同时存在多个, 但是只有root有权限取设置组管理员
+                用命令添加组管理员的话, 会覆盖, 可以手动取修改文件/etc/gshadow
+            组管理可以添加和删除组员
+            组管理员可以删除其他的组管理员, 只是删除这个组管理员的普通成员身份, 还是具有管理员的权限
+            组管理员可以把自己从这个组里面删除
+       -------------------------------------------------------------------------------
+
+手工创建用户
+
+    第一步：在/etc/passwd添加一行信息
+        bean:x:1003:1003::/home/bean:/bin/bash
+    第二步：修改/etc/shadow的信息
+        复制当前的普通用户那一行， 再进行相对应的修改
+    第三步：在/etc/group添加组的信息
+        bean:x:1003:
+    第四步：在/etc/gshadow添加组的密码信息
+        bean:!::
+    第五步：创建家目录
+        mkdir /home/bean
+    第六步：把用户的环境变量文件复制到家目录
+        cp /etc/skel/.bash* /home/bean
+        chown bean:bean /home/bean/ -R
+        chmod 700 /home/bean/ -R
+    第七步：创建用户的邮件文件
+        touch /var/mail/bean
+        chown bean:bean /var/mail/bean
+        chmod 660 /var/mail/bean</code></pre>
+<p>============================================================================</p>
+<h1 id="二、Linux权限"><a href="#二、Linux权限" class="headerlink" title="二、Linux权限"></a>二、Linux权限</h1><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line">ls -hl &#x2F;tmp&#x2F;readme.txt</span><br><span class="line">-   rw-        r--        r--     1 root root 4383 2011-03-01 01:37 readme.txt所属用户权限u 所属用户组权限g  其它人权限o</span><br><span class="line">                u   &lt;-- user    代表文件的所有者的权限</span><br><span class="line">                g   &lt;-- group   代表文件所属组的权限</span><br><span class="line">                o   &lt;-- other   代表的是其他用户的权限</span><br><span class="line">    </span><br><span class="line">        r                           read 读权限</span><br><span class="line">            针对文件夹，具有r权限，就代表具有对这个文件夹进行列表的权限</span><br><span class="line">            针对文件，具有r权限，就代表具有读取这个文件的内容的权限</span><br><span class="line">    </span><br><span class="line">        w                           write 写权限</span><br><span class="line">            针对文件夹，具有w权限，代表具有他能在此文件夹里创建修改等操作</span><br><span class="line">            针对文件，具有w权限，代表具有修改此文件内容的权限</span><br><span class="line">    </span><br><span class="line">        x                           execute 执行权限</span><br><span class="line">            针对文件夹，具有x权限，代表可以切换到此文件夹</span><br><span class="line">            针对文件，具有x权限，代表可以运行它，文件必须是可执行或脚本等</span><br></pre></td></tr></table></figure>
+<pre><code>二进制转八进制：
+   8421
+    000     0       ---
+    001     1       --x
+    010     2       -w-
+    011     3       -wx
+    100     4       r--
+    101     5       r-x
+    110     6       rw-
+    111     7       rwx
+
+    rwx, r-x, r-x
+    421  401  401
+    7    5      5</code></pre>
+<h2 id="chmod-PPP9-修改权限的命令"><a href="#chmod-PPP9-修改权限的命令" class="headerlink" title="chmod(PPP9)                         修改权限的命令"></a>chmod(PPP9)                         修改权限的命令</h2><pre><code>    chmod u+x,g+r,o-r file
+    chmod u=rwx,g=rw,o=r file   rwx rw- r--
+    chmod 755 file              rwx r-x r-x
+    chmod 755 dirs -R           dirs目录下面所有文件的权限修改为755
+    权限判断的顺序
+        先判断是否是文件的所有人，如果是，则执行所属人的权限后结束，
+        如果不是所有人，则判断是否所属组（可以是主组也可以是辅助组），如果是，则执行所属组的权限后结束，
+        如果不是则执行其他人的权限后结束。</code></pre>
+<hr>
+<pre><code>    公开的文件夹, 不要乱加权限, 给的最大权限不要超过755, 其他用户加w权限要谨慎
+        就算给其他用户只给了3的权限, 别人也能进来修改文件强制保存,
+        把文件变成别人的</code></pre>
+<hr>
+<h2 id="chown-修改文件用户所属"><a href="#chown-修改文件用户所属" class="headerlink" title="chown                           修改文件用户所属"></a>chown                           修改文件用户所属</h2><pre><code>    必须具有root权限才能修改
+    sudo chown tom file               修改file文件所属用户为tom
+    sudo chown :tom file              修改file文件所属组为tom
+    sudo chown tom:jack file          修改file文件的所属用户为tom,所属用户组为jack
+    sudo chown jack.root dirs -R      修改dirs目录下面所有文件的所属用户为jack，所属用户组为root
+
+-------------------------------------------------------------</code></pre>
+<h2 id="umask-默认创建文件或文件夹权限掩码"><a href="#umask-默认创建文件或文件夹权限掩码" class="headerlink" title="umask                           默认创建文件或文件夹权限掩码"></a>umask                           默认创建文件或文件夹权限掩码</h2><pre><code>    管理员默认umask为022
+    普通用户默认umask为002
+
+    普通用户默认创建文件夹权限是777,而掩码设置为002,则要减去掩码，默认创建文件夹权限则变成775
+    普通用户默认创建文件权限是666，而掩码设置为002,则减去掩码，默认创建文件权限为664
+
+    root默认创建文件夹权限是777,而掩码设置为022,则要减去掩码，默认创建文件夹权限则变成755
+    root默认创建文件权限是666，而掩码设置为022,则减去掩码，默认创建文件权限为644
+
+    默认权限与掩码进行异或, 得出真实创建文件或文件夹的权限
+    影响创建文件或文件夹的默认权限
+    修改只是临时，只影响当前进程
+
+    umask       查看当前权限掩码
+        0777 111 111 111        异或
+        0002 000 000 010
+             111 111 101
+            异或： 相同为0, 不同为1
+
+    umask 0077  修改当前权限掩码
+
+-------------------------------------------------------------</code></pre>
+<h2 id="特权位"><a href="#特权位" class="headerlink" title="特权位"></a>特权位</h2><p>针对命令文件，设定setuid、setgid<br>命令文件设定setuid、setgid<br>没加特权位之前，命令运行的时候所采用的身份是运行者的身份<br>添加了特权位之后，命令运行的时候采用的身份不再是运行者的身份，而是命令本身的所属者<br>例：passwd 文件</p>
+<p>ls -al /usr/bin/passwd</p>
+<p><img src="https://s1.ax1x.com/2020/08/03/aUxpwQ.png" alt="aUxpwQ.png"></p>
+<p>针对目录设定setgid</p>
+<p>设定了组的特权位后，在该文件夹下创建子文件或子目录，它们自动继承文件夹的所属组的身份,子目录会继承目录的特权位</p>
+<pre><code>    chmod u+s/g+s  file         给file设置特权位
+    chmod u-s/g-s  file         给file取消特权位
+
+    例: tom用户指定mary可以在tom目录下创建文件
+        adduser  tom
+         adduser  mary
+        mkdir /test/{tom,mary} -p
+        sudo chown tom:tom /test/tom -R
+        sudo chown mary:mary /test/mary -R
+        sudo chmod 700 /test/{tom,mary} -R
+        sudo cp /usr/bin/touch /test/mary/tomCreate
+        sudo chown tom:tom /test/mary/tomCreate
+        sudo chmod 755 /test/mary/tomCreate
+        sudo chmod u+s /test/mary/tomCreate
+
+        su - mary
+            /test/mary/tomCreate /test/tom/mary.file
+            su -  
+          su - tom 
+           -rw-rw-r-- 1 tom  mary 0 12月  9 21:40 mary.file
+
+            查看新创建的文件的所有者和所属组是谁,会看到所属组为mary
+
+针对目录的特权位
+    只能对目录设置组特权,
+    任何用户在此目录创建文件的所属用户组为目录的所属用户组(root用户也不行)
+        组特权为只能管理到他的下面一级， 更里面的文件夹不能管理到
+-------------------------------------------------------------</code></pre>
+<h2 id="粘贴位-sticky"><a href="#粘贴位-sticky" class="headerlink" title="粘贴位(sticky)"></a>粘贴位(sticky)</h2><p>防止其它用户删除文件，针对其它用户，管理员和本人可以删除，针对目录有效，文件没有用</p>
+<pre><code>    chmod o+t dirs              给dirs目录设置粘贴位
+
+    例：
+        cd /
+        ls -l查看tmp目录具有的权限
+        创建文件/tmp/uplooking.txt
+        chmod 777 /tmp/uplooking.txt
+        su - tom
+        rm /tmp/uplooking.txt 看是否可以？
+        exit
+        sudo chmod o-t /tmp
+
+        su - tom
+        rm /tmp/uplooking.txt 看是否可以？
+
+        sudo chmod o+t /tmp
+        想想中间的原理是什么？</code></pre>
+<hr>
+<pre><code>两个特殊权限都是在x位上，为了区分权限，如果在某一位有x权限，对应的特殊权限就是小写的，
+    如果没有x权限，对应的特殊权限就是大写的，sS, tT
+   chmod u-x tmp/
+   ll tmp -d
+    drwSrwxrwt.  16 root root 4096 12月  9 21:55 tmp</code></pre>
+<hr>
+<pre><code>-------------------------------------------------------------
+基本权限只能表示三类权限，如果对权限的需求超过三种，那么基本权限就无法满足需要了，
+这个时候可以使用扩展的权限，请参考拓展部分内容。
+
+-------------------------------------------------------------</code></pre>
+<h2 id="文件特殊属性"><a href="#文件特殊属性" class="headerlink" title="文件特殊属性"></a>文件特殊属性</h2><pre><code>    lsattr                      查看文件特殊属性
+
+    chattr                      添加或修改文件特殊属性
+
+        sudo chattr +i file          添加i属性，管理员也不得更改
+        sudo chattr +a file          只能追加内容，不得修改内容，如果有i属性，先取消i,a属性才有用
+        sudo chattr -i/-a file       取消文件特殊属性
+
+    例:
+        touch /tmp/uplooking.txt
+        chmod 777 /tmp/uplooking.txt
+        sudo chattr +i /tmp/uplooking
+        vim /tmp/uplooking 看各种保存是否能成功（&gt;, &gt;&gt;）
+        sudo chattr +a /tmp/uplooking 看是否能成功？
+        sudo chattr -i /tmp/uplooking
+        sudo chattr +a /tmp/uplooking 看是否能成功？
+        vim /tmp/uplooking 编辑文件，各种保存看是否能成功,
+            且文件中并没有提示这是一个只读文件
+        echo &quot;hello world&quot; &gt;&gt; /tmp/uplooking 看是否能成功
+
+    PPP10 -&gt; PPP16</code></pre>
+<p>===============================================================================</p>
+<h1 id="三、环境变量、命令别名与命令历史"><a href="#三、环境变量、命令别名与命令历史" class="headerlink" title="三、环境变量、命令别名与命令历史"></a>三、环境变量、命令别名与命令历史</h1><h2 id="env"><a href="#env" class="headerlink" title="env"></a>env</h2><p>显示当前shell定义的环境变量，包括当前用户的环境变量</p>
+<h2 id="set"><a href="#set" class="headerlink" title="set"></a>set</h2><p>显示当前shell定义的私有变量，包括用户环境变量,按变量名称排序</p>
+<h2 id="export"><a href="#export" class="headerlink" title="export"></a>export</h2><p>显示当前导出成用户变量shell变量，并显示变量的属性，按变量名称排序</p>
+<pre><code>用户环境变量相关配置文件
+    路径：/home/用户名/  或  /root/
+
+    .bash_history               用户退出登录之后记录之前的历史命令，logout后才会把当前命令历史添加到此文件
+    .bash_logout                用户退出登录时执行的代码，前提是logout退出或su切换用户用exit或logout才会生效
+    .bash_profile               用户的环境变量常规设定的地方,用户登录时执行
+    .bashrc                     命令别名的设定地方，打开终端时执行
+
+全局环境变量相关配置文件
+
+    /etc/bashrc                 和上述一样，只不过这是全局，所有用户都影响
+    /etc/profile
+
+    source /etc/profile         立即生效对/etc/profile文件的修改
+    . /etc/profile              功能同上
+
+
+命令历史
+
+    history                     查看当前用户的历史命令
+
+        !!                      重复执行上一条命令
+        !a                      重复执行上一条以a为首的命令
+        !100                    重复执行第100条命令
+        !$                      获取上一条命令的参数，多用于获取路径
+
+    history 10                  显示最后10条命令历史
+    history -w  b.history       把当前命令历史写到b.history文件中
+    history -r  a.history       把a.history的命令读到命令历史列表中
+    history -c                  清除命令历史
+
+
+命令别名
+
+    alias                       列出目前所有的别名设置
+    alias ls=&#39;ls -l&#39;            创建ls -l的别名为ls, 只在本shell生效，而且重启终端即失效
+    unalias ls                  释放ls -l的别名
+
+    echo &quot;set -o vi&quot;  &gt;&gt; ~/.bashrc
+
+    用命令别名去快速的挂载和取消挂载
+    alias ms=&#39;sudo mount 192.168.0.183:/ /guazai&#39;
+    alias ums=&#39;sudo umount /guazai&#39;
+
+    . ~/.bashrc
+
+    永久生效就把alias创建加入到~/.bashrc里即可</code></pre>
+<h2 id="bash快捷键"><a href="#bash快捷键" class="headerlink" title="bash快捷键"></a>bash快捷键</h2><pre><code>    tab                         一次补完命令行或文件名，二次可以列出所有匹配的选择
+    ctrl+c                      结束当前的任务
+    ctrl+a                      跳到行首</code></pre>
+</div><ul class="post-copyright"><li><strong>本文标题：</strong><a href="https://yc6.cool/2020/08/03/linux用户管理/">linux用户管理</a></li><li><strong>本文作者：</strong><a href="https://yc6.cool">yichen</a></li><li><strong>本文链接：</strong><a href="https://yc6.cool/2020/08/03/linux用户管理/">https://yc6.cool/2020/08/03/linux用户管理/</a></li><li><strong>版权声明：</strong><span>本博客所有文章除特别声明外，均采用 <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/deed.zh" rel="external nofollow" target="_blank">CC BY-NC-SA 4.0</a> 许可协议。转载请注明出处！</span></li></ul><div><div class="recommend-post"><span class="is-size-6 has-text-grey has-mr-7"># 相关文章</span><br><span>  1.<a class="is-size-6" href="/2020/08/05/sed_%E7%9A%84%E5%B8%B8%E7%94%A8%E5%91%BD%E4%BB%A4%E7%9A%84%E4%BD%BF%E7%94%A8/" target="_blank">sed的常用命令的使用</a><br></span><span>  2.<a class="is-size-6" href="/2020/08/04/linux%E4%B8%8B%E7%9A%84%E7%9B%AE%E5%BD%95%E4%BB%8B%E7%BB%8D/" target="_blank">linux根下目录文件介绍</a><br></span><span>  3.<a class="is-size-6" href="/2020/08/03/vim%E4%BD%BF%E7%94%A8/" target="_blank">vim的使用</a><br></span><span>  4.<a class="is-size-6" href="/2020/08/03/linux%E4%B8%AD%E4%B8%A2%E5%A4%B1grub.cfg%E5%BC%95%E5%AF%BC%E6%96%87%E4%BB%B6%E4%BF%AE%E5%A4%8D/" target="_blank">linux中丢失grub.cfg引导文件修复</a><br></span><span>  5.<a class="is-size-6" href="/2020/08/03/linux%E7%B3%BB%E7%BB%9F%E7%AE%A1%E7%90%86/" target="_blank">linux系统管理</a><br></span><span>  6.<a class="is-size-6" href="/2020/08/03/linux%E7%A3%81%E7%9B%98%E7%AE%A1%E7%90%86/" target="_blank">linux磁盘管理</a><br></span><span>  7.<a class="is-size-6" href="/2020/08/03/%E7%A3%81%E7%9B%98%E5%91%BD%E4%BB%A4lvm/" target="_blank">磁盘命令lvm</a><br></span><span>  8.<a class="is-size-6" href="/2020/08/03/linux%E8%BD%AF%E4%BB%B6%E7%AE%A1%E7%90%86/" target="_blank">linux软件管理</a><br></span></div><div class="recommend-post"><span class="is-size-6 has-text-grey has-mr-7"># 推荐文章</span><br><span>  1.<a class="is-size-6" href="/2020/08/04/docker%E4%BD%BF%E7%94%A8/" target="_blank">docker的使用</a><br></span><span>  2.<a class="is-size-6" href="/2020/08/03/mysql%E5%9F%BA%E7%A1%80/" target="_blank">mysql基础</a><br></span><span>  3.<a class="is-size-6" href="/2020/08/03/nginx%E5%9F%BA%E7%A1%80/" target="_blank">nginx基础</a><br></span><span>  4.<a class="is-size-6" href="/2020/08/04/python3%E5%9F%BA%E7%A1%80%E7%9F%A5%E8%AF%86%E9%87%8D%E7%82%B9/" target="_blank">python3基础知识重点</a><br></span><span>  5.<a class="is-size-6" href="/2023/05/07/Linux%E6%9C%8D%E5%8A%A1%E5%99%A8%E7%B3%BB%E7%BB%9F%E7%9B%91%E6%8E%A7/" target="_blank">Prometheus监控linux</a><br></span><span>  6.<a class="is-size-6" href="/2023/05/10/Prometheus%E4%BD%BF%E7%94%A8%E9%82%AE%E7%AE%B1%E6%8E%A5%E6%94%B6%E5%91%8A%E8%AD%A6%E9%80%9A%E7%9F%A5/" target="_blank">Prometheus使用邮件接收告警通知</a><br></span></div></div><link rel="stylesheet" href="https://cdnjs.loli.net/ajax/libs/social-share.js/1.0.16/css/share.min.css"><div class="social-share"></div><script src="https://cdnjs.loli.net/ajax/libs/social-share.js/1.0.16/js/social-share.min.js"></script></article></div><div class="card"><div class="card-content"><h3 class="menu-label has-text-centered">喜欢这篇文章？打赏一下作者吧</h3><div class="buttons is-centered"><a class="button is-info donate"><span class="icon is-small"><i class="fab fa-alipay"></i></span><span>支付宝</span><span class="qrcode"><img src="https://yichenxiu.com/tupian/tubiao/alipay1.jpg" alt="支付宝"></span></a><a class="button is-success donate"><span class="icon is-small"><i class="fab fa-weixin"></i></span><span>微信</span><span class="qrcode"><img src="https://i.328888.xyz/2023/03/05/dZXCk.jpeg" alt="微信"></span></a></div></div></div><nav class="post-navigation mt-4 level is-mobile"><div class="level-start"><a class="article-nav-prev level level-item link-muted" href="/2020/08/03/%E5%B8%B8%E8%A7%81%E7%BD%91%E7%BB%9C%E5%B7%A5%E5%85%B7%E7%9A%84%E4%BD%BF%E7%94%A8/"><i class="level-item fas fa-chevron-left"></i><span class="level-item">常见网络工具的使用</span></a></div><div class="level-end"><a class="article-nav-next level level-item link-muted" href="/2020/08/03/linux%E5%9F%BA%E7%A1%80/"><span class="level-item">linux基础</span><i class="level-item fas fa-chevron-right"></i></a></div></nav><div class="card"><div class="card-content"><h3 class="title is-5">评论</h3><div id="comment-container"></div><link rel="stylesheet" href="https://cdnjs.loli.net/ajax/libs/gitalk/1.6.0/gitalk.css"><script> $.getScript('/js/gitalk.min.js', function () { 
+            var gitalk = new Gitalk({
+            language:'zh-CN',
+            id: '1938164b450d00696d62e0a383956299',
+            repo: 'issue_database',
+            owner: 'zhi666',
+            clientID: '1b861f81e9a79ee6028d',
+            clientSecret: 'cc629aff090aa9c60d5e13ddf7fcfce14f00a478',
+            admin: ["zhi666"],
+            createIssueManually: true,
+            distractionFreeMode: true,
+            perPage: 10,
+            pagerDirection: 'last',
+            proxy: 'https://cors-anywhere.azm.workers.dev/https://github.com/login/oauth/access_token',
+            
+            enableHotKey: true,
+            isLocked: false
+        })
+        gitalk.render('comment-container')});</script></div></div></div><div class="column column-left is-4-tablet is-4-desktop is-4-widescreen  order-1 is-sticky"><!--!--><div class="card widget"><div class="card-content"><nav class="level"><div class="level-item has-text-centered flex-shrink-1"><div><figure class="image is-128x128 mx-auto mb-2"><img class="is-rounded" src="/img/toudong.jpg" alt="逸尘秀"></figure><p class="title is-size-4 is-block line-height-inherit">逸尘秀</p><p class="is-size-6 is-block">只此一生 ， 必须快乐 ！</p><p class="is-size-6 is-flex justify-content-center"><i class="fas fa-map-marker-alt mr-1"></i><span>深圳</span></p></div></div></nav><nav class="level is-mobile"><div class="level-item has-text-centered is-marginless"><div><p class="heading">文章</p><a href="/archives"><p class="title">136</p></a></div></div><div class="level-item has-text-centered is-marginless"><div><p class="heading">分类</p><a href="/categories"><p class="title">17</p></a></div></div><div class="level-item has-text-centered is-marginless"><div><p class="heading">标签</p><a href="/tags"><p class="title">55</p></a></div></div></nav><div class="level"><a class="level-item button is-primary is-rounded" href="https://weibo.com/u/6155656382" target="_blank" rel="noopener">关注我</a></div><div class="level is-mobile"><a class="level-item button is-transparent is-white is-marginless" target="_blank" rel="noopener" title="Github" href="https://github.com/zhi666"><i class="fab fa-github"></i></a><a class="level-item button is-transparent is-white is-marginless" target="_blank" rel="noopener" title="Weibo" href="https://weibo.com/u/6155656382"><i class="fab fa-weibo"></i></a><a class="level-item button is-transparent is-white is-marginless" target="_blank" rel="noopener" title="Email" href="mailto:1378373724@qq.com"><i class="fa fa-envelope"></i></a><a class="level-item button is-transparent is-white is-marginless" target="_blank" rel="noopener" title="Next" href="https://zhi666.github.io/remove.io"><i class="fab fa-dribbble"></i></a><a class="level-item button is-transparent is-white is-marginless" target="_blank" rel="noopener" title="RSS" href="/atom.xml"><i class="fas fa-rss"></i></a></div><div><hr><p id="hitokoto">:D 一言句子获取中...</p><script type="text/javascript" defer>function getYiyan(){
+                                $.getJSON("https://v1.hitokoto.cn/", function (data) {
+                                if(data){
+                                    $('#hitokoto').html("");
+                                    $('#hitokoto').append("<strong style='color: #3273dc;'>"+data.hitokoto+"</strong>"+
+                                    "<p>"+"来源《"+data.from+"》</p><p>提供者-"+data.creator+"</p>");
+                                }});}
+                                $(function (){getYiyan();$('#hitokoto').click(function(){getYiyan();})});</script></div></div></div><div class="card widget"><div class="card-content"><h3 class="menu-label">最新评论</h3><span class="body_hot_comment">加载中，最新评论有1分钟缓存...</span></div></div><div class="card widget"><div class="card-content"><h3 class="menu-label">最新文章</h3><article class="media"><div class="media-content size-small"><p><time dateTime="2023-11-01T02:25:44.578Z">2023-11-01</time></p><p class="title is-6"><a class="link-muted" href="/2023/11/01/selenlium%E6%89%B9%E9%87%8F%E6%B7%BB%E5%8A%A0dns%E5%9F%9F%E5%90%8D/">批量添加dns域名解析</a></p><p class="is-uppercase"><i class="fas fa-folder-open has-text-grey"> </i><a class="link-muted" href="/categories/python/">python</a></p></div></article><article class="media"><div class="media-content size-small"><p><time dateTime="2023-05-17T01:45:36.000Z">2023-05-17</time></p><p class="title is-6"><a class="link-muted" href="/2023/05/17/Kubernetes%E9%AB%98%E5%8F%AF%E7%94%A8%E9%9B%86%E7%BE%A4%E4%BA%8C%E8%BF%9B%E5%88%B6%E9%83%A8%E7%BD%B2/">Kubernetes高可用集群二进制部署</a></p><p class="is-uppercase"><i class="fas fa-folder-open has-text-grey"> </i><a class="link-muted" href="/categories/linux3/">linux3</a></p></div></article><article class="media"><div class="media-content size-small"><p><time dateTime="2023-05-10T06:25:36.000Z">2023-05-10</time></p><p class="title is-6"><a class="link-muted" href="/2023/05/10/Prometheus%E4%BD%BF%E7%94%A8%E6%89%8B%E6%9C%BA%E7%94%B5%E8%AF%9D_%E7%9F%AD%E4%BF%A1%E6%8E%A5%E6%94%B6%E5%91%8A%E8%AD%A6%E9%80%9A%E7%9F%A5/">Prometheus使用手机电话_短信接收告警通知</a></p><p class="is-uppercase"><i class="fas fa-folder-open has-text-grey"> </i><a class="link-muted" href="/categories/linux2/">linux2</a></p></div></article><article class="media"><div class="media-content size-small"><p><time dateTime="2023-05-10T06:22:36.000Z">2023-05-10</time></p><p class="title is-6"><a class="link-muted" href="/2023/05/10/Prometheus%E4%BD%BF%E7%94%A8%E4%BC%81%E4%B8%9A%E5%BE%AE%E4%BF%A1%E6%8E%A5%E6%94%B6%E5%91%8A%E8%AD%A6%E9%80%9A%E7%9F%A5/">Prometheus使用企业微信接收告警通知</a></p><p class="is-uppercase"><i class="fas fa-folder-open has-text-grey"> </i><a class="link-muted" href="/categories/linux2/">linux2</a></p></div></article><article class="media"><div class="media-content size-small"><p><time dateTime="2023-05-10T06:20:36.000Z">2023-05-10</time></p><p class="title is-6"><a class="link-muted" href="/2023/05/10/Prometheus%E4%BD%BF%E7%94%A8%E4%BC%81%E4%B8%9A%E9%92%89%E9%92%89%E5%91%8A%E8%AD%A6%E9%80%9A%E7%9F%A5/">Prometheus使用企业钉钉接收告警通知</a></p><p class="is-uppercase"><i class="fas fa-folder-open has-text-grey"> </i><a class="link-muted" href="/categories/linux2/">linux2</a></p></div></article></div></div><div class="card widget"><div class="card-content"><div class="menu"><h3 class="menu-label">分类</h3><ul class="menu-list"><li><a class="level is-mobile is-marginless" href="/categories/English/"><span class="level-start"><span class="level-item">English</span></span><span class="level-end"><span class="level-item tag">1</span></span></a></li><li><a class="level is-mobile is-marginless" href="/categories/HTML/"><span class="level-start"><span class="level-item">HTML</span></span><span class="level-end"><span class="level-item tag">4</span></span></a></li><li><a class="level is-mobile is-marginless" href="/categories/JS/"><span class="level-start"><span class="level-item">JS</span></span><span class="level-end"><span class="level-item tag">2</span></span></a></li><li><a class="level is-mobile is-marginless" href="/categories/html/"><span class="level-start"><span class="level-item">html</span></span><span class="level-end"><span class="level-item tag">1</span></span></a></li><li><a class="level is-mobile is-marginless" href="/categories/linux1/"><span class="level-start"><span class="level-item">linux1</span></span><span class="level-end"><span class="level-item tag">15</span></span></a></li><li><a class="level is-mobile is-marginless" href="/categories/linux2/"><span class="level-start"><span class="level-item">linux2</span></span><span class="level-end"><span class="level-item tag">33</span></span></a></li><li><a class="level is-mobile is-marginless" href="/categories/linux3/"><span class="level-start"><span class="level-item">linux3</span></span><span class="level-end"><span class="level-item tag">27</span></span></a></li><li><a class="level is-mobile is-marginless" href="/categories/python/"><span class="level-start"><span class="level-item">python</span></span><span class="level-end"><span class="level-item tag">12</span></span></a></li><li><a class="level is-mobile is-marginless" href="/categories/web/"><span class="level-start"><span class="level-item">web</span></span><span class="level-end"><span class="level-item tag">1</span></span></a></li><li><a class="level is-mobile is-marginless" href="/categories/work/"><span class="level-start"><span class="level-item">work</span></span><span class="level-end"><span class="level-item tag">7</span></span></a></li><a class="level is-mobile is-marginless" href="/categories/"><span class="level-start"><span class="level-item">查看全部&gt;&gt;</span></span></a></ul></div></div></div><div class="card widget"><div class="card-content"><div class="menu"><h3 class="menu-label">归档</h3><ul class="menu-list"><li><a class="level is-mobile is-marginless" href="/archives/2023/11/"><span class="level-start"><span class="level-item">十一月 2023</span></span><span class="level-end"><span class="level-item tag">5</span></span></a></li><li><a class="level is-mobile is-marginless" href="/archives/2023/05/"><span class="level-start"><span class="level-item">五月 2023</span></span><span class="level-end"><span class="level-item tag">13</span></span></a></li><li><a class="level is-mobile is-marginless" href="/archives/2023/04/"><span class="level-start"><span class="level-item">四月 2023</span></span><span class="level-end"><span class="level-item tag">2</span></span></a></li><li><a class="level is-mobile is-marginless" href="/archives/2023/02/"><span class="level-start"><span class="level-item">二月 2023</span></span><span class="level-end"><span class="level-item tag">1</span></span></a></li><li><a class="level is-mobile is-marginless" href="/archives/2022/06/"><span class="level-start"><span class="level-item">六月 2022</span></span><span class="level-end"><span class="level-item tag">3</span></span></a></li><a class="level is-mobile is-marginless" href="/archives/"><span class="level-start"><span class="level-item">查看全部&gt;&gt;</span></span></a></ul></div></div></div><div class="card widget"><div class="card-content"><div class="menu"><h3 class="menu-label">标签</h3><div class="field is-grouped is-grouped-multiline"><div class="control"><a class="tags has-addons" href="/tags/linux/"><span class="tag">linux</span><span class="tag is-grey-lightest">18</span></a></div><div class="control"><a class="tags has-addons" href="/tags/docker/"><span class="tag">docker</span><span class="tag is-grey-lightest">16</span></a></div><div class="control"><a class="tags has-addons" href="/tags/Prometheus/"><span class="tag">Prometheus</span><span class="tag is-grey-lightest">14</span></a></div><div class="control"><a class="tags has-addons" href="/tags/html/"><span class="tag">html</span><span class="tag is-grey-lightest">14</span></a></div><div class="control"><a class="tags has-addons" href="/tags/python/"><span class="tag">python</span><span class="tag is-grey-lightest">12</span></a></div><div class="control"><a class="tags has-addons" href="/tags/web/"><span class="tag">web</span><span class="tag is-grey-lightest">12</span></a></div><div class="control"><a class="tags has-addons" href="/tags/nginx/"><span class="tag">nginx</span><span class="tag is-grey-lightest">9</span></a></div><div class="control"><a class="tags has-addons" href="/tags/mysql/"><span class="tag">mysql</span><span class="tag is-grey-lightest">7</span></a></div><div class="control"><a class="tags has-addons" href="/tags/%E5%AE%B9%E5%99%A8/"><span class="tag">容器</span><span class="tag is-grey-lightest">7</span></a></div><div class="control"><a class="tags has-addons" href="/tags/%E6%95%B0%E6%8D%AE%E5%BA%93/"><span class="tag">数据库</span><span class="tag is-grey-lightest">7</span></a></div><div class="control"><a class="tags has-addons" href="/tags/%E7%A7%91%E5%AD%A6%E4%B8%8A%E7%BD%91/"><span class="tag">科学上网</span><span class="tag is-grey-lightest">6</span></a></div><div class="control"><a class="tags has-addons" href="/tags/work/"><span class="tag">work</span><span class="tag is-grey-lightest">5</span></a></div><div class="control"><a class="tags has-addons" href="/tags/%E8%87%AA%E5%8A%A8%E5%8C%96/"><span class="tag">自动化</span><span class="tag is-grey-lightest">5</span></a></div><div class="control"><a class="tags has-addons" href="/tags/%E5%8D%9A%E5%AE%A2/"><span class="tag">博客</span><span class="tag is-grey-lightest">4</span></a></div><div class="control"><a class="tags has-addons" href="/tags/%E5%B7%A5%E4%BD%9C/"><span class="tag">工作</span><span class="tag is-grey-lightest">4</span></a></div><div class="control"><a class="tags has-addons" href="/tags/%E5%B7%A5%E5%85%B7/"><span class="tag">工具</span><span class="tag is-grey-lightest">4</span></a></div><div class="control"><a class="tags has-addons" href="/tags/ssl/"><span class="tag">ssl</span><span class="tag is-grey-lightest">3</span></a></div><div class="control"><a class="tags has-addons" href="/tags/%E6%96%87%E4%BB%B6%E7%B3%BB%E7%BB%9F/"><span class="tag">文件系统</span><span class="tag is-grey-lightest">3</span></a></div><div class="control"><a class="tags has-addons" href="/tags/%E6%97%A5%E5%BF%97/"><span class="tag">日志</span><span class="tag is-grey-lightest">3</span></a></div><div class="control"><a class="tags has-addons" href="/tags/%E6%97%A5%E5%BF%97%E5%8A%A0%E5%AF%86/"><span class="tag">日志加密</span><span class="tag is-grey-lightest">3</span></a></div></div><div class="field is-grouped is-grouped-multiline"><a class="tags has-addons" href="/tags/"><span class="tag">查看全部&gt;&gt;</span></a></div></div></div></div><div class="card widget"><div class="card-content"><div class="menu"><h3 class="menu-label">订阅更新</h3><form action="https://feedburner.google.com/fb/a/mailverify" method="post" target="popupwindow" onsubmit="window.open(&#039;https://feedburner.google.com/fb/a/mailverify?uri=zhi666FeedsId&#039;,&#039;popupwindow&#039;,&#039;scrollbars=yes,width=550,height=520&#039;);return true"><input type="hidden" value="zhi666FeedsId" name="uri"><input type="hidden" name="loc" value="en_US"><div class="field has-addons"><div class="control has-icons-left is-expanded"><input class="input" name="email" type="email" placeholder="Email"><span class="icon is-small is-left"><i class="fas fa-envelope"></i></span></div><div class="control"><input class="button is-primary" type="submit" value="订阅"></div></div><p class="help">输入邮箱开始订阅，更博后邮件通知！</p></form></div></div></div></div></div></div></section><footer class="footer"><div class="container"><div class="level"><div class="level-start"><a class="footer-logo is-block mb-2" href="/"><img src="/img/logo.png" alt="逸尘秀" height="28"></a><p class="size-small"><span>&copy; 2023 yichen</span>  Powered by <a href="https://hexo.io/" target="_blank">Hexo</a> &amp; <a href="https://github.com/ppoffice/hexo-theme-icarus" target="_blank">Icarus</a>,Modify by <a href="https://github.com/removeif/hexo-theme-amazing" target="_blank">removeif</a> <br><span>© 版权说明：[本网站所有内容均收集于互联网或自己创作,<br />&nbsp;&nbsp;&nbsp;&nbsp;方便于网友与自己学习交流，如有侵权，请<a href="/message" target="_blank">留言</a>，立即处理]<br /></span><span><span id="statistic-times">loading...</span><script>function createTime(time) {
+            var n = new Date(time);
+            now.setTime(now.getTime() + 250),
+                days = (now - n) / 1e3 / 60 / 60 / 24,
+                dnum = Math.floor(days),
+                hours = (now - n) / 1e3 / 60 / 60 - 24 * dnum,
+                hnum = Math.floor(hours),
+            1 == String(hnum).length && (hnum = "0" + hnum),
+                minutes = (now - n) / 1e3 / 60 - 1440 * dnum - 60 * hnum,
+                mnum = Math.floor(minutes),
+            1 == String(mnum).length && (mnum = "0" + mnum),
+                seconds = (now - n) / 1e3 - 86400 * dnum - 3600 * hnum - 60 * mnum,
+                snum = Math.round(seconds),
+            1 == String(snum).length && (snum = "0" + snum),
+                document.getElementById("statistic-times").innerHTML = "❤️本站自 <strong>"+time.split(" ")[0].replace(/\//g,".")+"</strong> 已运行 <strong>" + dnum + "</strong> 天 <strong>" + hnum + "</strong> 小时 <strong>" + mnum + "</strong> 分 <strong>" + snum + "</strong> 秒！❤️";
+        }var now = new Date();setInterval("createTime('2020/08/02 00:00:00')", 250,"");</script><br></span><div class="size-small"><span>❤️感谢 <strong><span id="busuanzi_value_site_uv">99+</span></strong> 小伙伴的 <strong><span id="busuanzi_value_site_pv">99+</span></strong> 次光临！❤️</span></div></p></div><div class="level-end"><div class="field has-addons"><p class="control"><a class="button is-transparent is-large" target="_blank" rel="noopener" title="Creative Commons" href="https://creativecommons.org/"><i class="fab fa-creative-commons"></i></a></p><p class="control"><a class="button is-transparent is-large" target="_blank" rel="noopener" title="Attribution 4.0 International" href="https://creativecommons.org/licenses/by/4.0/"><i class="fab fa-creative-commons-by"></i></a></p><p class="control"><a class="button is-transparent is-large" target="_blank" rel="noopener" title="Download on GitHub" href="https://github.com/zhi666"><i class="fab fa-github"></i></a></p></div><div class="sideMusic"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/aplayer/dist/APlayer.min.css"><script src="/js/APlayer.min.js"></script><script src="https://cdn.jsdelivr.net/npm/meting@2/dist/Meting.min.js"></script><meting-js style="width: auto;height: 2000px;" server="netease" type="playlist" id="2364053447" theme="#2980b9" loop="all" autoplay="false" order="list" storageName="aplayer-setting" lrctype="0" list-max-height="400px" fixed="true"></meting-js></div></div></div></div></footer><script src="https://cdnjs.loli.net/ajax/libs/moment.js/2.22.2/moment-with-locales.min.js"></script><script>moment.locale("zh-CN");</script><script>var IcarusThemeSettings = {
+            site: {
+                url: 'https://yc6.cool',
+                external_link: {"enable":true,"exclude":[]}
+            },
+            article: {
+                highlight: {
+                    clipboard: true,
+                    fold: 'unfolded'
+                }
+            }
+        };</script><script src="https://cdnjs.loli.net/ajax/libs/clipboard.js/2.0.4/clipboard.min.js" defer></script><script src="/js/animation.js"></script><a id="back-to-top" title="回到顶端" href="javascript:;"><i class="fas fa-chevron-up"></i></a><script src="/js/back-to-top.js" defer></script><!--!--><!--!--><script src="https://cdnjs.loli.net/ajax/libs/lightgallery/1.6.12/js/lightgallery-all.min.js" defer></script><script src="https://cdnjs.loli.net/ajax/libs/justifiedGallery/3.7.0/js/jquery.justifiedGallery.min.js" defer></script><!--!--><!--!--><!--!--><script src="/js/toc.js" defer></script><script src="/js/main.js" defer></script><script>$.getScript('/js/comment-issue-data.js',function(){loadIssueData('1b861f81e9a79ee6028d','cc629aff090aa9c60d5e13ddf7fcfce14f00a478','zhi666','issue_database',false);})</script><link rel="stylesheet" href="/css/insight.css"><div class="searchbox ins-search"><div class="searchbox-container ins-search-container"><div class="searchbox-input-wrapper"><input class="searchbox-input ins-search-input" type="text" placeholder="想要查找什么..."><span class="searchbox-close ins-close ins-selectable"><i class="fa fa-times-circle"></i></span></div><div class="searchbox-result-wrapper ins-section-wrapper"><div class="ins-section-container"></div></div></div></div><script>(function (window) {
+            var INSIGHT_CONFIG = {
+                TRANSLATION: {
+                    POSTS: '文章',
+                    PAGES: '页面',
+                    CATEGORIES: '分类',
+                    TAGS: '标签',
+                    UNTITLED: '(无标题)',
+                },
+                CONTENT_URL: '/content.json',
+            };
+            window.INSIGHT_CONFIG = INSIGHT_CONFIG;
+        })(window);</script><script src="/js/insight.js" defer></script></body></html>

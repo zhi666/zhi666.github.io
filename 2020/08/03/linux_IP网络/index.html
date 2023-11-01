@@ -1,0 +1,343 @@
+<!doctype html>
+<html lang="zh"><head><meta charset="utf-8"><meta name="generator" content="Hexo 4.2.0"><meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"><meta><meta name="keywords" content="[object Object]"><meta name="description" content="IP分类(IPV4/IPV6)(不必记住)32位的二进制数字, IP地址由网络地址和主机地址组合
+
+特殊的IP地址:
+    32位全为0的IP地址, 代表本机本身
+    32位全为1的IP地址, 代表全网广播地址
+    10 172 192开头的地址为内网IP(局域网地址)
+    127开头的地址代表回环地址， 代表本机本身， 用于测试使用"><meta name="author" content="zhi666"><title>linux_IP网络 - 逸尘秀</title><meta description="IP分类(IPV4&amp;#x2F;IPV6)(不必记住)32位的二进制数字, IP地址由网络地址和主机地址组合  特殊的IP地址:     32位全为0的IP地址, 代表本机本身     32位全为1的IP地址, 代表全网广播地址     10 172 192开头的地址为内网IP(局域网地址)     127开头的地址代表回环地址， 代表本机本身， 用于测试使用"><meta property="og:type" content="article"><meta property="og:title" content="linux_IP网络"><meta property="og:url" content="https://yc6.cool/2020/08/03/linux_IP%E7%BD%91%E7%BB%9C/"><meta property="og:site_name" content="逸尘秀"><meta property="og:description" content="IP分类(IPV4&amp;#x2F;IPV6)(不必记住)32位的二进制数字, IP地址由网络地址和主机地址组合  特殊的IP地址:     32位全为0的IP地址, 代表本机本身     32位全为1的IP地址, 代表全网广播地址     10 172 192开头的地址为内网IP(局域网地址)     127开头的地址代表回环地址， 代表本机本身， 用于测试使用"><meta property="og:locale" content="zh_CN"><meta property="article:published_time" content="2020-08-03T07:50:42.000Z"><meta property="article:modified_time" content="2023-11-01T02:25:44.564Z"><meta property="article:author" content="zhi666"><meta property="article:tag" content="linux"><meta property="twitter:card" content="summary"><meta property="twitter:image" content="https://yc6.cool/img/avatar.png"><script type="application/ld+json">{"@context":"https://schema.org","@type":"BlogPosting","mainEntityOfPage":{"@type":"WebPage","@id":"https://yc6.cool/2020/08/03/linux_IP%E7%BD%91%E7%BB%9C/"},"headline":"linux_IP网络","image":["https://yc6.cool/img/avatar.png"],"datePublished":"2020-08-03T07:50:42.000Z","dateModified":"2023-11-01T02:25:44.564Z","author":{"@type":"Person","name":"zhi666"},"description":"IP分类(IPV4&#x2F;IPV6)(不必记住)32位的二进制数字, IP地址由网络地址和主机地址组合  特殊的IP地址:     32位全为0的IP地址, 代表本机本身     32位全为1的IP地址, 代表全网广播地址     10 172 192开头的地址为内网IP(局域网地址)     127开头的地址代表回环地址， 代表本机本身， 用于测试使用"}</script><link rel="alternative" href="/atom.xml" title="逸尘秀" type="application/atom+xml"><link rel="icon" href="/img/favicon.png"><link rel="stylesheet" href="https://cdnjs.loli.net/ajax/libs/font-awesome/5.12.0/css/all.min.css"><link rel="stylesheet" href="https://fonts.loli.net/css?family=Ubuntu:400,600|Source+Code+Pro|Monda:300,300italic,400,400italic,700,700italic|Roboto Slab:300,300italic,400,400italic,700,700italic|Microsoft YaHei:300,300italic,400,400italic,700,700italic|PT Mono:300,300italic,400,400italic,700,700italic&amp;amp;subset=latin,latin-ext|Inconsolata|Itim|Lobster.css"><link rel="stylesheet" href="https://cdnjs.loli.net/ajax/libs/highlight.js/9.12.0/styles/atom-one-dark.min.css"><style>body>.footer,body>.navbar,body>.section{opacity:0}</style><!--!--><!--!--><script src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js" defer></script><link rel="stylesheet" href="https://cdnjs.loli.net/ajax/libs/lightgallery/1.6.12/css/lightgallery.min.css"><link rel="stylesheet" href="https://cdnjs.loli.net/ajax/libs/justifiedGallery/3.7.0/css/justifiedGallery.min.css"><!--!--><!--!--><script src="https://cdnjs.loli.net/ajax/libs/pace/1.0.2/pace.min.js"></script><link rel="stylesheet" href="/css/style.css"><script src="https://cdnjs.loli.net/ajax/libs/jquery/3.3.1/jquery.min.js"></script><script src="/js/globalUtils.js"></script><link rel="stylesheet" href="/live2d/waifu.css"><script type="text/javascript" async src="/live2d/autoload.js"></script></head><body class="is-3-column has-navbar-fixed-top"><nav class="navbar navbar-main is-fixed-top"><div class="container"><div class="navbar-brand justify-content-center"><a class="navbar-item navbar-logo" href="/"><img src="/img/logo.png" alt="逸尘秀" height="28"></a></div><div class="navbar-menu"><div class="navbar-start"><a class="navbar-item" href="/">首页</a><a class="navbar-item" href="/archives">归档</a><a class="navbar-item" href="/categories">分类</a><a class="navbar-item" href="/tags">标签</a><a class="navbar-item" href="/media">影音</a><a class="navbar-item" href="/album">相册</a><a class="navbar-item" href="/friend">友链</a><a class="navbar-item" href="/self-talking">碎碎念</a><a class="navbar-item" href="/message">留言</a><a class="navbar-item" href="/about">关于</a></div><div class="navbar-end"><a class="navbar-item" target="_blank" rel="noopener" title="Download on GitHub" href="https://github.com/zhi666"><i class="fab fa-github"></i></a><a class="navbar-item search" title="搜索" href="javascript:;"><i class="fas fa-search"></i></a><a class="navbar-item" id="night-nav" title="Night Mode" href="javascript:;"><i class="fas fa-moon" id="night-icon"></i></a></div></div></div></nav><script type="text/javascript" src="/js/theme-setting.js"></script><section class="section"><div class="container"><div class="columns"><div class="column order-2 column-main is-8-tablet is-8-desktop is-9-widescreen"><div class="card"><article class="card-content article" role="article"><div class="article-meta size-small is-uppercase level is-mobile"><div class="level-left"><i class="far fa-calendar-plus"> </i>2020-08-03  <a class="commentCountImg" href="/2020/08/03/linux_IP%E7%BD%91%E7%BB%9C/#comment-container"><span class="display-none-class">6d497a218a2e5a499503863f7a8f24ad</span><i class="far fa-comment-dots"></i> <span class="commentCount" id="6d497a218a2e5a499503863f7a8f24ad">99+</span>  </a><span class="level-item"><i class="far fa-clock"> </i>20 分钟  <i class="fas fa-pencil-alt"> </i>3.0 k</span><span class="level-item" id="busuanzi_container_page_pv"><i class="far fa-eye"></i>&nbsp;&nbsp;<span id="busuanzi_value_page_pv">0</span>次访问</span></div></div><h1 class="title is-3 is-size-4-mobile">linux_IP网络</h1><div class="content"><h1 id="IP分类-IPV4-IPV6-不必记住"><a href="#IP分类-IPV4-IPV6-不必记住" class="headerlink" title="IP分类(IPV4/IPV6)(不必记住)"></a>IP分类(IPV4/IPV6)(不必记住)</h1><pre><code>32位的二进制数字, IP地址由网络地址和主机地址组合
+
+特殊的IP地址:
+    32位全为0的IP地址, 代表本机本身
+    32位全为1的IP地址, 代表全网广播地址
+    10 172 192开头的地址为内网IP(局域网地址)
+    127开头的地址代表回环地址， 代表本机本身， 用于测试使用</code></pre>
+<a id="more"></a>
+
+<pre><code>A   前8位为网络地址， 后24位为主机地址
+    首位固定为0, 范围:1-127
+    00000000.00000000.00000000.00000001 － 01111111.11111111.11111111.11111111
+    0.0.0.1         －  127.255.255.255
+
+B   前16位为网络地址，后16位为主机地址, 2的7次方128开始
+    开头两位固定为10, 范围128-191
+    10000000.00000000.00000000.00000000 － 10111111.11111111.11111111.11111111
+    128.0.0.0       －  191.255.255.255
+    默认子网掩码:255.255.255.0
+
+C   前24位为网络地址，后8位为主机地址, 2的7次方 + 2的6次方 192开始
+    开头两位固定为110, 范围192-223
+    11000000.00000000.00000000.00000000 － 11011111.11111111.11111111.11111111
+    192.0.0.0   －  223.255.255.255
+    默认子网掩码:255.255.255.0
+
+D   组播地址, 用于视频会议, 2的7次方 + 2的6次方 + 2的5次方 224开始
+    11100000.00000000.00000000.00000000 － 11101111.11111111.11111111.11111111
+    224.0.0.0   －  239.255.255.255
+
+E   军方使用和预留, 2的7次方 + 2的6次方 + 2的5次方 + 2的4次方 240开始
+    11110000.00000000.00000000.00000000 － 11110111.11111111.11111111.11111111
+    240.0.0.0   －  247.255.255.255</code></pre>
+<h2 id="特殊的网络地址"><a href="#特殊的网络地址" class="headerlink" title="特殊的网络地址"></a>特殊的网络地址</h2><p>   0.0.0.0                      &lt;—-  代表全世界所有的地址<br>   127.0.0.1 - 127.255.255.255  &lt;—-  本地环回地址，测试本机tcp/ip是否正常<br>   –某些集群软件也会使用环回地址(lvs集群的DR（direct routing)架构会使用环回地址)</p>
+<h2 id="记住三个私网IP段"><a href="#记住三个私网IP段" class="headerlink" title="记住三个私网IP段"></a>记住三个私网IP段</h2><pre><code>A类: 10.0.0.0    - 10.255.255.255
+B类: 172.16.0.0  - 172.31.255.255
+C类: 192.168.0.0 - 192.168.255.255</code></pre>
+<p>网络通信的类型<br>    点对点，平常大多数的网络行为都是点对点，比如发邮件，从http下载文件，从DNS服务器获取域名解析<br>    组播（点对多点），集群<br>    广播（点对多点），dhcp获取地址，ARP (Address resolution protocol)</p>
+<p>子网掩码是如何影响对网络号的确定。(PPP1)</p>
+<pre><code>192.168.224.11/24
+55 - 32 = 23
+11000000.10101000.00000000.10110111 IP
+11111111.11111111.11111111.00000000 掩码
+11111111.11111111.11111111.10110111
+    二进制的与运算, 只有位值都为0时才取0，否则取1
+
+子网掩码把一个IP地址分成两部分，左边是网络部分，右边是主机部分
+网络号  ：10.1.1.0   (主机部分的二进制位全部为0）
+广播地址：10.1.1.255 (主机部分的二进制位全部为1）
+可用的IP地址数量：主机部分除开网络号和广播地址，剩下的IP都是可用IP
+
+---&gt; 网络号相同就是同一个网段，同一个网段的节点在默认配置下可以直接通信 &lt;---</code></pre>
+<p>两个节点能通信的条件<br>    物理上连通（线缆符合规格，交换机加电）<br>    有正确的路由，也就是知道到达目的地的路<br>    有通信的权限（防火墙）</p>
+<h2 id="网络故障排查"><a href="#网络故障排查" class="headerlink" title="网络故障排查"></a>网络故障排查</h2><pre><code>1. 检查网线
+    a.  查看物理网口的黄灯是否闪烁
+        不闪烁， 检查物理网线是否正常
+    b.  闪烁
+        操作的网卡
+            sudo mii-tool 网卡设备名(PPP2)
+                显示link ok代表网卡连接情况正常
+                这里的正常是网卡能正常使用， 并不是可以正常上网
+2. 查看右上角的网络连接状态， 查看有线网络是否有连接
+3. 查看当前使用的网卡是否是停用状态
+    ip a s
+        查看enp0s25后面的信息，查看mtu 1500 qdisc pfifo_fast state
+        后面的字母是UP还是DOWN
+    如果是DOWN， 执行命令:
+        sudo ip l set enp0s25 up
+        停用网卡： sudo ip l set enp0s25 down
+4. 查看当前使用的网卡是否有ip
+    ip a s
+        如果没有的话就可以临时获取ip
+            删除当前的ip
+                sudo ip a del 192.168.0.*/24 dev enp0s25
+
+            添加一个临时ip
+                sudo ip a add 192.168.0.*/24 dev enp0s25
+            ip的获取方式是动态的时候, 随机获取一个动态ip
+                sudo dhclient enp0s25
+                或者点右上角, 断开再连接
+                或者重新插拔网线
+        也可以设置永久
+            在设置之前先把防火墙和selinux关闭
+                sudo iptables -F        &lt;-- 清空放火墙的规则
+                sudo setenforce 0       &lt;-- 暂时关闭selinux
+                getenforce              &lt;-- 查看selinux的状态
+                    Permissive/disable  表示已经关闭
+            永久设置selinux
+                sudo vim /etc/selinux/config
+                    SELINUX=disable     &lt;-- 修改这个值</code></pre>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br></pre></td><td class="code"><pre><span class="line">sudo vim &#x2F;etc&#x2F;sysconfig&#x2F;network-scripts&#x2F;ifcfg-enp2s0</span><br><span class="line">    </span><br><span class="line">DEVICE&#x3D;&quot;enp0s25&quot;            &lt;-- 网卡名字</span><br><span class="line">BOOTPROTO&#x3D;static            &lt;-- 使用固定IP</span><br><span class="line">NM_CONTROLLED&#x3D;no            &lt;-- 不受networkmanager控制</span><br><span class="line">ONBOOT&#x3D;yes                  &lt;-- 自动启动</span><br><span class="line">TYPE&#x3D;Ethernet</span><br><span class="line">IPADDR&#x3D;192.168.0.200        &lt;-- IP 地址</span><br><span class="line">NETMASK&#x3D;255.255.255.0       &lt;-- 子网掩码</span><br><span class="line">GATEWAY&#x3D;192.168.0.1         &lt;-- 默认网关</span><br><span class="line">DNS1&#x3D;223.5.5.5              &lt;-- DNS1 服务器</span><br><span class="line">DNS2&#x3D;192.168.0.1            &lt;-- DNS2 服务器</span><br><span class="line">    </span><br><span class="line">sudo systemctl restart network  &lt;-- 重启网卡</span><br><span class="line">    </span><br><span class="line">sudo systemctl status network   &lt;-- 查看network的服务状态</span><br><span class="line">sudo systemctl stop network     &lt;-- 停止network的服务</span><br><span class="line">sudo systemctl start network    &lt;-- 启动network的服务</span><br></pre></td></tr></table></figure>
+<pre><code>5.  检查网关(路由器)连接情况
+    使用ping命令检查网关连接情况
+        ping -c 1 192.168.0.1
+
+    外网IP ping不通, 先检查路由表, 再检查网关的配置
+
+    查看路由表
+        route -n
+            查看UG标识行里有没有网关IP
+
+    网关ping不通, 检查本机到网关的线路问题及网关
+        sudo ip r add default via 192.168.0.1        &lt;-- 添加默认路由
+        sudo ip r del default                        &lt;-- 删除默认路由
+
+6.  检查DNS解析情况
+    ping -c 3 www.baidu.com
+
+    域名ping不通, 外网IP能ping通, DNS设置问题
+
+    设置DNS: sudo vim /etc/resolv.conf
+        添加以下内容:(顶行)
+            nameserver 223.5.5.5
+
+        只有前三个DNS能起作用
+
+# vi /etc/sysconfig/network
+NETWORKING=yes
+    如果这里设置为no，那么本机的网络将可能不可用,网络服务不能中场重启</code></pre>
+<h2 id="上互联网的三要素：IP-Gateway-DNS"><a href="#上互联网的三要素：IP-Gateway-DNS" class="headerlink" title="上互联网的三要素：IP, Gateway, DNS"></a>上互联网的三要素：IP, Gateway, DNS</h2><p>/etc/resolv.conf        &lt;– 域名服务器信息会记录在这个文件中</p>
+<pre><code>hosts文件(本地DNS缓存)
+    格式: IP地址 域名
+
+主机名(局域网使用)(PPP3)
+    查看主机名
+        hostname
+
+    1. 修改主机名 /etc/hostname
+        临时修改主机名
+            hostname 主机名
+
+        永久修改主机名
+            hostnamectl set-hostname 主机名
+      或者  hostnamectl set-hostname --static look.com
+    2. 修改主机名一定要修改/etc/hosts文件, 将回环地址与主机名对应关系
+        不修改/etc/hosts，会出现图形界面启动速度慢</code></pre>
+<p><img src="https://s1.ax1x.com/2020/08/03/aaPElR.png" alt="aaPElR.png"></p>
+<h2 id="ssh-安全的链接方式，可用于远程登录，传输文件，创建加密隧道等"><a href="#ssh-安全的链接方式，可用于远程登录，传输文件，创建加密隧道等" class="headerlink" title="ssh, 安全的链接方式，可用于远程登录，传输文件，创建加密隧道等"></a>ssh, 安全的链接方式，可用于远程登录，传输文件，创建加密隧道等</h2><p><strong>1. 普通远程登录 ssh username@ip(PPP4)</strong><br>(1)ssh 的证书登录方式的配置(PPP8)</p>
+<p> 客户端创建一组密码钥匙 ssh-keygen -t rsa -b 4096<br>  -rw——- 1 root root 3239 May  9 14:35 id_rsa     &lt;– 私钥<br>  -rw-r–r– 1 root root  736 May  9 14:35 id_rsa.pub &lt;– 公钥</p>
+<p>(2) 把客户端所创建的公钥id_rsa.pub传给服务器<br>(3) 服务器把客户端的公钥添加到文件$HOME/.ssh/authorized_keys 中，具体如下：<br>假设想允许客户端以用户u9的身份登录到服务端，那么就把公钥放到<br>/home/u9/.ssh/authorized_keys 里面。<br>如果想允许客户端以用户root的身份登录到服务端，那么就把公钥放到<br>/root/.ssh/authorized_keys 里面。</p>
+<p><strong>2. 远程登录并允许运行远程机上的图形软件</strong><br>ssh -X username@hostname<br>ssh -Y username@hostname<br>vncviewr</p>
+<p><strong>3. scp(PPP5) 远程传输文件</strong><br>传输bash文件 到 192.168.224.12服务器下的/tmp/目录下，并命名newbash<br>scp /bin/bash <a href="mailto:&#114;&#x6f;&#111;&#116;&#x40;&#49;&#57;&#50;&#x2e;&#x31;&#54;&#x38;&#46;&#x32;&#50;&#52;&#46;&#x31;&#50;">&#114;&#x6f;&#111;&#116;&#x40;&#49;&#57;&#50;&#x2e;&#x31;&#54;&#x38;&#46;&#x32;&#50;&#52;&#46;&#x31;&#50;</a>:/tmp/newbash</p>
+<p>scp <a href="mailto:&#114;&#x6f;&#111;&#116;&#x40;&#x31;&#x39;&#50;&#46;&#x31;&#x36;&#x38;&#46;&#50;&#50;&#x34;&#46;&#49;&#x32;">&#114;&#x6f;&#111;&#116;&#x40;&#x31;&#x39;&#50;&#46;&#x31;&#x36;&#x38;&#46;&#50;&#50;&#x34;&#46;&#49;&#x32;</a>:/some/where/file /local/dir/file</p>
+<p><strong>远程复制文件夹</strong><br>scp -r <a href="mailto:&#x72;&#x6f;&#x6f;&#x74;&#64;&#49;&#x39;&#50;&#x2e;&#x31;&#x36;&#x38;&#46;&#x30;&#x2e;&#49;&#x38;&#x32;">&#x72;&#x6f;&#x6f;&#x74;&#64;&#49;&#x39;&#50;&#x2e;&#x31;&#x36;&#x38;&#46;&#x30;&#x2e;&#49;&#x38;&#x32;</a>:/some/where/dirname /local/dir/file</p>
+<pre><code>4. 把一个字符串传输到远程，并在远程存储为文件
+    echo &quot;hello &quot; | ssh user@host.com &quot;cat &gt; /somewhere/file&quot;
+
+5. 修改远程机的帐号密码
+    必须登录对方的root账户才可以去修改， 可以试下uplooking用户的结果
+    echo &quot;123&quot; | ssh root@192.168.0.1 &quot;passwd --stdin u1&quot;</code></pre>
+<h2 id="nc-远程传输命令-PPP6"><a href="#nc-远程传输命令-PPP6" class="headerlink" title="nc 远程传输命令(PPP6)"></a>nc 远程传输命令(PPP6)</h2><pre><code>yum install -y nc telnet nmap
+
+网络点对点聊天
+    服务端: (谁先运行谁是服务端)
+        nc -l 本机的IP地址 端口号
+            端口号建议的取值范围: 1024 ~ 65535
+        例: nc -l 192.168.224.11 8000
+
+    客户端:
+        nc 服务器IP 服务器设置的端口号
+        例: nc 192.168.224.11 8000
+例二：
+  A机器   nc  -l 8000
+
+  B机器   telnet 192.168.224.11 8000
+  在B机器上telnet A机器此端口，如下显示表示B机器可以访问A机器此端口
+  telnet 192.168.224.11   8000
+  Trying 192.168.224.11...
+Connected to 192.168.224.11.
+Escape character is &#39;^]&#39;.</code></pre>
+<p>​<br>​<br>    1. 文件传输<br>        A作为服务器, A发给B<br>            A: Server(假设服务器的ip为192.168.224.11)</p>
+<pre><code>            nc -l 192.168.224.11 8000 &lt; file.txt
+
+        B: Client
+
+            nc 192.168.224.11 8000 &lt; file.txt
+
+2. 目录传输
+    A: Server
+
+        tar -cvzf – dir_name1 di_rname2 | nc -l 192.168.224.11 8000
+
+    B: Client
+
+        nc 192.168.224.11 8000 | tar -xvzf -</code></pre>
+<h2 id="rsync"><a href="#rsync" class="headerlink" title="rsync"></a>rsync</h2><pre><code>1. rsync是什么
+    它是一个远程数据同步工具，它在同步文件的同时，可通过LAN/WAN快速同步多台主机间的文件。
+    Rsync使用所谓的“rsync算法”来使本地和远程两个主机之间的文件达到同步，
+    这个算法只传送两个文件的不同部分，而不是每次都整份传送，因此速度相当快。
+    可以保持原来文件的权限、时间、软硬链接等附加信息。
+2. 配置文件
+    rsync的主要有以下三个配置文件，后面两个文件默认不存在，请手动创建它。
+        /etc/rsyncd.conf(主配置文件)
+        /etc/rsyncd.secrets(密码文件)
+        /etc/rsyncd.motd(rsync服务器信息)
+
+3. Rsync选项
+    -v      # verbose 详细模式输出
+    -q      # quiet 精简输出模式。
+    -a      # archive归档模式，以递归的方式传输文件，并保持所有文件属性，（-a = -rlptgoD）
+    -l      # links 保留链接
+    --delete        # 删除那些DST（目标主机）中SRC（源主机）没有的文件
+    --exclude       # 指定不传输的文件
+
+    rsync  -av  /test/  /backup
+        本机上的同步，把/test目录下的内容同步到/backup目录下(包括隐藏文件)
+
+    rsync  -av  /test/  u1@192.168.224.12:/backup
+        把本地的/test目录内容，同步到远端192.168.224.12的/backup目录下
+
+    rsync  -av  u1@192.168.224.12:/backup/  /backup/
+        把远端192.168.224.12的/backup目录下的内容同步到本地的/backup目录
+
+        (注意：路径写法的区别！原目录后面加不加/也影响你的同步目录；
+            没加/，就是将目录本身同步过去；
+            目录加/，就是将目录里的内容同步过去!)
+
+    rsync  -av  /test/  --exclude=no.txt  /backup
+        将/test目录下除了no.txt其他内容都同步到/backup目录下
+
+    rsync  -a  --delete  /backup/  /test/
+        如果同步后，源主机中有文件删除了，这时要想目标主机与源主机的内容保持一致，可以使用--delete参数进行同步
+
+    PPP7</code></pre>
+<h2 id="nfs网络共享服务-PPP9"><a href="#nfs网络共享服务-PPP9" class="headerlink" title="nfs网络共享服务(PPP9)"></a>nfs网络共享服务(PPP9)</h2><pre><code>查看当前挂载情况: mount
+    或者 df -h
+
+安装：
+    sudo yum -y install nfs-utils
+
+共享端:
+    使用sudo打开/etc/exports文件(NFS服务配置文件)
+        追加共享配置信息(必须顶行):
+            /test  *(ro)
+
+    常用参数：
+    ro                  &lt;-- 只读
+    rw                  &lt;-- 读写
+    no_root_squash      &lt;-- 不映射uid 0 的请求到匿名用户
+    root_squash         &lt;-- 把来自uid 0 的请求映射到匿名用户（默认启用）
+    all_squash          &lt;-- 映射所有uid 和 uid 的请求到匿名用户/组（65534）
+    no_all_squash       &lt;-- 和all_squash相反（默认启用）
+    anonuid             &lt;-- 自定义匿名用户的uid
+    anongid             &lt;-- 自定义匿名组的gid
+    sync                &lt;-- 同步写入
+    async               &lt;-- 异步写入
+
+提示：在启动NFS SERVER之前，首先要启动RPC服务（即portmap服务，下同）否则NFS SERVER就无法向RPC服务区注册，另外，如果RPC服务重新启动，原来已经注册好的NFS端口数据就会全部丢失。因此此时RPC服务管理的NFS程序也要重新启动以重新向RPC注册。特别注意：一般修改NFS配置文档后，是不需要重启NFS的，直接在命令执行/etc/init.d/nfs  reload或exportfs –rv即可使修改的/etc/exports生效。
+
+    /test 192.168.224.12(ro)  代表只有192.168.224.12这条可以访问
+ /test 192.168.224.12(rw,sync)  表示可以同步写入
+    sudo exportfs -arv    使修改配置文件的内容生效
+    sudo systemctl restart rpcbind
+    sudo systemctl restart nfs
+    sudo iptables -F
+
+
+root访问端:
+    查看服务器共享了什么:
+        showmount -e 192.168.224.11
+            /root *
+            显示共享目录信息代表服务器没有问题
+
+    挂载服务器共享目录:
+        sudo mount 192.168.224.11:/test /mnt
+
+    进入/mnt目录即可看到共享内容, 可以像操作本地目录一样操作网络共享目录
+
+    操作完成取消挂载:
+        sudo umount /mnt
+
+        强制取消挂载: sudo umount -l /mnt</code></pre>
+</div><ul class="post-copyright"><li><strong>本文标题：</strong><a href="https://yc6.cool/2020/08/03/linux_IP网络/">linux_IP网络</a></li><li><strong>本文作者：</strong><a href="https://yc6.cool">yichen</a></li><li><strong>本文链接：</strong><a href="https://yc6.cool/2020/08/03/linux_IP网络/">https://yc6.cool/2020/08/03/linux_IP网络/</a></li><li><strong>版权声明：</strong><span>本博客所有文章除特别声明外，均采用 <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/deed.zh" rel="external nofollow" target="_blank">CC BY-NC-SA 4.0</a> 许可协议。转载请注明出处！</span></li></ul><div><div class="recommend-post"><span class="is-size-6 has-text-grey has-mr-7"># 相关文章</span><br><span>  1.<a class="is-size-6" href="/2020/08/05/sed_%E7%9A%84%E5%B8%B8%E7%94%A8%E5%91%BD%E4%BB%A4%E7%9A%84%E4%BD%BF%E7%94%A8/" target="_blank">sed的常用命令的使用</a><br></span><span>  2.<a class="is-size-6" href="/2020/08/04/linux%E4%B8%8B%E7%9A%84%E7%9B%AE%E5%BD%95%E4%BB%8B%E7%BB%8D/" target="_blank">linux根下目录文件介绍</a><br></span><span>  3.<a class="is-size-6" href="/2020/08/03/vim%E4%BD%BF%E7%94%A8/" target="_blank">vim的使用</a><br></span><span>  4.<a class="is-size-6" href="/2020/08/03/linux%E4%B8%AD%E4%B8%A2%E5%A4%B1grub.cfg%E5%BC%95%E5%AF%BC%E6%96%87%E4%BB%B6%E4%BF%AE%E5%A4%8D/" target="_blank">linux中丢失grub.cfg引导文件修复</a><br></span><span>  5.<a class="is-size-6" href="/2020/08/03/linux%E7%B3%BB%E7%BB%9F%E7%AE%A1%E7%90%86/" target="_blank">linux系统管理</a><br></span><span>  6.<a class="is-size-6" href="/2020/08/03/linux%E7%A3%81%E7%9B%98%E7%AE%A1%E7%90%86/" target="_blank">linux磁盘管理</a><br></span><span>  7.<a class="is-size-6" href="/2020/08/03/%E7%A3%81%E7%9B%98%E5%91%BD%E4%BB%A4lvm/" target="_blank">磁盘命令lvm</a><br></span><span>  8.<a class="is-size-6" href="/2020/08/03/linux%E8%BD%AF%E4%BB%B6%E7%AE%A1%E7%90%86/" target="_blank">linux软件管理</a><br></span></div><div class="recommend-post"><span class="is-size-6 has-text-grey has-mr-7"># 推荐文章</span><br><span>  1.<a class="is-size-6" href="/2020/08/04/docker%E4%BD%BF%E7%94%A8/" target="_blank">docker的使用</a><br></span><span>  2.<a class="is-size-6" href="/2020/08/03/mysql%E5%9F%BA%E7%A1%80/" target="_blank">mysql基础</a><br></span><span>  3.<a class="is-size-6" href="/2020/08/03/nginx%E5%9F%BA%E7%A1%80/" target="_blank">nginx基础</a><br></span><span>  4.<a class="is-size-6" href="/2020/08/04/python3%E5%9F%BA%E7%A1%80%E7%9F%A5%E8%AF%86%E9%87%8D%E7%82%B9/" target="_blank">python3基础知识重点</a><br></span><span>  5.<a class="is-size-6" href="/2023/05/07/Linux%E6%9C%8D%E5%8A%A1%E5%99%A8%E7%B3%BB%E7%BB%9F%E7%9B%91%E6%8E%A7/" target="_blank">Prometheus监控linux</a><br></span><span>  6.<a class="is-size-6" href="/2023/05/10/Prometheus%E4%BD%BF%E7%94%A8%E9%82%AE%E7%AE%B1%E6%8E%A5%E6%94%B6%E5%91%8A%E8%AD%A6%E9%80%9A%E7%9F%A5/" target="_blank">Prometheus使用邮件接收告警通知</a><br></span></div></div><link rel="stylesheet" href="https://cdnjs.loli.net/ajax/libs/social-share.js/1.0.16/css/share.min.css"><div class="social-share"></div><script src="https://cdnjs.loli.net/ajax/libs/social-share.js/1.0.16/js/social-share.min.js"></script></article></div><div class="card"><div class="card-content"><h3 class="menu-label has-text-centered">喜欢这篇文章？打赏一下作者吧</h3><div class="buttons is-centered"><a class="button is-info donate"><span class="icon is-small"><i class="fab fa-alipay"></i></span><span>支付宝</span><span class="qrcode"><img src="https://yichenxiu.com/tupian/tubiao/alipay1.jpg" alt="支付宝"></span></a><a class="button is-success donate"><span class="icon is-small"><i class="fab fa-weixin"></i></span><span>微信</span><span class="qrcode"><img src="https://i.328888.xyz/2023/03/05/dZXCk.jpeg" alt="微信"></span></a></div></div></div><nav class="post-navigation mt-4 level is-mobile"><div class="level-start"><a class="article-nav-prev level level-item link-muted" href="/2020/08/03/linux%E8%BF%9B%E7%A8%8B%E7%AE%A1%E7%90%86/"><i class="level-item fas fa-chevron-left"></i><span class="level-item">linux进程管理</span></a></div><div class="level-end"><a class="article-nav-next level level-item link-muted" href="/2020/08/03/%E5%B8%B8%E8%A7%81%E7%BD%91%E7%BB%9C%E5%B7%A5%E5%85%B7%E7%9A%84%E4%BD%BF%E7%94%A8/"><span class="level-item">常见网络工具的使用</span><i class="level-item fas fa-chevron-right"></i></a></div></nav><div class="card"><div class="card-content"><h3 class="title is-5">评论</h3><div id="comment-container"></div><link rel="stylesheet" href="https://cdnjs.loli.net/ajax/libs/gitalk/1.6.0/gitalk.css"><script> $.getScript('/js/gitalk.min.js', function () { 
+            var gitalk = new Gitalk({
+            language:'zh-CN',
+            id: '6d497a218a2e5a499503863f7a8f24ad',
+            repo: 'issue_database',
+            owner: 'zhi666',
+            clientID: '1b861f81e9a79ee6028d',
+            clientSecret: 'cc629aff090aa9c60d5e13ddf7fcfce14f00a478',
+            admin: ["zhi666"],
+            createIssueManually: true,
+            distractionFreeMode: true,
+            perPage: 10,
+            pagerDirection: 'last',
+            proxy: 'https://cors-anywhere.azm.workers.dev/https://github.com/login/oauth/access_token',
+            
+            enableHotKey: true,
+            isLocked: false
+        })
+        gitalk.render('comment-container')});</script></div></div></div><div class="column column-left is-4-tablet is-4-desktop is-4-widescreen  order-1 is-sticky"><!--!--><div class="card widget"><div class="card-content"><nav class="level"><div class="level-item has-text-centered flex-shrink-1"><div><figure class="image is-128x128 mx-auto mb-2"><img class="is-rounded" src="/img/toudong.jpg" alt="逸尘秀"></figure><p class="title is-size-4 is-block line-height-inherit">逸尘秀</p><p class="is-size-6 is-block">只此一生 ， 必须快乐 ！</p><p class="is-size-6 is-flex justify-content-center"><i class="fas fa-map-marker-alt mr-1"></i><span>深圳</span></p></div></div></nav><nav class="level is-mobile"><div class="level-item has-text-centered is-marginless"><div><p class="heading">文章</p><a href="/archives"><p class="title">136</p></a></div></div><div class="level-item has-text-centered is-marginless"><div><p class="heading">分类</p><a href="/categories"><p class="title">17</p></a></div></div><div class="level-item has-text-centered is-marginless"><div><p class="heading">标签</p><a href="/tags"><p class="title">55</p></a></div></div></nav><div class="level"><a class="level-item button is-primary is-rounded" href="https://weibo.com/u/6155656382" target="_blank" rel="noopener">关注我</a></div><div class="level is-mobile"><a class="level-item button is-transparent is-white is-marginless" target="_blank" rel="noopener" title="Github" href="https://github.com/zhi666"><i class="fab fa-github"></i></a><a class="level-item button is-transparent is-white is-marginless" target="_blank" rel="noopener" title="Weibo" href="https://weibo.com/u/6155656382"><i class="fab fa-weibo"></i></a><a class="level-item button is-transparent is-white is-marginless" target="_blank" rel="noopener" title="Email" href="mailto:1378373724@qq.com"><i class="fa fa-envelope"></i></a><a class="level-item button is-transparent is-white is-marginless" target="_blank" rel="noopener" title="Next" href="https://zhi666.github.io/remove.io"><i class="fab fa-dribbble"></i></a><a class="level-item button is-transparent is-white is-marginless" target="_blank" rel="noopener" title="RSS" href="/atom.xml"><i class="fas fa-rss"></i></a></div><div><hr><p id="hitokoto">:D 一言句子获取中...</p><script type="text/javascript" defer>function getYiyan(){
+                                $.getJSON("https://v1.hitokoto.cn/", function (data) {
+                                if(data){
+                                    $('#hitokoto').html("");
+                                    $('#hitokoto').append("<strong style='color: #3273dc;'>"+data.hitokoto+"</strong>"+
+                                    "<p>"+"来源《"+data.from+"》</p><p>提供者-"+data.creator+"</p>");
+                                }});}
+                                $(function (){getYiyan();$('#hitokoto').click(function(){getYiyan();})});</script></div></div></div><div class="card widget"><div class="card-content"><h3 class="menu-label">最新评论</h3><span class="body_hot_comment">加载中，最新评论有1分钟缓存...</span></div></div><div class="card widget"><div class="card-content"><h3 class="menu-label">最新文章</h3><article class="media"><div class="media-content size-small"><p><time dateTime="2023-11-01T02:25:44.578Z">2023-11-01</time></p><p class="title is-6"><a class="link-muted" href="/2023/11/01/selenlium%E6%89%B9%E9%87%8F%E6%B7%BB%E5%8A%A0dns%E5%9F%9F%E5%90%8D/">批量添加dns域名解析</a></p><p class="is-uppercase"><i class="fas fa-folder-open has-text-grey"> </i><a class="link-muted" href="/categories/python/">python</a></p></div></article><article class="media"><div class="media-content size-small"><p><time dateTime="2023-05-17T01:45:36.000Z">2023-05-17</time></p><p class="title is-6"><a class="link-muted" href="/2023/05/17/Kubernetes%E9%AB%98%E5%8F%AF%E7%94%A8%E9%9B%86%E7%BE%A4%E4%BA%8C%E8%BF%9B%E5%88%B6%E9%83%A8%E7%BD%B2/">Kubernetes高可用集群二进制部署</a></p><p class="is-uppercase"><i class="fas fa-folder-open has-text-grey"> </i><a class="link-muted" href="/categories/linux3/">linux3</a></p></div></article><article class="media"><div class="media-content size-small"><p><time dateTime="2023-05-10T06:25:36.000Z">2023-05-10</time></p><p class="title is-6"><a class="link-muted" href="/2023/05/10/Prometheus%E4%BD%BF%E7%94%A8%E6%89%8B%E6%9C%BA%E7%94%B5%E8%AF%9D_%E7%9F%AD%E4%BF%A1%E6%8E%A5%E6%94%B6%E5%91%8A%E8%AD%A6%E9%80%9A%E7%9F%A5/">Prometheus使用手机电话_短信接收告警通知</a></p><p class="is-uppercase"><i class="fas fa-folder-open has-text-grey"> </i><a class="link-muted" href="/categories/linux2/">linux2</a></p></div></article><article class="media"><div class="media-content size-small"><p><time dateTime="2023-05-10T06:22:36.000Z">2023-05-10</time></p><p class="title is-6"><a class="link-muted" href="/2023/05/10/Prometheus%E4%BD%BF%E7%94%A8%E4%BC%81%E4%B8%9A%E5%BE%AE%E4%BF%A1%E6%8E%A5%E6%94%B6%E5%91%8A%E8%AD%A6%E9%80%9A%E7%9F%A5/">Prometheus使用企业微信接收告警通知</a></p><p class="is-uppercase"><i class="fas fa-folder-open has-text-grey"> </i><a class="link-muted" href="/categories/linux2/">linux2</a></p></div></article><article class="media"><div class="media-content size-small"><p><time dateTime="2023-05-10T06:20:36.000Z">2023-05-10</time></p><p class="title is-6"><a class="link-muted" href="/2023/05/10/Prometheus%E4%BD%BF%E7%94%A8%E4%BC%81%E4%B8%9A%E9%92%89%E9%92%89%E5%91%8A%E8%AD%A6%E9%80%9A%E7%9F%A5/">Prometheus使用企业钉钉接收告警通知</a></p><p class="is-uppercase"><i class="fas fa-folder-open has-text-grey"> </i><a class="link-muted" href="/categories/linux2/">linux2</a></p></div></article></div></div><div class="card widget"><div class="card-content"><div class="menu"><h3 class="menu-label">分类</h3><ul class="menu-list"><li><a class="level is-mobile is-marginless" href="/categories/English/"><span class="level-start"><span class="level-item">English</span></span><span class="level-end"><span class="level-item tag">1</span></span></a></li><li><a class="level is-mobile is-marginless" href="/categories/HTML/"><span class="level-start"><span class="level-item">HTML</span></span><span class="level-end"><span class="level-item tag">4</span></span></a></li><li><a class="level is-mobile is-marginless" href="/categories/JS/"><span class="level-start"><span class="level-item">JS</span></span><span class="level-end"><span class="level-item tag">2</span></span></a></li><li><a class="level is-mobile is-marginless" href="/categories/html/"><span class="level-start"><span class="level-item">html</span></span><span class="level-end"><span class="level-item tag">1</span></span></a></li><li><a class="level is-mobile is-marginless" href="/categories/linux1/"><span class="level-start"><span class="level-item">linux1</span></span><span class="level-end"><span class="level-item tag">15</span></span></a></li><li><a class="level is-mobile is-marginless" href="/categories/linux2/"><span class="level-start"><span class="level-item">linux2</span></span><span class="level-end"><span class="level-item tag">33</span></span></a></li><li><a class="level is-mobile is-marginless" href="/categories/linux3/"><span class="level-start"><span class="level-item">linux3</span></span><span class="level-end"><span class="level-item tag">27</span></span></a></li><li><a class="level is-mobile is-marginless" href="/categories/python/"><span class="level-start"><span class="level-item">python</span></span><span class="level-end"><span class="level-item tag">12</span></span></a></li><li><a class="level is-mobile is-marginless" href="/categories/web/"><span class="level-start"><span class="level-item">web</span></span><span class="level-end"><span class="level-item tag">1</span></span></a></li><li><a class="level is-mobile is-marginless" href="/categories/work/"><span class="level-start"><span class="level-item">work</span></span><span class="level-end"><span class="level-item tag">7</span></span></a></li><a class="level is-mobile is-marginless" href="/categories/"><span class="level-start"><span class="level-item">查看全部&gt;&gt;</span></span></a></ul></div></div></div><div class="card widget"><div class="card-content"><div class="menu"><h3 class="menu-label">归档</h3><ul class="menu-list"><li><a class="level is-mobile is-marginless" href="/archives/2023/11/"><span class="level-start"><span class="level-item">十一月 2023</span></span><span class="level-end"><span class="level-item tag">5</span></span></a></li><li><a class="level is-mobile is-marginless" href="/archives/2023/05/"><span class="level-start"><span class="level-item">五月 2023</span></span><span class="level-end"><span class="level-item tag">13</span></span></a></li><li><a class="level is-mobile is-marginless" href="/archives/2023/04/"><span class="level-start"><span class="level-item">四月 2023</span></span><span class="level-end"><span class="level-item tag">2</span></span></a></li><li><a class="level is-mobile is-marginless" href="/archives/2023/02/"><span class="level-start"><span class="level-item">二月 2023</span></span><span class="level-end"><span class="level-item tag">1</span></span></a></li><li><a class="level is-mobile is-marginless" href="/archives/2022/06/"><span class="level-start"><span class="level-item">六月 2022</span></span><span class="level-end"><span class="level-item tag">3</span></span></a></li><a class="level is-mobile is-marginless" href="/archives/"><span class="level-start"><span class="level-item">查看全部&gt;&gt;</span></span></a></ul></div></div></div><div class="card widget"><div class="card-content"><div class="menu"><h3 class="menu-label">标签</h3><div class="field is-grouped is-grouped-multiline"><div class="control"><a class="tags has-addons" href="/tags/linux/"><span class="tag">linux</span><span class="tag is-grey-lightest">18</span></a></div><div class="control"><a class="tags has-addons" href="/tags/docker/"><span class="tag">docker</span><span class="tag is-grey-lightest">16</span></a></div><div class="control"><a class="tags has-addons" href="/tags/Prometheus/"><span class="tag">Prometheus</span><span class="tag is-grey-lightest">14</span></a></div><div class="control"><a class="tags has-addons" href="/tags/html/"><span class="tag">html</span><span class="tag is-grey-lightest">14</span></a></div><div class="control"><a class="tags has-addons" href="/tags/python/"><span class="tag">python</span><span class="tag is-grey-lightest">12</span></a></div><div class="control"><a class="tags has-addons" href="/tags/web/"><span class="tag">web</span><span class="tag is-grey-lightest">12</span></a></div><div class="control"><a class="tags has-addons" href="/tags/nginx/"><span class="tag">nginx</span><span class="tag is-grey-lightest">9</span></a></div><div class="control"><a class="tags has-addons" href="/tags/mysql/"><span class="tag">mysql</span><span class="tag is-grey-lightest">7</span></a></div><div class="control"><a class="tags has-addons" href="/tags/%E5%AE%B9%E5%99%A8/"><span class="tag">容器</span><span class="tag is-grey-lightest">7</span></a></div><div class="control"><a class="tags has-addons" href="/tags/%E6%95%B0%E6%8D%AE%E5%BA%93/"><span class="tag">数据库</span><span class="tag is-grey-lightest">7</span></a></div><div class="control"><a class="tags has-addons" href="/tags/%E7%A7%91%E5%AD%A6%E4%B8%8A%E7%BD%91/"><span class="tag">科学上网</span><span class="tag is-grey-lightest">6</span></a></div><div class="control"><a class="tags has-addons" href="/tags/work/"><span class="tag">work</span><span class="tag is-grey-lightest">5</span></a></div><div class="control"><a class="tags has-addons" href="/tags/%E8%87%AA%E5%8A%A8%E5%8C%96/"><span class="tag">自动化</span><span class="tag is-grey-lightest">5</span></a></div><div class="control"><a class="tags has-addons" href="/tags/%E5%8D%9A%E5%AE%A2/"><span class="tag">博客</span><span class="tag is-grey-lightest">4</span></a></div><div class="control"><a class="tags has-addons" href="/tags/%E5%B7%A5%E4%BD%9C/"><span class="tag">工作</span><span class="tag is-grey-lightest">4</span></a></div><div class="control"><a class="tags has-addons" href="/tags/%E5%B7%A5%E5%85%B7/"><span class="tag">工具</span><span class="tag is-grey-lightest">4</span></a></div><div class="control"><a class="tags has-addons" href="/tags/ssl/"><span class="tag">ssl</span><span class="tag is-grey-lightest">3</span></a></div><div class="control"><a class="tags has-addons" href="/tags/%E6%96%87%E4%BB%B6%E7%B3%BB%E7%BB%9F/"><span class="tag">文件系统</span><span class="tag is-grey-lightest">3</span></a></div><div class="control"><a class="tags has-addons" href="/tags/%E6%97%A5%E5%BF%97/"><span class="tag">日志</span><span class="tag is-grey-lightest">3</span></a></div><div class="control"><a class="tags has-addons" href="/tags/%E6%97%A5%E5%BF%97%E5%8A%A0%E5%AF%86/"><span class="tag">日志加密</span><span class="tag is-grey-lightest">3</span></a></div></div><div class="field is-grouped is-grouped-multiline"><a class="tags has-addons" href="/tags/"><span class="tag">查看全部&gt;&gt;</span></a></div></div></div></div><div class="card widget"><div class="card-content"><div class="menu"><h3 class="menu-label">订阅更新</h3><form action="https://feedburner.google.com/fb/a/mailverify" method="post" target="popupwindow" onsubmit="window.open(&#039;https://feedburner.google.com/fb/a/mailverify?uri=zhi666FeedsId&#039;,&#039;popupwindow&#039;,&#039;scrollbars=yes,width=550,height=520&#039;);return true"><input type="hidden" value="zhi666FeedsId" name="uri"><input type="hidden" name="loc" value="en_US"><div class="field has-addons"><div class="control has-icons-left is-expanded"><input class="input" name="email" type="email" placeholder="Email"><span class="icon is-small is-left"><i class="fas fa-envelope"></i></span></div><div class="control"><input class="button is-primary" type="submit" value="订阅"></div></div><p class="help">输入邮箱开始订阅，更博后邮件通知！</p></form></div></div></div></div></div></div></section><footer class="footer"><div class="container"><div class="level"><div class="level-start"><a class="footer-logo is-block mb-2" href="/"><img src="/img/logo.png" alt="逸尘秀" height="28"></a><p class="size-small"><span>&copy; 2023 yichen</span>  Powered by <a href="https://hexo.io/" target="_blank">Hexo</a> &amp; <a href="https://github.com/ppoffice/hexo-theme-icarus" target="_blank">Icarus</a>,Modify by <a href="https://github.com/removeif/hexo-theme-amazing" target="_blank">removeif</a> <br><span>© 版权说明：[本网站所有内容均收集于互联网或自己创作,<br />&nbsp;&nbsp;&nbsp;&nbsp;方便于网友与自己学习交流，如有侵权，请<a href="/message" target="_blank">留言</a>，立即处理]<br /></span><span><span id="statistic-times">loading...</span><script>function createTime(time) {
+            var n = new Date(time);
+            now.setTime(now.getTime() + 250),
+                days = (now - n) / 1e3 / 60 / 60 / 24,
+                dnum = Math.floor(days),
+                hours = (now - n) / 1e3 / 60 / 60 - 24 * dnum,
+                hnum = Math.floor(hours),
+            1 == String(hnum).length && (hnum = "0" + hnum),
+                minutes = (now - n) / 1e3 / 60 - 1440 * dnum - 60 * hnum,
+                mnum = Math.floor(minutes),
+            1 == String(mnum).length && (mnum = "0" + mnum),
+                seconds = (now - n) / 1e3 - 86400 * dnum - 3600 * hnum - 60 * mnum,
+                snum = Math.round(seconds),
+            1 == String(snum).length && (snum = "0" + snum),
+                document.getElementById("statistic-times").innerHTML = "❤️本站自 <strong>"+time.split(" ")[0].replace(/\//g,".")+"</strong> 已运行 <strong>" + dnum + "</strong> 天 <strong>" + hnum + "</strong> 小时 <strong>" + mnum + "</strong> 分 <strong>" + snum + "</strong> 秒！❤️";
+        }var now = new Date();setInterval("createTime('2020/08/02 00:00:00')", 250,"");</script><br></span><div class="size-small"><span>❤️感谢 <strong><span id="busuanzi_value_site_uv">99+</span></strong> 小伙伴的 <strong><span id="busuanzi_value_site_pv">99+</span></strong> 次光临！❤️</span></div></p></div><div class="level-end"><div class="field has-addons"><p class="control"><a class="button is-transparent is-large" target="_blank" rel="noopener" title="Creative Commons" href="https://creativecommons.org/"><i class="fab fa-creative-commons"></i></a></p><p class="control"><a class="button is-transparent is-large" target="_blank" rel="noopener" title="Attribution 4.0 International" href="https://creativecommons.org/licenses/by/4.0/"><i class="fab fa-creative-commons-by"></i></a></p><p class="control"><a class="button is-transparent is-large" target="_blank" rel="noopener" title="Download on GitHub" href="https://github.com/zhi666"><i class="fab fa-github"></i></a></p></div><div class="sideMusic"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/aplayer/dist/APlayer.min.css"><script src="/js/APlayer.min.js"></script><script src="https://cdn.jsdelivr.net/npm/meting@2/dist/Meting.min.js"></script><meting-js style="width: auto;height: 2000px;" server="netease" type="playlist" id="2364053447" theme="#2980b9" loop="all" autoplay="false" order="list" storageName="aplayer-setting" lrctype="0" list-max-height="400px" fixed="true"></meting-js></div></div></div></div></footer><script src="https://cdnjs.loli.net/ajax/libs/moment.js/2.22.2/moment-with-locales.min.js"></script><script>moment.locale("zh-CN");</script><script>var IcarusThemeSettings = {
+            site: {
+                url: 'https://yc6.cool',
+                external_link: {"enable":true,"exclude":[]}
+            },
+            article: {
+                highlight: {
+                    clipboard: true,
+                    fold: 'unfolded'
+                }
+            }
+        };</script><script src="https://cdnjs.loli.net/ajax/libs/clipboard.js/2.0.4/clipboard.min.js" defer></script><script src="/js/animation.js"></script><a id="back-to-top" title="回到顶端" href="javascript:;"><i class="fas fa-chevron-up"></i></a><script src="/js/back-to-top.js" defer></script><!--!--><!--!--><script src="https://cdnjs.loli.net/ajax/libs/lightgallery/1.6.12/js/lightgallery-all.min.js" defer></script><script src="https://cdnjs.loli.net/ajax/libs/justifiedGallery/3.7.0/js/jquery.justifiedGallery.min.js" defer></script><!--!--><!--!--><!--!--><script src="/js/toc.js" defer></script><script src="/js/main.js" defer></script><script>$.getScript('/js/comment-issue-data.js',function(){loadIssueData('1b861f81e9a79ee6028d','cc629aff090aa9c60d5e13ddf7fcfce14f00a478','zhi666','issue_database',false);})</script><link rel="stylesheet" href="/css/insight.css"><div class="searchbox ins-search"><div class="searchbox-container ins-search-container"><div class="searchbox-input-wrapper"><input class="searchbox-input ins-search-input" type="text" placeholder="想要查找什么..."><span class="searchbox-close ins-close ins-selectable"><i class="fa fa-times-circle"></i></span></div><div class="searchbox-result-wrapper ins-section-wrapper"><div class="ins-section-container"></div></div></div></div><script>(function (window) {
+            var INSIGHT_CONFIG = {
+                TRANSLATION: {
+                    POSTS: '文章',
+                    PAGES: '页面',
+                    CATEGORIES: '分类',
+                    TAGS: '标签',
+                    UNTITLED: '(无标题)',
+                },
+                CONTENT_URL: '/content.json',
+            };
+            window.INSIGHT_CONFIG = INSIGHT_CONFIG;
+        })(window);</script><script src="/js/insight.js" defer></script></body></html>

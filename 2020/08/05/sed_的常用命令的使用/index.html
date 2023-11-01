@@ -1,0 +1,288 @@
+<!doctype html>
+<html lang="zh"><head><meta charset="utf-8"><meta name="generator" content="Hexo 4.2.0"><meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"><meta><meta name="keywords" content="[object Object]"><meta name="description" content="sed 的常用命令的使用sed 会根据脚本命令来处理文本文件中的数据，这些命令要么从命令行中输入，要么存储在一个文本文件中，此命令执行数据的顺序如下：
+
+每次仅读取一行内容；
+根据提供的规则命令匹配并修改数据。注意，sed 默认不会直接修改源文件数据，而是会将数据复制到缓冲区中，修改也仅限于缓冲区中的数据；
+将执行结果输出。
+
+当一行数据匹配完成后，它会继续读取下一行数据，并重复这个过程，直到将文件中所有数据处理完毕。"><meta name="author" content="zhi666"><title>sed的常用命令的使用 - 逸尘秀</title><meta description="sed 的常用命令的使用sed 会根据脚本命令来处理文本文件中的数据，这些命令要么从命令行中输入，要么存储在一个文本文件中，此命令执行数据的顺序如下：  每次仅读取一行内容； 根据提供的规则命令匹配并修改数据。注意，sed 默认不会直接修改源文件数据，而是会将数据复制到缓冲区中，修改也仅限于缓冲区中的数据； 将执行结果输出。  当一行数据匹配完成后，它会继续读取下一行数据，并重复这个过程，直到将文"><meta property="og:type" content="article"><meta property="og:title" content="sed的常用命令的使用"><meta property="og:url" content="https://yc6.cool/2020/08/05/sed_%E7%9A%84%E5%B8%B8%E7%94%A8%E5%91%BD%E4%BB%A4%E7%9A%84%E4%BD%BF%E7%94%A8/"><meta property="og:site_name" content="逸尘秀"><meta property="og:description" content="sed 的常用命令的使用sed 会根据脚本命令来处理文本文件中的数据，这些命令要么从命令行中输入，要么存储在一个文本文件中，此命令执行数据的顺序如下：  每次仅读取一行内容； 根据提供的规则命令匹配并修改数据。注意，sed 默认不会直接修改源文件数据，而是会将数据复制到缓冲区中，修改也仅限于缓冲区中的数据； 将执行结果输出。  当一行数据匹配完成后，它会继续读取下一行数据，并重复这个过程，直到将文"><meta property="og:locale" content="zh_CN"><meta property="article:published_time" content="2020-08-05T04:00:36.000Z"><meta property="article:modified_time" content="2023-11-01T02:25:44.578Z"><meta property="article:author" content="zhi666"><meta property="article:tag" content="linux"><meta property="article:tag" content="sed"><meta property="twitter:card" content="summary"><meta property="twitter:image" content="https://yc6.cool/img/avatar.png"><script type="application/ld+json">{"@context":"https://schema.org","@type":"BlogPosting","mainEntityOfPage":{"@type":"WebPage","@id":"https://yc6.cool/2020/08/05/sed_%E7%9A%84%E5%B8%B8%E7%94%A8%E5%91%BD%E4%BB%A4%E7%9A%84%E4%BD%BF%E7%94%A8/"},"headline":"sed的常用命令的使用","image":["https://yc6.cool/img/avatar.png"],"datePublished":"2020-08-05T04:00:36.000Z","dateModified":"2023-11-01T02:25:44.578Z","author":{"@type":"Person","name":"zhi666"},"description":"sed 的常用命令的使用sed 会根据脚本命令来处理文本文件中的数据，这些命令要么从命令行中输入，要么存储在一个文本文件中，此命令执行数据的顺序如下：  每次仅读取一行内容； 根据提供的规则命令匹配并修改数据。注意，sed 默认不会直接修改源文件数据，而是会将数据复制到缓冲区中，修改也仅限于缓冲区中的数据； 将执行结果输出。  当一行数据匹配完成后，它会继续读取下一行数据，并重复这个过程，直到将文"}</script><link rel="alternative" href="/atom.xml" title="逸尘秀" type="application/atom+xml"><link rel="icon" href="/img/favicon.png"><link rel="stylesheet" href="https://cdnjs.loli.net/ajax/libs/font-awesome/5.12.0/css/all.min.css"><link rel="stylesheet" href="https://fonts.loli.net/css?family=Ubuntu:400,600|Source+Code+Pro|Monda:300,300italic,400,400italic,700,700italic|Roboto Slab:300,300italic,400,400italic,700,700italic|Microsoft YaHei:300,300italic,400,400italic,700,700italic|PT Mono:300,300italic,400,400italic,700,700italic&amp;amp;subset=latin,latin-ext|Inconsolata|Itim|Lobster.css"><link rel="stylesheet" href="https://cdnjs.loli.net/ajax/libs/highlight.js/9.12.0/styles/atom-one-dark.min.css"><style>body>.footer,body>.navbar,body>.section{opacity:0}</style><!--!--><!--!--><script src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js" defer></script><link rel="stylesheet" href="https://cdnjs.loli.net/ajax/libs/lightgallery/1.6.12/css/lightgallery.min.css"><link rel="stylesheet" href="https://cdnjs.loli.net/ajax/libs/justifiedGallery/3.7.0/css/justifiedGallery.min.css"><!--!--><!--!--><script src="https://cdnjs.loli.net/ajax/libs/pace/1.0.2/pace.min.js"></script><link rel="stylesheet" href="/css/style.css"><script src="https://cdnjs.loli.net/ajax/libs/jquery/3.3.1/jquery.min.js"></script><script src="/js/globalUtils.js"></script><link rel="stylesheet" href="/live2d/waifu.css"><script type="text/javascript" async src="/live2d/autoload.js"></script></head><body class="is-3-column has-navbar-fixed-top"><nav class="navbar navbar-main is-fixed-top"><div class="container"><div class="navbar-brand justify-content-center"><a class="navbar-item navbar-logo" href="/"><img src="/img/logo.png" alt="逸尘秀" height="28"></a></div><div class="navbar-menu"><div class="navbar-start"><a class="navbar-item" href="/">首页</a><a class="navbar-item" href="/archives">归档</a><a class="navbar-item" href="/categories">分类</a><a class="navbar-item" href="/tags">标签</a><a class="navbar-item" href="/media">影音</a><a class="navbar-item" href="/album">相册</a><a class="navbar-item" href="/friend">友链</a><a class="navbar-item" href="/self-talking">碎碎念</a><a class="navbar-item" href="/message">留言</a><a class="navbar-item" href="/about">关于</a></div><div class="navbar-end"><a class="navbar-item" target="_blank" rel="noopener" title="Download on GitHub" href="https://github.com/zhi666"><i class="fab fa-github"></i></a><a class="navbar-item is-hidden-tablet catalogue" title="目录" href="javascript:;"><i class="fas fa-list-ul"></i></a><a class="navbar-item search" title="搜索" href="javascript:;"><i class="fas fa-search"></i></a><a class="navbar-item" id="night-nav" title="Night Mode" href="javascript:;"><i class="fas fa-moon" id="night-icon"></i></a></div></div></div></nav><script type="text/javascript" src="/js/theme-setting.js"></script><section class="section"><div class="container"><div class="columns"><div class="column order-2 column-main is-8-tablet is-8-desktop is-9-widescreen"><div class="card"><article class="card-content article" role="article"><div class="article-meta size-small is-uppercase level is-mobile"><div class="level-left"><i class="far fa-calendar-plus"> </i>2020-08-05  <a class="commentCountImg" href="/2020/08/05/sed_%E7%9A%84%E5%B8%B8%E7%94%A8%E5%91%BD%E4%BB%A4%E7%9A%84%E4%BD%BF%E7%94%A8/#comment-container"><span class="display-none-class">ac8321550423ca6b87a43d1780aaf803</span><i class="far fa-comment-dots"></i> <span class="commentCount" id="ac8321550423ca6b87a43d1780aaf803">99+</span>  </a><span class="level-item"><i class="far fa-clock"> </i>20 分钟  <i class="fas fa-pencil-alt"> </i>3.0 k</span><span class="level-item" id="busuanzi_container_page_pv"><i class="far fa-eye"></i>&nbsp;&nbsp;<span id="busuanzi_value_page_pv">0</span>次访问</span></div></div><h1 class="title is-3 is-size-4-mobile">sed的常用命令的使用</h1><div class="content"><h1 id="sed-的常用命令的使用"><a href="#sed-的常用命令的使用" class="headerlink" title="sed 的常用命令的使用"></a>sed 的常用命令的使用</h1><p>sed 会根据脚本命令来处理文本文件中的数据，这些命令要么从命令行中输入，要么存储在一个文本文件中，此命令执行数据的顺序如下：</p>
+<ol>
+<li>每次仅读取一行内容；</li>
+<li>根据提供的规则命令匹配并修改数据。注意，sed 默认不会直接修改源文件数据，而是会将数据复制到缓冲区中，修改也仅限于缓冲区中的数据；</li>
+<li>将执行结果输出。</li>
+</ol>
+<p>当一行数据匹配完成后，它会继续读取下一行数据，并重复这个过程，直到将文件中所有数据处理完毕。</p>
+<a id="more"></a>
+<p> sed 命令的基本格式如下： </p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"></span><br><span class="line">[root@localhost ~]# sed [选项] [脚本命令] 文件名</span><br></pre></td></tr></table></figure>
+
+<p>该命令常用的选项及含义，如表 1 所示。</p>
+<table>
+<thead>
+<tr>
+<th>选项</th>
+<th>含义</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>-e 脚本命令</td>
+<td>该选项会将其后跟的脚本命令添加到已有的命令中。</td>
+</tr>
+<tr>
+<td>-f 脚本命令文件</td>
+<td>该选项会将其后文件中的脚本命令添加到已有的命令中。</td>
+</tr>
+<tr>
+<td>-n</td>
+<td>默认情况下，sed 会在所有的脚本指定执行完毕后，会自动输出处理后的内容，而该选项会屏蔽启动输出，需使用 print 命令来完成输出。</td>
+</tr>
+<tr>
+<td>-i</td>
+<td>此选项会直接修改源文件，要慎用。</td>
+</tr>
+</tbody></table>
+<p> 成功使用 sed 命令的关键在于掌握各式各样的脚本命令及格式，它能帮你定制编辑文件的规则。 </p>
+<h2 id="sed脚本命令"><a href="#sed脚本命令" class="headerlink" title="sed脚本命令"></a>sed脚本命令</h2><h4 id="sed-s-替换脚本命令"><a href="#sed-s-替换脚本命令" class="headerlink" title="sed s 替换脚本命令"></a>sed s 替换脚本命令</h4><p>此命令的基本格式为：</p>
+<p>[address]s/pattern/replacement/flags</p>
+<p>其中，address 表示指定要操作的具体行，pattern 指的是需要替换的内容，replacement 指的是要替换的新内容。<br>此命令中常用的 flags 标记如表 2 所示。</p>
+<table>
+<thead>
+<tr>
+<th>flags 标记</th>
+<th>功能</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>n</td>
+<td>1~512 之间的数字，表示指定要替换的字符串出现第几次时才进行替换，例如，一行中有 3 个 A，但用户只想替换第二个 A，这是就用到这个标记；</td>
+</tr>
+<tr>
+<td>g</td>
+<td>对数据中所有匹配到的内容进行替换，如果没有 g，则只会在第一次匹配成功时做替换操作。例如，一行数据中有 3 个 A，则只会替换第一个 A；</td>
+</tr>
+<tr>
+<td>p</td>
+<td>会打印与替换命令中指定的模式匹配的行。此标记通常与 -n 选项一起使用。</td>
+</tr>
+<tr>
+<td>w file</td>
+<td>将缓冲区中的内容写到指定的 file 文件中；</td>
+</tr>
+<tr>
+<td>&amp;</td>
+<td>用正则表达式匹配的内容进行替换；</td>
+</tr>
+<tr>
+<td>\n</td>
+<td>匹配第 n 个子串，该子串之前在 pattern 中用 () 指定。</td>
+</tr>
+<tr>
+<td>\</td>
+<td>转义（转义替换部分包含：&amp;、\ 等）</td>
+</tr>
+</tbody></table>
+<p>比如，可以指定 sed 用新文本替换第几处模式匹配的地方：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">vim test.txt</span><br><span class="line"></span><br><span class="line">This is a test of the test script.</span><br><span class="line">This is the second test of the test script.</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">sed &#39;s&#x2F;test&#x2F;trial&#x2F;2&#39; test.txt</span><br><span class="line">This is a test of the trial script.</span><br><span class="line">This is the second test of the trial script.</span><br></pre></td></tr></table></figure>
+
+<p> 可以看到，使用数字 2 作为标记的结果就是，sed 编辑器只替换每行中第 2 次出现的匹配模式。</p>
+<p>如果要用新文件替换所有匹配的字符串，可以使用 g 标记： </p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">sed &#39;s&#x2F;test&#x2F;trial&#x2F;g&#39; test.txt</span><br><span class="line">This is a trial of the trial script.</span><br><span class="line">This is the second trial of the trial script.</span><br></pre></td></tr></table></figure>
+
+<p> -n 选项会禁止 sed 输出，但 p 标记会输出修改过的行，将二者匹配使用的效果就是只输出被替换命令修改过的行，例如： </p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">sed -n &#39;s&#x2F;test&#x2F;trial&#x2F;p&#39; test1.txt </span><br><span class="line">This is a trial line.</span><br></pre></td></tr></table></figure>
+
+<p> w 标记会将匹配后的结果保存到指定文件中，比如： </p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">sed &#39;s&#x2F;test&#x2F;trial&#x2F;w testnew.txt&#39; test1.txt </span><br><span class="line">This is a trial line.</span><br><span class="line">This is a different line.</span><br></pre></td></tr></table></figure>
+
+<p>cat testnew.txt<br>This is a trial line.</p>
+<p>在使用 s 脚本命令时，替换类似文件路径的字符串会比较麻烦，需要将路径中的正斜线进行转义，例如：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">sed &#39;s&#x2F;\&#x2F;bin\&#x2F;bash&#x2F;\&#x2F;bin\&#x2F;csh&#x2F;&#39; &#x2F;etc&#x2F;passwd</span><br></pre></td></tr></table></figure>
+
+<h4 id="sed-d-替换脚本命令"><a href="#sed-d-替换脚本命令" class="headerlink" title="sed d 替换脚本命令"></a>sed d 替换脚本命令</h4><p>此命令的基本格式为：</p>
+<p>[address]d</p>
+<p>如果需要删除文本中的特定行，可以用 d 脚本命令，它会删除指定行中的所有内容。但使用该命令时要特别小心，如果你忘记指定具体行的话，文件中的所有内容都会被删除，举个例子：</p>
+<p>cat test.txt<br>The quick brown fox jumps over the lazy dog<br>The quick brown fox jumps over the lazy dog<br>The quick brown fox jumps over the lazy dog<br>The quick brown fox jumps over the lazy dog</p>
+<p>sed ‘d’ test.txt</p>
+<p> #什么也不输出，证明成了空文件 </p>
+<p> 当和指定地址一起使用时，删除命令显然能发挥出大的功用。可以从数据流中删除特定的文本行。</p>
+<p>address 的具体写法后续会做详细介绍，这里只给大家举几个简单的例子： </p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line">cat test.txt </span><br><span class="line">This is line number 1.</span><br><span class="line">This is line number 2.</span><br><span class="line">This is line number 3.</span><br><span class="line">This is line number 4.</span><br><span class="line"></span><br><span class="line"> sed &#39;3d&#39; test.txt </span><br><span class="line">This is line number 1.</span><br><span class="line">This is line number 2.</span><br><span class="line">This is line number 4.</span><br></pre></td></tr></table></figure>
+
+<p> 或者通过特定行区间指定，比如删除 data6.txt 文件内容中的第 2、3行： </p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">sed &#39;2,3d&#39; test.txt </span><br><span class="line">This is line number 1.</span><br><span class="line">This is line number 4.</span><br></pre></td></tr></table></figure>
+
+<p> 也可以使用两个文本模式来删除某个区间内的行，但这么做时要小心，你指定的第一个模式会“打开”行删除功能，第二个模式会“关闭”行删除功能，因此，sed 会删除两个指定行之间的所有行（包括指定的行），例如： </p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">sed &#39;&#x2F;1&#x2F;,&#x2F;3&#x2F;d&#39; test.txt </span><br><span class="line">This is line number 4.</span><br></pre></td></tr></table></figure>
+
+<p> 或者通过特殊的文件结尾字符，比如删除 data6.txt 文件内容中第 3 行开始的所有的内容： </p>
+<p>sed ‘3,$d’ test.txt<br>This is line number 1.<br>This is line number 2.</p>
+<p> 在此强调，在默认情况下 sed 并不会修改原始文件，这里被删除的行只是从 sed 的输出中消失了，原始文件没做任何改变。 </p>
+<h4 id="sed-a-和-i-脚本命令"><a href="#sed-a-和-i-脚本命令" class="headerlink" title="sed a 和 i 脚本命令"></a>sed a 和 i 脚本命令</h4><p>a 命令表示在指定行的后面附加一行，i 命令表示在指定行的前面插入一行，这里之所以要同时介绍这 2 个脚本命令，因为它们的基本格式完全相同，如下所示：</p>
+<p> [address]a（或 i）\新文本内容 </p>
+<p> 下面分别就这 2 个命令，举几个例子。比如说，将一个新行插入到数据流第三行前，执行命令如下： </p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"> sed &#39;3i  This is an inserted line.&#39; test.txt </span><br><span class="line">This is line number 1.</span><br><span class="line">This is line number 2.</span><br><span class="line">This is an inserted line.</span><br><span class="line">This is line number 3.</span><br><span class="line">This is line number 4.</span><br></pre></td></tr></table></figure>
+
+<p> 再比如说，将一个新行附加到数据流中第三行后，执行命令如下 </p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">sed &#39;3a  This is an inserted line.&#39; test.txt </span><br><span class="line">This is line number 1.</span><br><span class="line">This is line number 2.</span><br><span class="line">This is line number 3.</span><br><span class="line">This is an inserted line.</span><br><span class="line">This is line number 4.</span><br></pre></td></tr></table></figure>
+
+<p> 如果你想将一个多行数据添加到数据流中，只需对要插入或附加的文本中的每一行末尾（除最后一行）添加反斜线即可，例如： </p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">sed &#39;1i This is one line of new text.\</span><br><span class="line">This another line of new text.&#39; test.txt</span><br><span class="line">This is one line of new text.</span><br><span class="line">This another line of new text.</span><br><span class="line">This is line number 1.</span><br><span class="line">This is line number 2.</span><br><span class="line">This is line number 3.</span><br><span class="line">This is line number 4.</span><br></pre></td></tr></table></figure>
+
+<p> 可以看到，指定的两行都会被添加到数据流中。 </p>
+<h4 id="sed-c-替换脚本命令"><a href="#sed-c-替换脚本命令" class="headerlink" title="sed c 替换脚本命令"></a>sed c 替换脚本命令</h4><p>c 命令表示将指定行中的所有内容，替换成该选项后面的字符串。该命令的基本格式为：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">sed &#39;3cThis is a changed line of text.&#39; test.txt </span><br><span class="line">This is line number 1.</span><br><span class="line">This is line number 2.</span><br><span class="line">This is a changed line of text.</span><br><span class="line">This is line number 4.</span><br></pre></td></tr></table></figure>
+
+<h4 id="sed-r-脚本命令"><a href="#sed-r-脚本命令" class="headerlink" title="sed r 脚本命令"></a>sed r 脚本命令</h4><p>r 命令用于将一个独立文件的数据插入到当前数据流的指定位置，该命令的基本格式为：</p>
+<p>[address]r filename</p>
+<p>sed 命令会将 filename 文件中的内容插入到 address 指定行的后面，比如说：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line">[root@server1 ~]# cat test2.txt </span><br><span class="line">This is an added line.</span><br><span class="line">This is the second added line.</span><br><span class="line">[root@server1 ~]# sed &#39;3r test2.txt&#39; test.txt </span><br><span class="line">This is line number 1.</span><br><span class="line">This is line number 2.</span><br><span class="line">This is line number 3.</span><br><span class="line">This is an added line.</span><br><span class="line">This is the second added line.</span><br><span class="line">This is line number 4.</span><br></pre></td></tr></table></figure>
+
+
+<p>如果你想将指定文件中的数据插入到数据流的末尾，可以使用 $ 地址符，例如：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"> sed &#39;$r test2.txt&#39; test.txt </span><br><span class="line">This is line number 1.</span><br><span class="line">This is line number 2.</span><br><span class="line">This is line number 3.</span><br><span class="line">This is line number 4.</span><br><span class="line">This is an added line.</span><br><span class="line">This is the second added line.</span><br></pre></td></tr></table></figure>
+
+
+
+<h4 id="sed-q-退出脚本命令"><a href="#sed-q-退出脚本命令" class="headerlink" title="sed q 退出脚本命令"></a>sed q 退出脚本命令</h4><p>q 命令的作用是使 sed 命令在第一次匹配任务结束后，退出 sed 程序，不再进行对后续数据的处理。<br>比如：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">sed &#39;2q&#39; test.txt </span><br><span class="line">This is line number 1.</span><br><span class="line">This is line number 2.</span><br></pre></td></tr></table></figure>
+
+
+
+<p>可以看到，sed 命令在打印输出第 2 行之后，就停止了，是 q 命令造成的，再比如：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">sed &#39;&#x2F;number 1&#x2F;&#123; s&#x2F;number 1&#x2F;number 0&#x2F;;q; &#125;&#39; test.txt</span><br><span class="line">This is line number 0.</span><br></pre></td></tr></table></figure>
+
+
+
+<p>[root@localhost ~]# sed ‘/number 1/{ s/number 1/number 0/;q; }’ test.txt<br>This is line number 0.</p>
+<p>使用 q 命令之后，sed 命令会在匹配到 number 1 时，将其替换成 number 0，然后直接退出。</p>
+<h4 id="sed-脚本命令的寻址方式"><a href="#sed-脚本命令的寻址方式" class="headerlink" title="sed 脚本命令的寻址方式"></a>sed 脚本命令的寻址方式</h4><p>前面在介绍各个脚本命令时，我们一直忽略了对 address 部分的介绍。对各个脚本命令来说，address 用来表明该脚本命令作用到文本中的具体行。</p>
+<p>[address]脚本命令</p>
+<p>或者</p>
+<p>address {<br>  多个脚本命令<br>}</p>
+<p>以上两种形式在前面例子中都有具体实例，因此这里不再做过多赘述。</p>
+<h4 id="以数字形式指定行区间"><a href="#以数字形式指定行区间" class="headerlink" title="以数字形式指定行区间"></a>以数字形式指定行区间</h4><p>当使用数字方式的行寻址时，可以用行在文本流中的行位置来引用。sed 会将文本流中的第一行编号为 1，然后继续按顺序为接下来的行分配行号。</p>
+<p> 在脚本命令中，指定的地址可以是单个行号，或是用起始行号、逗号以及结尾行号指定的一定区间范围内的行。这里举一个 sed 命令作用到指定行号的例子： </p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"></span><br><span class="line"> [root@localhost ~]#sed &#39;2s&#x2F;dog&#x2F;cat&#x2F;&#39; data1.txt</span><br><span class="line">The quick brown fox jumps over the lazy dog</span><br><span class="line">The quick brown fox jumps over the lazy cat</span><br><span class="line">The quick brown fox jumps over the lazy dog</span><br><span class="line">The quick brown fox jumps over the lazy dog</span><br></pre></td></tr></table></figure>
+
+<p> 可以看到，sed 只修改地址指定的第二行的文本。下面的例子中使用了行地址区间： </p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">[root@localhost ~]# sed &#39;2,3s&#x2F;dog&#x2F;cat&#x2F;&#39; data1.txt</span><br><span class="line">The quick brown fox jumps over the lazy dog</span><br><span class="line">The quick brown fox jumps over the lazy cat</span><br><span class="line">The quick brown fox jumps over the lazy cat</span><br><span class="line">The quick brown fox jumps over the lazy dog</span><br></pre></td></tr></table></figure>
+
+<p> 在此基础上，如果想将命令作用到文本中从某行开始的所有行，可以用特殊地址——美元符（$）： </p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">[root@localhost ~]# sed &#39;2,$s&#x2F;dog&#x2F;cat&#x2F;&#39; data1.txt</span><br><span class="line">The quick brown fox jumps over the lazy dog</span><br><span class="line">The quick brown fox jumps over the lazy cat</span><br><span class="line">The quick brown fox jumps over the lazy cat</span><br><span class="line">The quick brown fox jumps over the lazy cat</span><br></pre></td></tr></table></figure>
+
+<h1 id="sed-常用选项-i-的使用"><a href="#sed-常用选项-i-的使用" class="headerlink" title="sed 常用选项 -i 的使用"></a>sed 常用选项 -i 的使用</h1><p>替换指定文件的内容</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">sed -i &#39;s&#x2F;This&#x2F;这个&#x2F;g&#39; test.txt</span><br><span class="line">cat test.txt </span><br><span class="line">这个 is line number 1.</span><br><span class="line">这个 is line number 2.</span><br><span class="line">这个 is line number 3.</span><br><span class="line">这个 is line number 4.</span><br></pre></td></tr></table></figure>
+
+<p>s 是替换，g是全局替换</p>
+<p><strong>替换指定目录下所有文件的指定内容</strong></p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br></pre></td><td class="code"><pre><span class="line">ls test&#x2F;</span><br><span class="line">test.txt  test.txt1  test.txt2  test.txt3</span><br><span class="line">[root@server1 ~]# cat test&#x2F;test.txt</span><br><span class="line">This is line number 1.</span><br><span class="line">This is line number 2.</span><br><span class="line">This is line number 3.</span><br><span class="line">This is line number 4.</span><br><span class="line"></span><br><span class="line">test.txt 和test.txt1-3的内容是一样的</span><br><span class="line">下面这条命令是查看test目录下所有有This内容的文件名，</span><br><span class="line">grep -rl &quot;This&quot; test</span><br><span class="line">test&#x2F;test.txt</span><br><span class="line">test&#x2F;test.txt1</span><br><span class="line">test&#x2F;test.txt2</span><br><span class="line">test&#x2F;test.txt3</span><br><span class="line">现在开始替换</span><br><span class="line">sed -i &#39;s&#x2F;This&#x2F;这个&#x2F;g&#39; &#96;grep -rl &quot;This&quot; test&#96;</span><br><span class="line">现在test目录下的所有的文件都替换好了</span><br><span class="line"></span><br><span class="line">cat test&#x2F;test.txt</span><br><span class="line">这个 is line number 1.</span><br><span class="line">这个 is line number 2.</span><br><span class="line">这个 is line number 3.</span><br><span class="line">这个 is line number 4.</span><br></pre></td></tr></table></figure>
+
+</div><ul class="post-copyright"><li><strong>本文标题：</strong><a href="https://yc6.cool/2020/08/05/sed_的常用命令的使用/">sed的常用命令的使用</a></li><li><strong>本文作者：</strong><a href="https://yc6.cool">yichen</a></li><li><strong>本文链接：</strong><a href="https://yc6.cool/2020/08/05/sed_的常用命令的使用/">https://yc6.cool/2020/08/05/sed_的常用命令的使用/</a></li><li><strong>版权声明：</strong><span>本博客所有文章除特别声明外，均采用 <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/deed.zh" rel="external nofollow" target="_blank">CC BY-NC-SA 4.0</a> 许可协议。转载请注明出处！</span></li></ul><div><div class="recommend-post"><span class="is-size-6 has-text-grey has-mr-7"># 相关文章</span><br><span>  1.<a class="is-size-6" href="/2020/08/04/linux%E4%B8%8B%E7%9A%84%E7%9B%AE%E5%BD%95%E4%BB%8B%E7%BB%8D/" target="_blank">linux根下目录文件介绍</a><br></span><span>  2.<a class="is-size-6" href="/2020/08/03/vim%E4%BD%BF%E7%94%A8/" target="_blank">vim的使用</a><br></span><span>  3.<a class="is-size-6" href="/2020/08/03/linux%E4%B8%AD%E4%B8%A2%E5%A4%B1grub.cfg%E5%BC%95%E5%AF%BC%E6%96%87%E4%BB%B6%E4%BF%AE%E5%A4%8D/" target="_blank">linux中丢失grub.cfg引导文件修复</a><br></span><span>  4.<a class="is-size-6" href="/2020/08/03/linux%E7%B3%BB%E7%BB%9F%E7%AE%A1%E7%90%86/" target="_blank">linux系统管理</a><br></span><span>  5.<a class="is-size-6" href="/2020/08/03/linux%E7%A3%81%E7%9B%98%E7%AE%A1%E7%90%86/" target="_blank">linux磁盘管理</a><br></span><span>  6.<a class="is-size-6" href="/2020/08/03/%E7%A3%81%E7%9B%98%E5%91%BD%E4%BB%A4lvm/" target="_blank">磁盘命令lvm</a><br></span><span>  7.<a class="is-size-6" href="/2020/08/03/linux%E8%BD%AF%E4%BB%B6%E7%AE%A1%E7%90%86/" target="_blank">linux软件管理</a><br></span><span>  8.<a class="is-size-6" href="/2020/08/03/dnf%E5%8C%85%E7%AE%A1%E7%90%86%E5%99%A8/" target="_blank">dnf包管理</a><br></span></div><div class="recommend-post"><span class="is-size-6 has-text-grey has-mr-7"># 推荐文章</span><br><span>  1.<a class="is-size-6" href="/2020/08/04/docker%E4%BD%BF%E7%94%A8/" target="_blank">docker的使用</a><br></span><span>  2.<a class="is-size-6" href="/2020/08/03/mysql%E5%9F%BA%E7%A1%80/" target="_blank">mysql基础</a><br></span><span>  3.<a class="is-size-6" href="/2020/08/03/nginx%E5%9F%BA%E7%A1%80/" target="_blank">nginx基础</a><br></span><span>  4.<a class="is-size-6" href="/2020/08/04/python3%E5%9F%BA%E7%A1%80%E7%9F%A5%E8%AF%86%E9%87%8D%E7%82%B9/" target="_blank">python3基础知识重点</a><br></span><span>  5.<a class="is-size-6" href="/2023/05/07/Linux%E6%9C%8D%E5%8A%A1%E5%99%A8%E7%B3%BB%E7%BB%9F%E7%9B%91%E6%8E%A7/" target="_blank">Prometheus监控linux</a><br></span><span>  6.<a class="is-size-6" href="/2023/05/10/Prometheus%E4%BD%BF%E7%94%A8%E9%82%AE%E7%AE%B1%E6%8E%A5%E6%94%B6%E5%91%8A%E8%AD%A6%E9%80%9A%E7%9F%A5/" target="_blank">Prometheus使用邮件接收告警通知</a><br></span></div></div><link rel="stylesheet" href="https://cdnjs.loli.net/ajax/libs/social-share.js/1.0.16/css/share.min.css"><div class="social-share"></div><script src="https://cdnjs.loli.net/ajax/libs/social-share.js/1.0.16/js/social-share.min.js"></script></article></div><div class="card"><div class="card-content"><h3 class="menu-label has-text-centered">喜欢这篇文章？打赏一下作者吧</h3><div class="buttons is-centered"><a class="button is-info donate"><span class="icon is-small"><i class="fab fa-alipay"></i></span><span>支付宝</span><span class="qrcode"><img src="https://yichenxiu.com/tupian/tubiao/alipay1.jpg" alt="支付宝"></span></a><a class="button is-success donate"><span class="icon is-small"><i class="fab fa-weixin"></i></span><span>微信</span><span class="qrcode"><img src="https://i.328888.xyz/2023/03/05/dZXCk.jpeg" alt="微信"></span></a></div></div></div><nav class="post-navigation mt-4 level is-mobile"><div class="level-start"><a class="article-nav-prev level level-item link-muted" href="/2020/08/05/%E6%B8%A0%E9%81%93%E5%8C%85html/"><i class="level-item fas fa-chevron-left"></i><span class="level-item">配置渠道包html代码修改</span></a></div><div class="level-end"><a class="article-nav-next level level-item link-muted" href="/2020/08/05/%E9%98%BF%E9%87%8C%E4%BA%91%E6%9C%8D%E5%8A%A1%E5%99%A8%E8%BF%81%E7%A7%BB/"><span class="level-item">阿里云服务器迁移</span><i class="level-item fas fa-chevron-right"></i></a></div></nav><div class="card"><div class="card-content"><h3 class="title is-5">评论</h3><div id="comment-container"></div><link rel="stylesheet" href="https://cdnjs.loli.net/ajax/libs/gitalk/1.6.0/gitalk.css"><script> $.getScript('/js/gitalk.min.js', function () { 
+            var gitalk = new Gitalk({
+            language:'zh-CN',
+            id: 'ac8321550423ca6b87a43d1780aaf803',
+            repo: 'issue_database',
+            owner: 'zhi666',
+            clientID: '1b861f81e9a79ee6028d',
+            clientSecret: 'cc629aff090aa9c60d5e13ddf7fcfce14f00a478',
+            admin: ["zhi666"],
+            createIssueManually: true,
+            distractionFreeMode: true,
+            perPage: 10,
+            pagerDirection: 'last',
+            proxy: 'https://cors-anywhere.azm.workers.dev/https://github.com/login/oauth/access_token',
+            
+            enableHotKey: true,
+            isLocked: false
+        })
+        gitalk.render('comment-container')});</script></div></div></div><div class="column column-left is-4-tablet is-4-desktop is-4-widescreen  order-1 is-sticky"><div class="card widget toc-scroll" id="toc"><div class="card-content"><div class="menu"><h3 class="menu-label">目录</h3><ul class="menu-list toc"><li><a class="is-flex toc-item" id="toc-item-sed-的常用命令的使用" href="#sed-的常用命令的使用"><span>sed 的常用命令的使用</span></a><ul class="menu-list toc"><li><a class="is-flex toc-item" id="toc-item-sed脚本命令" href="#sed脚本命令"><span>sed脚本命令</span></a><ul class="menu-list toc"><li><a class="is-flex toc-item" id="toc-item-以数字形式指定行区间" href="#以数字形式指定行区间"><span>以数字形式指定行区间</span></a></li></ul></li></ul></li><li><a class="is-flex toc-item" id="toc-item-sed-常用选项-i-的使用" href="#sed-常用选项-i-的使用"><span>sed 常用选项 -i 的使用</span></a></li></ul></div></div><script type="text/javascript" async>
+        $(document).ready(function () { //参考自 https://github.com/ppoffice/hexo-theme-icarus/pull/616/files
+            var observerTopMargin;
+            var scrollObserver;
+            var headerElems = $(".headerlink");
+            var activeTocItem;
+        
+            function initIntersectionObserver(docHeight) {
+                observerTopMargin = docHeight;
+                scrollObserver = new IntersectionObserver(scrollCallBack,
+                    {
+                        root: null,  // viewpoint
+                        rootMargin: docHeight + "px 0px -80% 0px"  // cover top 30% of viewport to the top of document
+                    })
+            }
+        
+            function scrollCallBack(entries, observer) {
+                if ($(window).scrollTop() > observerTopMargin * 0.7) { 
+                    // User somehow scroll to 70% of observerTopMargin (which is inited as 200% document height)
+                    // Observer top margin need to extend to cover all the space to the top of the document
+                    initIntersectionObserver(observerTopMargin * 2)
+                    observer.disconnect();
+                    return;
+                }
+                let toActive;
+                if (entries[0].intersectionRatio == 1) {  // enter viewed area
+                    let entry = entries.reduce((u, v) => (u.target.toc_id > v.target.toc_id ? u : v));  // get the lowest item
+                    toActive = $("#toc-item-" + $(entry.target).attr("href").substr(1));
+                } else {
+                    let entry = entries.reduce((u, v) => (u.target.toc_id < v.target.toc_id ? u : v));  // get the highest item
+                    let idx = Math.max(entry.target.toc_id - 1, 0);
+                    toActive = $("#toc-item-" + $(headerElems[idx]).attr("href").substr(1));
+                }
+                if (activeTocItem) activeTocItem.removeClass("is-current");
+                activeTocItem = toActive
+                activeTocItem.addClass("is-current");
+            }
+        
+            initIntersectionObserver($(document).height() * 2);
+            headerElems.each(function (index, obj) {
+                obj.toc_id = index;
+                scrollObserver.observe(obj);
+            })
+        });</script></div><div class="card widget"><div class="card-content"><nav class="level"><div class="level-item has-text-centered flex-shrink-1"><div><figure class="image is-128x128 mx-auto mb-2"><img class="is-rounded" src="/img/toudong.jpg" alt="逸尘秀"></figure><p class="title is-size-4 is-block line-height-inherit">逸尘秀</p><p class="is-size-6 is-block">只此一生 ， 必须快乐 ！</p><p class="is-size-6 is-flex justify-content-center"><i class="fas fa-map-marker-alt mr-1"></i><span>深圳</span></p></div></div></nav><nav class="level is-mobile"><div class="level-item has-text-centered is-marginless"><div><p class="heading">文章</p><a href="/archives"><p class="title">136</p></a></div></div><div class="level-item has-text-centered is-marginless"><div><p class="heading">分类</p><a href="/categories"><p class="title">17</p></a></div></div><div class="level-item has-text-centered is-marginless"><div><p class="heading">标签</p><a href="/tags"><p class="title">55</p></a></div></div></nav><div class="level"><a class="level-item button is-primary is-rounded" href="https://weibo.com/u/6155656382" target="_blank" rel="noopener">关注我</a></div><div class="level is-mobile"><a class="level-item button is-transparent is-white is-marginless" target="_blank" rel="noopener" title="Github" href="https://github.com/zhi666"><i class="fab fa-github"></i></a><a class="level-item button is-transparent is-white is-marginless" target="_blank" rel="noopener" title="Weibo" href="https://weibo.com/u/6155656382"><i class="fab fa-weibo"></i></a><a class="level-item button is-transparent is-white is-marginless" target="_blank" rel="noopener" title="Email" href="mailto:1378373724@qq.com"><i class="fa fa-envelope"></i></a><a class="level-item button is-transparent is-white is-marginless" target="_blank" rel="noopener" title="Next" href="https://zhi666.github.io/remove.io"><i class="fab fa-dribbble"></i></a><a class="level-item button is-transparent is-white is-marginless" target="_blank" rel="noopener" title="RSS" href="/atom.xml"><i class="fas fa-rss"></i></a></div><div><hr><p id="hitokoto">:D 一言句子获取中...</p><script type="text/javascript" defer>function getYiyan(){
+                                $.getJSON("https://v1.hitokoto.cn/", function (data) {
+                                if(data){
+                                    $('#hitokoto').html("");
+                                    $('#hitokoto').append("<strong style='color: #3273dc;'>"+data.hitokoto+"</strong>"+
+                                    "<p>"+"来源《"+data.from+"》</p><p>提供者-"+data.creator+"</p>");
+                                }});}
+                                $(function (){getYiyan();$('#hitokoto').click(function(){getYiyan();})});</script></div></div></div><div class="card widget"><div class="card-content"><h3 class="menu-label">最新评论</h3><span class="body_hot_comment">加载中，最新评论有1分钟缓存...</span></div></div><div class="card widget"><div class="card-content"><h3 class="menu-label">最新文章</h3><article class="media"><div class="media-content size-small"><p><time dateTime="2023-11-01T02:25:44.578Z">2023-11-01</time></p><p class="title is-6"><a class="link-muted" href="/2023/11/01/selenlium%E6%89%B9%E9%87%8F%E6%B7%BB%E5%8A%A0dns%E5%9F%9F%E5%90%8D/">批量添加dns域名解析</a></p><p class="is-uppercase"><i class="fas fa-folder-open has-text-grey"> </i><a class="link-muted" href="/categories/python/">python</a></p></div></article><article class="media"><div class="media-content size-small"><p><time dateTime="2023-05-17T01:45:36.000Z">2023-05-17</time></p><p class="title is-6"><a class="link-muted" href="/2023/05/17/Kubernetes%E9%AB%98%E5%8F%AF%E7%94%A8%E9%9B%86%E7%BE%A4%E4%BA%8C%E8%BF%9B%E5%88%B6%E9%83%A8%E7%BD%B2/">Kubernetes高可用集群二进制部署</a></p><p class="is-uppercase"><i class="fas fa-folder-open has-text-grey"> </i><a class="link-muted" href="/categories/linux3/">linux3</a></p></div></article><article class="media"><div class="media-content size-small"><p><time dateTime="2023-05-10T06:25:36.000Z">2023-05-10</time></p><p class="title is-6"><a class="link-muted" href="/2023/05/10/Prometheus%E4%BD%BF%E7%94%A8%E6%89%8B%E6%9C%BA%E7%94%B5%E8%AF%9D_%E7%9F%AD%E4%BF%A1%E6%8E%A5%E6%94%B6%E5%91%8A%E8%AD%A6%E9%80%9A%E7%9F%A5/">Prometheus使用手机电话_短信接收告警通知</a></p><p class="is-uppercase"><i class="fas fa-folder-open has-text-grey"> </i><a class="link-muted" href="/categories/linux2/">linux2</a></p></div></article><article class="media"><div class="media-content size-small"><p><time dateTime="2023-05-10T06:22:36.000Z">2023-05-10</time></p><p class="title is-6"><a class="link-muted" href="/2023/05/10/Prometheus%E4%BD%BF%E7%94%A8%E4%BC%81%E4%B8%9A%E5%BE%AE%E4%BF%A1%E6%8E%A5%E6%94%B6%E5%91%8A%E8%AD%A6%E9%80%9A%E7%9F%A5/">Prometheus使用企业微信接收告警通知</a></p><p class="is-uppercase"><i class="fas fa-folder-open has-text-grey"> </i><a class="link-muted" href="/categories/linux2/">linux2</a></p></div></article><article class="media"><div class="media-content size-small"><p><time dateTime="2023-05-10T06:20:36.000Z">2023-05-10</time></p><p class="title is-6"><a class="link-muted" href="/2023/05/10/Prometheus%E4%BD%BF%E7%94%A8%E4%BC%81%E4%B8%9A%E9%92%89%E9%92%89%E5%91%8A%E8%AD%A6%E9%80%9A%E7%9F%A5/">Prometheus使用企业钉钉接收告警通知</a></p><p class="is-uppercase"><i class="fas fa-folder-open has-text-grey"> </i><a class="link-muted" href="/categories/linux2/">linux2</a></p></div></article></div></div><div class="card widget"><div class="card-content"><div class="menu"><h3 class="menu-label">分类</h3><ul class="menu-list"><li><a class="level is-mobile is-marginless" href="/categories/English/"><span class="level-start"><span class="level-item">English</span></span><span class="level-end"><span class="level-item tag">1</span></span></a></li><li><a class="level is-mobile is-marginless" href="/categories/HTML/"><span class="level-start"><span class="level-item">HTML</span></span><span class="level-end"><span class="level-item tag">4</span></span></a></li><li><a class="level is-mobile is-marginless" href="/categories/JS/"><span class="level-start"><span class="level-item">JS</span></span><span class="level-end"><span class="level-item tag">2</span></span></a></li><li><a class="level is-mobile is-marginless" href="/categories/html/"><span class="level-start"><span class="level-item">html</span></span><span class="level-end"><span class="level-item tag">1</span></span></a></li><li><a class="level is-mobile is-marginless" href="/categories/linux1/"><span class="level-start"><span class="level-item">linux1</span></span><span class="level-end"><span class="level-item tag">15</span></span></a></li><li><a class="level is-mobile is-marginless" href="/categories/linux2/"><span class="level-start"><span class="level-item">linux2</span></span><span class="level-end"><span class="level-item tag">33</span></span></a></li><li><a class="level is-mobile is-marginless" href="/categories/linux3/"><span class="level-start"><span class="level-item">linux3</span></span><span class="level-end"><span class="level-item tag">27</span></span></a></li><li><a class="level is-mobile is-marginless" href="/categories/python/"><span class="level-start"><span class="level-item">python</span></span><span class="level-end"><span class="level-item tag">12</span></span></a></li><li><a class="level is-mobile is-marginless" href="/categories/web/"><span class="level-start"><span class="level-item">web</span></span><span class="level-end"><span class="level-item tag">1</span></span></a></li><li><a class="level is-mobile is-marginless" href="/categories/work/"><span class="level-start"><span class="level-item">work</span></span><span class="level-end"><span class="level-item tag">7</span></span></a></li><a class="level is-mobile is-marginless" href="/categories/"><span class="level-start"><span class="level-item">查看全部&gt;&gt;</span></span></a></ul></div></div></div><div class="card widget"><div class="card-content"><div class="menu"><h3 class="menu-label">归档</h3><ul class="menu-list"><li><a class="level is-mobile is-marginless" href="/archives/2023/11/"><span class="level-start"><span class="level-item">十一月 2023</span></span><span class="level-end"><span class="level-item tag">5</span></span></a></li><li><a class="level is-mobile is-marginless" href="/archives/2023/05/"><span class="level-start"><span class="level-item">五月 2023</span></span><span class="level-end"><span class="level-item tag">13</span></span></a></li><li><a class="level is-mobile is-marginless" href="/archives/2023/04/"><span class="level-start"><span class="level-item">四月 2023</span></span><span class="level-end"><span class="level-item tag">2</span></span></a></li><li><a class="level is-mobile is-marginless" href="/archives/2023/02/"><span class="level-start"><span class="level-item">二月 2023</span></span><span class="level-end"><span class="level-item tag">1</span></span></a></li><li><a class="level is-mobile is-marginless" href="/archives/2022/06/"><span class="level-start"><span class="level-item">六月 2022</span></span><span class="level-end"><span class="level-item tag">3</span></span></a></li><a class="level is-mobile is-marginless" href="/archives/"><span class="level-start"><span class="level-item">查看全部&gt;&gt;</span></span></a></ul></div></div></div><div class="card widget"><div class="card-content"><div class="menu"><h3 class="menu-label">标签</h3><div class="field is-grouped is-grouped-multiline"><div class="control"><a class="tags has-addons" href="/tags/linux/"><span class="tag">linux</span><span class="tag is-grey-lightest">18</span></a></div><div class="control"><a class="tags has-addons" href="/tags/docker/"><span class="tag">docker</span><span class="tag is-grey-lightest">16</span></a></div><div class="control"><a class="tags has-addons" href="/tags/Prometheus/"><span class="tag">Prometheus</span><span class="tag is-grey-lightest">14</span></a></div><div class="control"><a class="tags has-addons" href="/tags/html/"><span class="tag">html</span><span class="tag is-grey-lightest">14</span></a></div><div class="control"><a class="tags has-addons" href="/tags/python/"><span class="tag">python</span><span class="tag is-grey-lightest">12</span></a></div><div class="control"><a class="tags has-addons" href="/tags/web/"><span class="tag">web</span><span class="tag is-grey-lightest">12</span></a></div><div class="control"><a class="tags has-addons" href="/tags/nginx/"><span class="tag">nginx</span><span class="tag is-grey-lightest">9</span></a></div><div class="control"><a class="tags has-addons" href="/tags/mysql/"><span class="tag">mysql</span><span class="tag is-grey-lightest">7</span></a></div><div class="control"><a class="tags has-addons" href="/tags/%E5%AE%B9%E5%99%A8/"><span class="tag">容器</span><span class="tag is-grey-lightest">7</span></a></div><div class="control"><a class="tags has-addons" href="/tags/%E6%95%B0%E6%8D%AE%E5%BA%93/"><span class="tag">数据库</span><span class="tag is-grey-lightest">7</span></a></div><div class="control"><a class="tags has-addons" href="/tags/%E7%A7%91%E5%AD%A6%E4%B8%8A%E7%BD%91/"><span class="tag">科学上网</span><span class="tag is-grey-lightest">6</span></a></div><div class="control"><a class="tags has-addons" href="/tags/work/"><span class="tag">work</span><span class="tag is-grey-lightest">5</span></a></div><div class="control"><a class="tags has-addons" href="/tags/%E8%87%AA%E5%8A%A8%E5%8C%96/"><span class="tag">自动化</span><span class="tag is-grey-lightest">5</span></a></div><div class="control"><a class="tags has-addons" href="/tags/%E5%8D%9A%E5%AE%A2/"><span class="tag">博客</span><span class="tag is-grey-lightest">4</span></a></div><div class="control"><a class="tags has-addons" href="/tags/%E5%B7%A5%E4%BD%9C/"><span class="tag">工作</span><span class="tag is-grey-lightest">4</span></a></div><div class="control"><a class="tags has-addons" href="/tags/%E5%B7%A5%E5%85%B7/"><span class="tag">工具</span><span class="tag is-grey-lightest">4</span></a></div><div class="control"><a class="tags has-addons" href="/tags/ssl/"><span class="tag">ssl</span><span class="tag is-grey-lightest">3</span></a></div><div class="control"><a class="tags has-addons" href="/tags/%E6%96%87%E4%BB%B6%E7%B3%BB%E7%BB%9F/"><span class="tag">文件系统</span><span class="tag is-grey-lightest">3</span></a></div><div class="control"><a class="tags has-addons" href="/tags/%E6%97%A5%E5%BF%97/"><span class="tag">日志</span><span class="tag is-grey-lightest">3</span></a></div><div class="control"><a class="tags has-addons" href="/tags/%E6%97%A5%E5%BF%97%E5%8A%A0%E5%AF%86/"><span class="tag">日志加密</span><span class="tag is-grey-lightest">3</span></a></div></div><div class="field is-grouped is-grouped-multiline"><a class="tags has-addons" href="/tags/"><span class="tag">查看全部&gt;&gt;</span></a></div></div></div></div><div class="card widget"><div class="card-content"><div class="menu"><h3 class="menu-label">订阅更新</h3><form action="https://feedburner.google.com/fb/a/mailverify" method="post" target="popupwindow" onsubmit="window.open(&#039;https://feedburner.google.com/fb/a/mailverify?uri=zhi666FeedsId&#039;,&#039;popupwindow&#039;,&#039;scrollbars=yes,width=550,height=520&#039;);return true"><input type="hidden" value="zhi666FeedsId" name="uri"><input type="hidden" name="loc" value="en_US"><div class="field has-addons"><div class="control has-icons-left is-expanded"><input class="input" name="email" type="email" placeholder="Email"><span class="icon is-small is-left"><i class="fas fa-envelope"></i></span></div><div class="control"><input class="button is-primary" type="submit" value="订阅"></div></div><p class="help">输入邮箱开始订阅，更博后邮件通知！</p></form></div></div></div></div></div></div></section><footer class="footer"><div class="container"><div class="level"><div class="level-start"><a class="footer-logo is-block mb-2" href="/"><img src="/img/logo.png" alt="逸尘秀" height="28"></a><p class="size-small"><span>&copy; 2023 yichen</span>  Powered by <a href="https://hexo.io/" target="_blank">Hexo</a> &amp; <a href="https://github.com/ppoffice/hexo-theme-icarus" target="_blank">Icarus</a>,Modify by <a href="https://github.com/removeif/hexo-theme-amazing" target="_blank">removeif</a> <br><span>© 版权说明：[本网站所有内容均收集于互联网或自己创作,<br />&nbsp;&nbsp;&nbsp;&nbsp;方便于网友与自己学习交流，如有侵权，请<a href="/message" target="_blank">留言</a>，立即处理]<br /></span><span><span id="statistic-times">loading...</span><script>function createTime(time) {
+            var n = new Date(time);
+            now.setTime(now.getTime() + 250),
+                days = (now - n) / 1e3 / 60 / 60 / 24,
+                dnum = Math.floor(days),
+                hours = (now - n) / 1e3 / 60 / 60 - 24 * dnum,
+                hnum = Math.floor(hours),
+            1 == String(hnum).length && (hnum = "0" + hnum),
+                minutes = (now - n) / 1e3 / 60 - 1440 * dnum - 60 * hnum,
+                mnum = Math.floor(minutes),
+            1 == String(mnum).length && (mnum = "0" + mnum),
+                seconds = (now - n) / 1e3 - 86400 * dnum - 3600 * hnum - 60 * mnum,
+                snum = Math.round(seconds),
+            1 == String(snum).length && (snum = "0" + snum),
+                document.getElementById("statistic-times").innerHTML = "❤️本站自 <strong>"+time.split(" ")[0].replace(/\//g,".")+"</strong> 已运行 <strong>" + dnum + "</strong> 天 <strong>" + hnum + "</strong> 小时 <strong>" + mnum + "</strong> 分 <strong>" + snum + "</strong> 秒！❤️";
+        }var now = new Date();setInterval("createTime('2020/08/02 00:00:00')", 250,"");</script><br></span><div class="size-small"><span>❤️感谢 <strong><span id="busuanzi_value_site_uv">99+</span></strong> 小伙伴的 <strong><span id="busuanzi_value_site_pv">99+</span></strong> 次光临！❤️</span></div></p></div><div class="level-end"><div class="field has-addons"><p class="control"><a class="button is-transparent is-large" target="_blank" rel="noopener" title="Creative Commons" href="https://creativecommons.org/"><i class="fab fa-creative-commons"></i></a></p><p class="control"><a class="button is-transparent is-large" target="_blank" rel="noopener" title="Attribution 4.0 International" href="https://creativecommons.org/licenses/by/4.0/"><i class="fab fa-creative-commons-by"></i></a></p><p class="control"><a class="button is-transparent is-large" target="_blank" rel="noopener" title="Download on GitHub" href="https://github.com/zhi666"><i class="fab fa-github"></i></a></p></div><div class="sideMusic"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/aplayer/dist/APlayer.min.css"><script src="/js/APlayer.min.js"></script><script src="https://cdn.jsdelivr.net/npm/meting@2/dist/Meting.min.js"></script><meting-js style="width: auto;height: 2000px;" server="netease" type="playlist" id="2364053447" theme="#2980b9" loop="all" autoplay="false" order="list" storageName="aplayer-setting" lrctype="0" list-max-height="400px" fixed="true"></meting-js></div></div></div></div></footer><script src="https://cdnjs.loli.net/ajax/libs/moment.js/2.22.2/moment-with-locales.min.js"></script><script>moment.locale("zh-CN");</script><script>var IcarusThemeSettings = {
+            site: {
+                url: 'https://yc6.cool',
+                external_link: {"enable":true,"exclude":[]}
+            },
+            article: {
+                highlight: {
+                    clipboard: true,
+                    fold: 'unfolded'
+                }
+            }
+        };</script><script src="https://cdnjs.loli.net/ajax/libs/clipboard.js/2.0.4/clipboard.min.js" defer></script><script src="/js/animation.js"></script><a id="back-to-top" title="回到顶端" href="javascript:;"><i class="fas fa-chevron-up"></i></a><script src="/js/back-to-top.js" defer></script><!--!--><!--!--><script src="https://cdnjs.loli.net/ajax/libs/lightgallery/1.6.12/js/lightgallery-all.min.js" defer></script><script src="https://cdnjs.loli.net/ajax/libs/justifiedGallery/3.7.0/js/jquery.justifiedGallery.min.js" defer></script><!--!--><!--!--><!--!--><script src="/js/toc.js" defer></script><script src="/js/main.js" defer></script><script>$.getScript('/js/comment-issue-data.js',function(){loadIssueData('1b861f81e9a79ee6028d','cc629aff090aa9c60d5e13ddf7fcfce14f00a478','zhi666','issue_database',false);})</script><link rel="stylesheet" href="/css/insight.css"><div class="searchbox ins-search"><div class="searchbox-container ins-search-container"><div class="searchbox-input-wrapper"><input class="searchbox-input ins-search-input" type="text" placeholder="想要查找什么..."><span class="searchbox-close ins-close ins-selectable"><i class="fa fa-times-circle"></i></span></div><div class="searchbox-result-wrapper ins-section-wrapper"><div class="ins-section-container"></div></div></div></div><script>(function (window) {
+            var INSIGHT_CONFIG = {
+                TRANSLATION: {
+                    POSTS: '文章',
+                    PAGES: '页面',
+                    CATEGORIES: '分类',
+                    TAGS: '标签',
+                    UNTITLED: '(无标题)',
+                },
+                CONTENT_URL: '/content.json',
+            };
+            window.INSIGHT_CONFIG = INSIGHT_CONFIG;
+        })(window);</script><script src="/js/insight.js" defer></script></body></html>

@@ -1,0 +1,614 @@
+<!doctype html>
+<html lang="zh"><head><meta charset="utf-8"><meta name="generator" content="Hexo 4.2.0"><meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"><meta><meta name="keywords" content="[object Object]"><meta name="description" content="一. 系统管理启动流程    通电 -&amp;gt"><meta name="author" content="zhi666"><title>linux系统管理 - 逸尘秀</title><meta description="一. 系统管理启动流程    通电 -&amp;gt; 执行主板内置程序(BIOS&amp;#x2F;UEFI)          -&amp;gt; Grub(&amp;#x2F;boot&amp;#x2F;grub&amp;#x2F;grub.cfg)          -&amp;gt; &amp;#x2F;boot&amp;#x2F;vmlinuz* (Linux 核心程序) 挂载临时文件系统(initrd*)          -&amp;gt; 挂载根分区(&amp;#x2F;etc&amp;#x2F;fstab)          -&amp;gt; system"><meta property="og:type" content="article"><meta property="og:title" content="linux系统管理"><meta property="og:url" content="https://yc6.cool/2020/08/03/linux%E7%B3%BB%E7%BB%9F%E7%AE%A1%E7%90%86/"><meta property="og:site_name" content="逸尘秀"><meta property="og:description" content="一. 系统管理启动流程    通电 -&amp;gt; 执行主板内置程序(BIOS&amp;#x2F;UEFI)          -&amp;gt; Grub(&amp;#x2F;boot&amp;#x2F;grub&amp;#x2F;grub.cfg)          -&amp;gt; &amp;#x2F;boot&amp;#x2F;vmlinuz* (Linux 核心程序) 挂载临时文件系统(initrd*)          -&amp;gt; 挂载根分区(&amp;#x2F;etc&amp;#x2F;fstab)          -&amp;gt; system"><meta property="og:locale" content="zh_CN"><meta property="article:published_time" content="2020-08-03T09:10:42.000Z"><meta property="article:modified_time" content="2023-11-01T02:25:44.568Z"><meta property="article:author" content="zhi666"><meta property="article:tag" content="linux"><meta property="article:tag" content="系统"><meta property="twitter:card" content="summary"><meta property="twitter:image" content="https://yc6.cool/img/avatar.png"><script type="application/ld+json">{"@context":"https://schema.org","@type":"BlogPosting","mainEntityOfPage":{"@type":"WebPage","@id":"https://yc6.cool/2020/08/03/linux%E7%B3%BB%E7%BB%9F%E7%AE%A1%E7%90%86/"},"headline":"linux系统管理","image":["https://yc6.cool/img/avatar.png"],"datePublished":"2020-08-03T09:10:42.000Z","dateModified":"2023-11-01T02:25:44.568Z","author":{"@type":"Person","name":"zhi666"},"description":"一. 系统管理启动流程    通电 -&gt; 执行主板内置程序(BIOS&#x2F;UEFI)          -&gt; Grub(&#x2F;boot&#x2F;grub&#x2F;grub.cfg)          -&gt; &#x2F;boot&#x2F;vmlinuz* (Linux 核心程序) 挂载临时文件系统(initrd*)          -&gt; 挂载根分区(&#x2F;etc&#x2F;fstab)          -&gt; system"}</script><link rel="alternative" href="/atom.xml" title="逸尘秀" type="application/atom+xml"><link rel="icon" href="/img/favicon.png"><link rel="stylesheet" href="https://cdnjs.loli.net/ajax/libs/font-awesome/5.12.0/css/all.min.css"><link rel="stylesheet" href="https://fonts.loli.net/css?family=Ubuntu:400,600|Source+Code+Pro|Monda:300,300italic,400,400italic,700,700italic|Roboto Slab:300,300italic,400,400italic,700,700italic|Microsoft YaHei:300,300italic,400,400italic,700,700italic|PT Mono:300,300italic,400,400italic,700,700italic&amp;amp;subset=latin,latin-ext|Inconsolata|Itim|Lobster.css"><link rel="stylesheet" href="https://cdnjs.loli.net/ajax/libs/highlight.js/9.12.0/styles/atom-one-dark.min.css"><style>body>.footer,body>.navbar,body>.section{opacity:0}</style><!--!--><!--!--><script src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js" defer></script><link rel="stylesheet" href="https://cdnjs.loli.net/ajax/libs/lightgallery/1.6.12/css/lightgallery.min.css"><link rel="stylesheet" href="https://cdnjs.loli.net/ajax/libs/justifiedGallery/3.7.0/css/justifiedGallery.min.css"><!--!--><!--!--><script src="https://cdnjs.loli.net/ajax/libs/pace/1.0.2/pace.min.js"></script><link rel="stylesheet" href="/css/style.css"><script src="https://cdnjs.loli.net/ajax/libs/jquery/3.3.1/jquery.min.js"></script><script src="/js/globalUtils.js"></script><link rel="stylesheet" href="/live2d/waifu.css"><script type="text/javascript" async src="/live2d/autoload.js"></script></head><body class="is-3-column has-navbar-fixed-top"><nav class="navbar navbar-main is-fixed-top"><div class="container"><div class="navbar-brand justify-content-center"><a class="navbar-item navbar-logo" href="/"><img src="/img/logo.png" alt="逸尘秀" height="28"></a></div><div class="navbar-menu"><div class="navbar-start"><a class="navbar-item" href="/">首页</a><a class="navbar-item" href="/archives">归档</a><a class="navbar-item" href="/categories">分类</a><a class="navbar-item" href="/tags">标签</a><a class="navbar-item" href="/media">影音</a><a class="navbar-item" href="/album">相册</a><a class="navbar-item" href="/friend">友链</a><a class="navbar-item" href="/self-talking">碎碎念</a><a class="navbar-item" href="/message">留言</a><a class="navbar-item" href="/about">关于</a></div><div class="navbar-end"><a class="navbar-item" target="_blank" rel="noopener" title="Download on GitHub" href="https://github.com/zhi666"><i class="fab fa-github"></i></a><a class="navbar-item search" title="搜索" href="javascript:;"><i class="fas fa-search"></i></a><a class="navbar-item" id="night-nav" title="Night Mode" href="javascript:;"><i class="fas fa-moon" id="night-icon"></i></a></div></div></div></nav><script type="text/javascript" src="/js/theme-setting.js"></script><section class="section"><div class="container"><div class="columns"><div class="column order-2 column-main is-8-tablet is-8-desktop is-9-widescreen"><div class="card"><article class="card-content article" role="article"><div class="article-meta size-small is-uppercase level is-mobile"><div class="level-left"><i class="far fa-calendar-plus"> </i>2020-08-03  <a class="commentCountImg" href="/2020/08/03/linux%E7%B3%BB%E7%BB%9F%E7%AE%A1%E7%90%86/#comment-container"><span class="display-none-class">a19ad23dad16be3e131210f20920bb8e</span><i class="far fa-comment-dots"></i> <span class="commentCount" id="a19ad23dad16be3e131210f20920bb8e">99+</span>  </a><span class="level-item"><i class="far fa-clock"> </i>1 小时  <i class="fas fa-pencil-alt"> </i>6.8 k</span><span class="level-item" id="busuanzi_container_page_pv"><i class="far fa-eye"></i>&nbsp;&nbsp;<span id="busuanzi_value_page_pv">0</span>次访问</span></div></div><h1 class="title is-3 is-size-4-mobile">linux系统管理</h1><div class="content"><h1 id="一-系统管理"><a href="#一-系统管理" class="headerlink" title="一. 系统管理"></a>一. 系统管理</h1><h2 id="启动流程"><a href="#启动流程" class="headerlink" title="启动流程"></a>启动流程</h2><pre><code>    通电 -&gt; 执行主板内置程序(BIOS/UEFI)
+         -&gt; Grub(/boot/grub/grub.cfg)
+         -&gt; /boot/vmlinuz* (Linux 核心程序) 挂载临时文件系统(initrd*)
+         -&gt; 挂载根分区(/etc/fstab)
+         -&gt; systemd(启动第一个进程)
+            -&gt; /etc/init/*.conf (运行所有配置文件)
+                -&gt; rc-sysinit.conf      定义操作系统运行级别
+                -&gt; rcS.conf
+                -&gt; rc.conf (开机运行的服务 /etc/rc*.d/*)
+                -&gt; lightdm.conf  图形界面
+                -&gt; rc.local      执行的最后一个脚本(用于用户自定义执行的脚本)
+            -&gt; 用户登录
+                -&gt; /etc/profile         任何用户登录就会执行的脚本
+                    -&gt; /etc/profile.d/*.sh
+                -&gt; /etc/bash.bashrc     终端启动全局配置文件
+
+                -&gt; ~/.profile           用户登录 执行登录用户相关配置, 用户登录就会执行
+                -&gt; ~/.bashrc            用户终端配置, 用户打开终端就会执行
+                    -&gt; ~/.bash.logout       用户登出执行脚本</code></pre>
+  <a id="more"></a>  
+<p>  图形界面的自动启动配置文件</p>
+<pre><code>    /etc/xdg/autostart/*.desktop
+        [Desktop Entry]
+        Type=Application
+        Name=KyoTerminal
+        Comment=kyo autostart terminal
+        Icon=preferences-desktop-screensaver
+        Exec=gnome-terminal
+
+    必须给可执行权限，否则没有作用
+
+    /etc/X11/xinit/xinitrc.d/*.sh
+
+systemd 启动配置目录 /etc/init/
+服务的启动程序 /etc/init.d/</code></pre>
+<h2 id="系统运行级别"><a href="#系统运行级别" class="headerlink" title="系统运行级别"></a>系统运行级别</h2><pre><code>系统的运行级别，是一种预定义的系统运行状态，一般来说，linux 支持以下几种
+运行级别。下面关于各个运行级别的描述，只是指一般的配置，不同的发行版，
+甚至相同发行版的不同版本，配置都不尽相同。
+    0：关机
+    1: 单用户模式
+    2：多用户模式，一般没有网络功能
+    3：多用户模式，通常有网络功能，没有图形界面，服务器基本上都是用这个级别
+    4：一般不使用, 预留, 未使用
+    5：多用户模式，通常有网络功能，有图形界面
+    6：重启
+
+init 3         &lt;-- 切换到运行级别3
+init 5         &lt;-- 切换到运行级别5
+runlevel       &lt;-- 查询运行级别
+who -r         &lt;-- 也可以查询运行级别
+
+开机是否启动
+    服务与运行级别相对应 /etc/rc*.d/
+    对/etc/rc*.d目录下的文件操作即可操作开机是否启动
+    rc*.d目录下的文件名第一个字母代表开机是否启动
+        K       开机不启动
+        S       开机启动
+        数字    启动顺序
+
+    设置开机是否启动只需要修改对应运行级别目录的文件名
+
+    centos6: chkconfig
+        chkconfig --level 5 服务名 off
+        chkconfig --level 5 服务名 on
+
+    centos7: systemctl
+        systemctl disable 服务名[.service]
+        systemctl enable 服务名[.service]
+
+    ubuntu: sysv-rc-conf
+
+
+启动/关闭/重启/查询系统服务
+    开启network服务
+        sudo service network start
+            或
+        sudo systemctl start network.service
+    停止network服务
+        sudo service network stop
+            或
+        sudo systemctl stop network.service
+    重启network服务
+        sudo service network restart
+            或
+        sudo systemctl restart network.service
+    查看network服务的状态
+        sudo service network status
+            或
+        sudo systemctl status network.service
+
+同样可以直接调用下面的脚本实现相同的目的
+    /etc/init.d/network start
+    /etc/init.d/network stop
+    /etc/init.d/network restart
+    /etc/init.d/network status
+
+service命令调用的是systemctl命令
+systemctl命令最终调用的是/etc/init.d/下面的脚本
+
+命令 who 也可以用来查看在线用户，此外还有别的用途
+
+    who -b
+         系统引导 2018-10-24 23:49    &lt;--- 最后一次系统启动时间
+
+    who -aH                      &lt;--- 列出当前用户的信息
+        名称     线路       时间                空闲  进程号 备注   退出
+                    系统引导 2018-10-25 17:56
+                    运行级别 5 2018-10-25 09:56
+        soul     ? :0       2018-10-25 09:56    ?     2115   (:0)
+        soul     + pts/0    2018-10-25 09:57    旧的  3201   (:0)
+
+给登录的用户发送消息
+
+    write soul /dev/pts/1                  &lt;--- 给指定的一个用户发消息，按Ctrl + D 结束
+    wall                                   &lt;--- 给所有的用户发消息，按Ctrl + D 结束
+    mesg n                                 &lt;--- 关闭接受消息的功能，这样普通用户就无法给该用户发送消息
+    mesg y                                 &lt;--- 打开接受消息的功能
+    echo &quot;Message content&quot; &gt; /dev/pts/1    &lt;--- 就算该用户关闭了接受消息的功能，仍然可以给他发送
+
+列出系统用户登入登出的历史记录
+
+    last                                     &lt;--- 所有用户的登入登出时间
+    last -F                                  &lt;--- 打印完整的时间
+    last -x | grep -E &#39;^(shutdown|reboot)&#39;   &lt;--- 查看开机关机时间
+
+last命令列出登录成功的记录，如果需要查询登录失败的记录，可以使用 lastb 命令, 默认只有root用户才能看到这些记录。
+ lastb
+root     ssh:notty    192.168.224.11   Fri Feb 14 04:59 - 04:59  (00:00)
+
+    ls -l /var/log/btmp    #登录失败的信息是在这个文件里面
+    -rw-------. 1 root utmp 6528 May  9 19:26 /var/log/btmp
+
+lastlog
+    列出系统用户最近的一次登录记录，如果把一个用户删除了，用这个命令就
+    看不到他的记录了，不过用命令last还能看到。
+    请留意，lastlog 不显示从图形界面登入的记录。</code></pre>
+<h1 id="二-定时任务"><a href="#二-定时任务" class="headerlink" title="二. 定时任务"></a>二. 定时任务</h1><pre><code>当需要周期性地重复执行任务，或者需要在将来某个时间点执行某个任务时，可以使用定时任务系统中。
+常用的定时任务的服务: at/atd crontab/cron anacron</code></pre>
+<h2 id="at"><a href="#at" class="headerlink" title="at"></a>at</h2><pre><code>    定时执行任务, 如果设定时间点过了，任务失效, 任务只是一次性
+
+    at保证运行正常必须保证服务正常运行
+         yum install -y at
+
+        sudo systemctl status atd.service
+        假如不是运行状态的话, 就运行
+        sudo systemctl restart atd.service
+
+    at 10:00 2018-10-31     定义2018年10月31号10点执行
+        at&gt; echo $(date +&quot;%F %T&quot;) &gt;&gt; /tmp/tmpfile
+        at&gt; (ctrl + d)
+
+    at -l               查看任务列表
+
+    at -c 3             查看id为3的任务的详情
+
+    at -d 3             删除id为3的任务
+
+    at -f test.sh 10:00 2018-10-31   定义脚本执行的时间
+
+    at -f test.sh now +1 minutes    定义一分钟后执行脚本
+
+    at -f test.sh now +2 hours      定义2个小时后执行脚本
+
+    ps: 这个脚本不需要执行权限也可以完成, 但是必须要有读的权限
+        假如连读的权限读没有的话, 需要用sudo去添加定时任务,
+        可以执行成功, 但是这个任务会一直存在, 不会主动删掉
+    ...
+
+    权限控制
+        /etc/at.deny        里面存储拒绝运行at服务用户名单
+            允许其他的所有用户， 拒绝此文件里面的用户
+
+        /etc/at.allow       里面存储允许运行at服务用户名单
+            拒绝其他的所有用户，允许此文件里面的用户
+
+        at.allow 和 at.deny 不能同时存在， 同时存在at.allow优先级高</code></pre>
+<h2 id="cron"><a href="#cron" class="headerlink" title="cron:"></a>cron:</h2><p><strong>能按照精确到分钟的时间去执行命令，此外，通常还可以设定cron按照</strong><br>            每小时，每天，每周，每月，每年的频率去执行任务。<br>        cron的定时任务，如果因为电脑关闭而无法在指定时间执行，开机之后是否会<br>            执行，取决于该任务定义在哪个配置文件中，如果是定义在<br>            /etc/anacrontab 中，则会执行，否则就不执行。</p>
+<pre><code>    linux下定时任务的实现，是依靠一个后台运行的系统服务crond(就是一个后台进程而已),
+        该服务每分钟检查一次，并执行符合条件的任务。
+
+    sudo service crond status
+
+    运行man 8 cron 查看cron的man文档，可以看到关于cron的行为的详细描述
+    crond检查定时任务的时候，会检查以下配置文件和目录:
+
+    /etc/anacrontab
+        通常用来设定需要每天，每周，每月周期执行的任务
+        记录在这个文件中的任务，如果因为电脑关机而没有按时执行
+        会在系统重新启动后再次执行。
+        该文件的配置语法可参照 man anacrontab
+
+    /etc/cron.d/
+        是一个目录，里面通常存放用来设定除了以上每天/每周/每月之外的定时任务，
+        比如说每小时周期执行的任务，和其它任何定时任务。
+        在这个目录中通常存放系统级别的定时任务
+        对于具体到某个用户的任务，一般不要放到这里。
+
+    /etc/crontab
+        该文件的作用相当于/etc/cron.d/下面的某一个文件
+
+    /var/spool/cron/
+        这个目录用来存放各个用户自己设定的定时任务
+        普通用户没有权限直接访问，必须通过crontab 命令(setuid)  crontab -e </code></pre>
+<h3 id="系统级别"><a href="#系统级别" class="headerlink" title="系统级别"></a>系统级别</h3><pre><code>    用户级别
+
+    设定定时任务的策略
+    1. 如果任务的时间只精确到 天/周/月，而且希望在系统重启之后，能把漏掉的任务补回来，则可以把任务的脚本文件放到/etc/cron.{daily,weekly,monthly,hourly} 中，cron会根据/etc/anacrontab 的配置去这三个目录中查找任务的脚本文件。
+    2. 如果任务的时间精确到分钟，则把任务的脚本文件放到/etc/cron.d/ 中。
+    3. 用户级别的任务没有选择的余地，只能用crontab命令来设置，设置结果会被放到/var/spool/cron/中。
+    4. 如果任务的时间需要精确到 秒，则cron没有办法做得到，需要借助其他方法，比如说cron加上自定义的脚本。
+
+    ===&gt; 设定系统级别的定时任务
+
+    方法：
+    1. 如果任务需要每天/周/月重复执行，而且希望在系统重启之后，能把漏掉的任务补回来，则为任务创建一个标准的shell脚本，赋予可执行权限，然后把它放到/etc/cron.{daily,weekly,monthly} 三者中相应的那个里面。
+    2. 如果任务需要每小时重复执行，可以使用系统已经设置好的一个每小时定时任务框架，仿照第1点的操作方式，把脚本文件放到/etc/cron.hourly/ 下面
+    3. 如果任务需每分钟重复执行，或者需要对时间做更细致的控制（比如：10月10号09点30分），则按下面步骤操作：
+       3.1. 在目录/etc/cron.d/ 中创建一个文件（可以直接复制该目录下原有的文件，再修改）
+       3.2. 在创建的文件中输入定时任务的条目，一个文件中可以写多个任务，一个任务一行，格式如下：</code></pre>
+<h3 id="crontab周期时间配置"><a href="#crontab周期时间配置" class="headerlink" title="crontab周期时间配置"></a>crontab周期时间配置</h3><pre><code>        # m h  dom mon dow   command
+        一行为一条周期任务
+        每一行以空格为分隔符分隔六个字段
+
+        第一字段    分钟 0-59
+        第二字段    小时 0-23
+        第三字段    日   具体看月份 (1-31)
+        第四字段    月   1-12
+        第五字段    周   0-7 (0和7都代表星期天)
+        第六字段    周期要执行的命令
+
+        时间格式
+
+            *       代表每分钟， 每小时，每天， 每月，每周
+
+            ,       代表分隔时间
+                3,5,8-10
+
+            -       代表时间段
+                3-10
+
+            */n     代表每隔n个单位
+
+        解决没有使用vi打开crontab问题:
+
+            export EDITOR=vi
+
+        日与周的关系
+            两个其中有一个为数字，则以此数字为准
+            两个都为数字为或的关系
+            两个都为*, 代表每天
+
+    /etc/cron.d/中的文件的范例：(PPP2)
+
+    SHELL=/bin/bash
+    PATH=/sbin:/bin:/usr/sbin:/usr/bin
+    MAILTO=root
+    HOME=/
+    * * * * * root echo &quot;Good morning $(date)&quot; &gt;&gt; /tmp/root.log
+    */2 * * * * soul id &gt;&gt; /tmp/soul.log
+    */2 * * * * soul echo &quot;hello $(date)&quot; &gt;&gt; /tmp/soul.log  # 每隔两分钟执行
+    8,10,11,13-16，*/20 * * * * echo  &quot;nihao &quot; &gt;&gt; /root/nihao.sh  # 每小时 8分，10分，11分。13到16分执行  还有每小时隔20分执行 </code></pre>
+<hr>
+<pre><code>    SEHLL 环境变量指定定时任务执行解析器
+    PATH 环境变量指定定时任务PATH路径
+
+    上面的范例中定义了3个定时任务：
+    1. 每分钟用root的身份运行命令echo &quot;Good morning $(date)&quot; &gt;&gt; /tmp/root.log
+    2. 能被2整除的分钟才用soul的身份运行命令 id &gt;&gt; /tmp/soul.log
+    3. 能被2整除的分钟才用soul的身份运行命令
+
+    任务描述中，时间的表示方法有以下的几种（拿分钟那一栏来举例，其它的都相同）：
+    1. 指定一个具体的数字，比如 3  代表第3分钟，10:03, 11:03, 09:03 都符合
+    2. 指定一个范围，比如 5-10  代表第5至第10分钟，10:05, 10:06, 11:06, 09:10 都符合
+    3. 指定一个表达式，比如 */3  代表分钟数能被3整除时才符合，10:00, 10:03, 11:06, 09:27 都符合
+    4. 结合以上三种，用逗号分隔，比如 3-5,7,15,*/20   10:04, 10:07, 10:15, 10:20, 10:40 都符合
+
+    每年的7月6号5点3分或星期天的5点3分执行
+        3 5 6 7 0 /tmp/test/test.sh
+
+    每分钟执行
+        * * * * * /tmp/test/test.sh
+
+    每隔两分钟执行
+        */2 * * * * /tmp/test/test.sh
+
+    每个小时的前30分钟执行任务
+        0-29 * * * *
+
+    每个月的15号每三个小时 每两分钟执行任务
+        */2 */3 15 * *
+
+    每个月的15号每三个小时 每两分钟执行任务 或者 星期三每三个小时 每两分钟执行任务
+        */2 */3 15 * 3
+
+    每天的1 3 7 8 13 21点05分执行任务
+        5 1,3,7-8,13,21 * * *
+
+    每个月的5号和20号的4点到13点的15分执行
+        15 4-13 5,20 * *
+
+    每个星期三的每两个小时
+        0 */2 * * 3
+
+    每年的5到8月的星期三和星期天的4点5分执行
+        5 4 * 5-8 7,3</code></pre>
+<h3 id="设定用户级别的定时任务"><a href="#设定用户级别的定时任务" class="headerlink" title="设定用户级别的定时任务"></a>设定用户级别的定时任务</h3><pre><code>    格式：
+    特别注意，用户级别的任务定义当中，没有用户名那一栏，如果像定义系统级别的命令那样，输入用户名，crontab编辑器不会提示格式错误，但是任务不会得到正确的执行。
+
+    .---------------- 分钟 (0 - 59)
+    |  .------------- 小时 (0 - 23)
+    |  |  .---------- 一个月中的某一天 (1 - 31)
+    |  |  |  .------- 月份 (1 - 12)
+    |  |  |  |  .---- 一周中的某一天 (0 - 6) (0和7都表示周日)
+    |  |  |  |  |
+    *  *  *  *  * command to be executed
+
+    普通用户编辑自己的定时任务</code></pre>
+<h4 id="crontab-e"><a href="#crontab-e" class="headerlink" title="crontab -e"></a>crontab -e</h4><p>​    编辑当前用户自己的定时任务（使用环境变量EDITOR指定的默认编辑器）</p>
+<pre><code>    crontab -l               &lt;--- 列出当前用户自己所有的定时任务
+    crontab -r               &lt;--- 删除当前用户自己所有的定时任务
+
+    作为管理员，root可以设定/调整所有用户的定时任务，命令和上面类似，只是增加了一个-u &lt;username&gt; 的参数
+    crontab -e -u soul        &lt;--- 编辑指定用户的定时任务（使用环境变量EDITOR指定的默认编辑器）
+    crontab -l -u soul        &lt;--- 列出指定用户所有的定时任务
+    crontab -r -u soul        &lt;--- 删除指定用户所有的定时任务
+
+    run-parts
+    cron用这个工具来执行某个目录下所有的可执行脚本，定时任务中的每小时/每天/每周/每月任务就是通过这个工具来触发的。使用方法可以参照cron的配置文件/etc/anacrontab，很简单，命令后面加一个目录名字就可以了，记得目录中的脚本必须可执行。</code></pre>
+<h1 id="三-系统日志"><a href="#三-系统日志" class="headerlink" title="三. 系统日志"></a>三. 系统日志</h1><pre><code>系统日志能记录什么信息</code></pre>
+<p>系统日志用来记录系统上的各种活动的信息，包括用户登入登出，系统开机关机，客户端访问web，ftp，端口扫描，等等。这些日志可供管理员分析，以帮助排查系统故障，或者发现潜在的问题，等等。常见的几个日志文件：</p>
+<pre><code>/var/log/secure      &lt;-- ssh, ftp, telnet, pop3, pam等有关
+/var/log/dmesg       &lt;-- 开机时核心检测过程中所产生的信息
+/var/log/cron        &lt;-- 和定时任务有关的日志
+/var/log/wtmp        &lt;-- 记录用户登录信息，二进制日志，需要用last查看
+/var/log/btmp        &lt;-- 记录失败的用户登录信息，二进制日志，需要用lastb查看
+/var/log/lastlog     &lt;-- 记录用户最后一次登录的信息，二进制日志，需要用lastlog查看
+/var/log/boot.log    &lt;-- 开机过程的日志，也包含某些服务的启动日志
+/var/log/maillog     &lt;-- mail相关
+/var/log/acpid       &lt;-- 高级电源管理
+/var/log/yum.log     &lt;-- yum的日志
+/var/log/messages    &lt;-- 非常重要的日志文件，几乎所有的系统重要错误都会记录在这里</code></pre>
+<p> Linux上的日志系统是一个系统服务，其他进程把日志信息发给日志服务，日志服务根据进程发来的数据的特征（服务名，级别）结合日志系统自身的配置，把信息写入相应的文件中，或者做其它的处理。</p>
+<pre><code>日志系统提供的服务名称，和日志信息的级别
+
+日志系统提供了以下服务(facility) 可供使用
+auth
+authpriv   &lt;-- 和权限，登录相关的信息
+cron       &lt;-- 定时任务会使用这个
+daemon
+kern       &lt;-- 内核信息，用户进程无法使用这个服务
+lpr
+mail       &lt;-- 邮件系统会使用这个
+mark
+news
+syslog
+user
+uucp
+local0 到 local7
+
+日志信息分为以下级别，从上到下级别依次降低
+none       &lt;-- none 不算是一个等级，它表示不记录服务的所有信息
+emerg      &lt;-- 系统不可用
+alert      &lt;-- 需要马上处理
+crit       &lt;-- 非常严重的状况
+err        &lt;-- 出错
+warning    &lt;-- 警告
+notice     &lt;-- 普通但很重要的信息
+info       &lt;-- 普通信息
+debug      &lt;-- 调试信息
+
+配置文件中常见的表示符号
+.          &lt;-- 用来分隔服务和级别
+*          &lt;-- 任何服务，或者任何级别
+=          &lt;-- 有等号表示等于某一级别，没有等号表示大于或者等于某一级别
+!          &lt;-- 排除操作，前面有相同服务的表达式，这个操作才有意义
+               代表从前面表达式所包含的内容中排除某些内容
+;          &lt;-- 用于分隔不同的  服务.级别 组合
+,          &lt;-- 用于分隔不同的服务
+-          &lt;-- 用于指定目标文件时，代表同步写入
+
+举例：
+cron.*                               &lt;-- cron 服务的所有级别
+*.info                               &lt;-- 所有服务的info 及以上级别
+cron.info                            &lt;-- . 用于连接服务和级别，表示大于或等于info级别
+cron.info;cron.!err                  &lt;-- 分号隔开多个表达式，感叹号代表取反，结合起来代表大于或等于info，小于err
+cron.=info                           &lt;-- 点后面的等号，代表等于info级别
+cron.info;cron.!=err                 &lt;-- 两个表达式结合，代表大于或等于info，但不等于err
+*.warning;mail.info                  &lt;-- 任何服务大于等于warning级别，和mail服务大于等于info级别
+mail,cron.info                       &lt;-- mail服务大于等于info级别，和cron服务大于等于info级别
+cron.err       /var/log/cron.log     &lt;-- 文件名前面没有减号，表示异步写入
+mail.err       -/var/log/mail.log    &lt;-- 文件名前面有减号，表示同步写入，也就是说rsyslog不会马上把收到的数据写入文件</code></pre>
+<h3 id="日志服务器的配置文件："><a href="#日志服务器的配置文件：" class="headerlink" title="日志服务器的配置文件："></a>日志服务器的配置文件：</h3><pre><code>    /etc/rsyslog.conf
+配置文件语法举例分析
+
+*.=crit;kern.none   /var/adm/critical
+把除了kern服务之外的所有服务中级别为crit的信息存入/var/adm/critical
+
+kern.*  /var/adm/kernel
+把kern服务的所有信息存入/var/adm/kernel
+
+kern.crit  @@10.1.1.1:514
+把kern服务crit及以上的信息发送到远程日志服务器10.1.1.1 的TCP 514端口
+
+kern.info;kern.!err  /var/adm/kernel-info
+把kern服务从info到warning的信息写入/var/adm/kernel-info
+
+mail.=info  /dev/tty12
+把所有指向mail服务的info级别的信息都输出到第12个终端
+
+mail.*;mail.!=info  /var/adm/mail
+把所有mail服务中，除info级别之外的信息，写入/var/adm/mail
+
+mail,news.=info  -/var/adm/info
+把符合mail.info 和 news.info 的信息存入/var/adm/info，而且要同步写入
+
+*.=emerg  *
+把所有级别为emerg 的信息发送给所有登录到系统上的用户
+
+*.alert root,czl
+把所有级别为alert 的信息发送给在线用户root和czl</code></pre>
+<h3 id="日志系统测试工具"><a href="#日志系统测试工具" class="headerlink" title="日志系统测试工具"></a>日志系统测试工具</h3><pre><code>logger工具可以向syslog发送日志信息，特别适合于调试syslog配置文件，也可以用于需要记录日志的脚本。
+使用范例：
+logger -t &quot;Logger&quot; -p mail.info &quot;Testing log info&quot;
+logger -t &quot;Cron&quot; -p cron.info &quot;Testing cron info&quot;</code></pre>
+<h1 id="四-日志轮转"><a href="#四-日志轮转" class="headerlink" title="四. 日志轮转"></a>四. 日志轮转</h1><pre><code>随着日志的增多，日志文件的尺寸会不断增大，为了方便备份，节省存储空间，可以用工具logrotate
+来对各个日志文件做轮转操作。轮转操作本质上是把旧的日志文件改名转存，然后以旧的名字创建一个文件。
+用来把旧文件轮转、压缩、删除，并且创建新的日志文件。我们可以根据日志文件的大小、天数等来转存，便于对日志文件管理，一般都是通过cron计划任务来完成的。
+
+
+man logrotate    &lt;-- 搜索CONFIGURATION FILE 可以显示logrotate的范例配置文件，和各种指令的使用说明
+
+logrotate 的配置文件是 /etc/logrotate.conf，配置文件中会引用/etc/logrotate.d/ 下面的其他配置文件。
+默认状态文件在/var/lib/logrotate/logrotate.status
+实际运行时，Logrotate会调用配置文件/etc/logrotate.conf,
+这里定义的是全局属性，而在/etc/logrotate.d目录里，可以定义每项应用服务的配置文件，并且定义会覆盖当下。
+定时执行/etc/cron.daily目录下的文件的设置，则在/etc/anacrontab里定义的
+
+
+常用的指令解释，这些指令都可以在man logrotate 中找得到。
+weekly                  &lt;-- 每周轮转一次(monthly,daily, yearly)
+rotate 4                &lt;-- 同一个文件最多轮转4次，4次之后就删除该文件
+create 0664 root utmp   &lt;-- 轮转之后创建新文件，权限是0664，属于root用户和utmp组
+dateext                 &lt;-- 用日期来做轮转之后的文件的后缀名
+compress                &lt;-- 用gzip对轮转后的日志进行压缩
+minsize 30K             &lt;-- 文件大于30K，而且周期到了，才会轮转
+size 30k                &lt;-- 文件必须大于30K才会轮转，而且文件只要大于30K就会轮转
+                            不管周期是否已到
+missingok               &lt;-- 如果日志文件不存在，不报错
+notifempty              &lt;-- 如果日志文件是空的，不轮转
+sharedscripts           &lt;-- 不管有多少个文件待轮转，prerotate 和 postrotate 代码只执行一次
+delaycompress           &lt;-- 下一次轮转的时候才压缩
+prerotate               &lt;-- 如果符合轮转的条件
+                            则在轮转之前执行prerotate和endscript 之间的shell代码
+postrotate              &lt;-- 轮转完后执行postrotate 和 endscript 之间的shell代码
+
+为了避免现有的日志数据被意外覆盖，通常可以给日志文件添加a 属性，这样就只能往文件尾部追加数据，而不能修改已有的数据，也不能删除文件。这只适用于通过添加的方式打开日志文件的程序，比如rsyslog。像wtmp, btmp这个两个文件就不能用这种方法。
+
+添加a属性：
+sudo chattr +a filename
+
+删除a属性：
+sudo chattr -a filename
+
+查看隐藏属性
+sudo lsattr filename</code></pre>
+<h1 id="五-dump"><a href="#五-dump" class="headerlink" title="五. dump"></a>五. dump</h1><pre><code>yum install -y dump
+dump 用于备份整个文件系统，支持完全备份和增量备份，支持ext2/ext3/ext4。用dump创建的备份，可以用工具restore来读取和恢复。
+
+备份级别
+dump有个叫做[备份级别]的概念，备份级别分为0级别和大于零的级别，0级别代表完全备份，大于零的级别代表增量备份。级别是确定增量起始点的一个依据，dump工具用它来确定在哪一次备份的基础之上计算增量，举例如下：
+
+日期：      周一 周二 周三 周四
+备份的级别： 0    3    2    5
+                            |
+             ?    ?    ?    |
+             ^    ^    ^    |
+             |____|____|____|
+
+假设曾经在周一，周二，周三这三天做过备份，备份的级别分别是0，3，2，那么，如果在周四那天需要做一个级别为5的备份，dump工具是如何确定从哪一次备份的基础上做增量备份的呢？它会按时间从最近的一次备份往前查找（上图中为从周三往周一的方向查找），找一个级别比现在将要执行的备份级别（上图中为级别5）低的备份，按照上图，将会找到周三。
+
+dump 是怎么知道周三曾经做过一个级别为2的备份的呢？靠的是文件/etc/dumpdates，该文件的格式如下：
+
+[root dump]# cat /etc/dumpdates
+/dev/sda1 0 Mon May 12 22:21:04 2014 +0800  &lt;-- 备份的设备，级别（0级别），时间
+/dev/sda1 1 Mon May 12 21:52:37 2014 +0800  &lt;-- 备份的设备，级别（1级别），时间</code></pre>
+<h3 id="dump的使用"><a href="#dump的使用" class="headerlink" title="dump的使用"></a>dump的使用</h3><pre><code>下载安装  只能备份整个文件系统，相当于备份一个挂载的设备，硬盘。
+    sudo yum isntall dump -y
+
+dump -0u /mysql -f /data/backup/dump0 -L &quot;Initial dump&quot;
+对挂载到/mysql的设备做一个完全备份，备份到文件/data/backup/dump0 中，标签是&quot;Initial dump&quot;
+
+dump -1u /mysql -f /data/backup/dump1
+对挂载到/mysql的设备做一个1级别的备份，备份到文件/data/backup/dump1 中</code></pre>
+<h3 id="restore-的使用"><a href="#restore-的使用" class="headerlink" title="restore 的使用"></a>restore 的使用</h3><pre><code>列出备份文件/data/backup/dump0 中的内容
+[root@mob backup]# restore -t -f /data/backup/dump0
+Dump   date: Sat Jul 12 21:18:01 2014
+Dumped from: the epoch
+Level 0 dump of /dev/shm/data on mob.lab.net:/dev/loop1
+Label: none
+         2  .       &lt;-- 左边是inode 号码，右边是文件名
+        11  ./0
+
+restore -r -f /data/backup/dump0
+把备份文件/data/backup/dump0 中的所有文件恢复到当前目录
+
+restore -i -f /data/backup/dump0
+进入互动模式，可以选择性恢复某些文件
+
+验证dump的备份级别对备份结果的影响
+
+1. 创建一系列的备份, 备份级别顺序: 0 3 2 5 4 7 6 1 3 2 5 4 7 6 1
+    head -c 1m /dev/zero &gt; f0
+    dump -0u /path/ -f /backup/dump0_l0 -L &quot;Initial dump&quot;
+    ...
+
+2. 查看每个备份文件中的内容
+
+dump存在一个问题，如果在dump在读取某个文件的过程中文件发生了改变，那么dump备份出来的文件可能是损坏的。事实上这是所有备份工具都面临的问题。根据前面所学的lvm的知识，我们可以用dump和lvm的快照逻辑卷相结合，解决dump的这个问题。
+
+1. 首先，在初期部署的时候就必须把需要做备份的数据存放在逻辑卷上。
+
+2. 开始备份前，为将要备份的的逻辑卷创建一个快照逻辑卷
+    快照逻辑卷的尺寸应能满足在备份过程中/dev/data/mysql的数据增长的需求
+    如果备份需要30分钟才能完成，而30分钟内/dev/data/mysql将会增长1G，那就给快照分配超过1G的空间。
+    假设将要备份/dev/data/mysql, 则用下面命令为它创建一个快照
+    lvcreate -n mysql-snapshot -s /dev/data/mysql -L 300M
+
+3. 备份快照就可以达到备份/dev/data/mysql的目的
+    dump -0u /dev/data/mysql-snapshot -f /backup/dump0_l0 -L &quot;Initial dump&quot;
+
+4. 备份完成后，要尽快删除快照逻辑卷
+    lvremove /dev/mapper/mysql-snapshot</code></pre>
+<p>六. 安装虚拟机<br>    KVM虚拟机的安装和配置</p>
+<pre><code>1. 确认CPU支持虚拟化
+
+    grep vmx /proc/cpuinfo      &lt;-- Intel CPU
+    grep svm /proc/cpuinfo      &lt;-- AMD CPU
+
+2. 确保文件 /dev/kvm 存在，如果没有此文件，需要到电脑的BIOS中开启虚拟化功能
+
+3. 通过yum安装相关软件包
+
+    sudo yum install qemu-kvm libvirt virt-install bridge-utils virt-manager libvirt-client -y
+
+4. 启动服务
+
+    sudo systemctl start libvirtd.service
+
+5. 应用程序 -&gt; 系统工具 -&gt; 虚拟系统管理器</code></pre>
+</div><ul class="post-copyright"><li><strong>本文标题：</strong><a href="https://yc6.cool/2020/08/03/linux系统管理/">linux系统管理</a></li><li><strong>本文作者：</strong><a href="https://yc6.cool">yichen</a></li><li><strong>本文链接：</strong><a href="https://yc6.cool/2020/08/03/linux系统管理/">https://yc6.cool/2020/08/03/linux系统管理/</a></li><li><strong>版权声明：</strong><span>本博客所有文章除特别声明外，均采用 <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/deed.zh" rel="external nofollow" target="_blank">CC BY-NC-SA 4.0</a> 许可协议。转载请注明出处！</span></li></ul><div><div class="recommend-post"><span class="is-size-6 has-text-grey has-mr-7"># 相关文章</span><br><span>  1.<a class="is-size-6" href="/2020/08/05/sed_%E7%9A%84%E5%B8%B8%E7%94%A8%E5%91%BD%E4%BB%A4%E7%9A%84%E4%BD%BF%E7%94%A8/" target="_blank">sed的常用命令的使用</a><br></span><span>  2.<a class="is-size-6" href="/2020/08/04/linux%E4%B8%8B%E7%9A%84%E7%9B%AE%E5%BD%95%E4%BB%8B%E7%BB%8D/" target="_blank">linux根下目录文件介绍</a><br></span><span>  3.<a class="is-size-6" href="/2020/08/03/vim%E4%BD%BF%E7%94%A8/" target="_blank">vim的使用</a><br></span><span>  4.<a class="is-size-6" href="/2020/08/03/linux%E4%B8%AD%E4%B8%A2%E5%A4%B1grub.cfg%E5%BC%95%E5%AF%BC%E6%96%87%E4%BB%B6%E4%BF%AE%E5%A4%8D/" target="_blank">linux中丢失grub.cfg引导文件修复</a><br></span><span>  5.<a class="is-size-6" href="/2020/08/03/linux%E7%A3%81%E7%9B%98%E7%AE%A1%E7%90%86/" target="_blank">linux磁盘管理</a><br></span><span>  6.<a class="is-size-6" href="/2020/08/03/%E7%A3%81%E7%9B%98%E5%91%BD%E4%BB%A4lvm/" target="_blank">磁盘命令lvm</a><br></span><span>  7.<a class="is-size-6" href="/2020/08/03/linux%E8%BD%AF%E4%BB%B6%E7%AE%A1%E7%90%86/" target="_blank">linux软件管理</a><br></span><span>  8.<a class="is-size-6" href="/2020/08/03/dnf%E5%8C%85%E7%AE%A1%E7%90%86%E5%99%A8/" target="_blank">dnf包管理</a><br></span></div><div class="recommend-post"><span class="is-size-6 has-text-grey has-mr-7"># 推荐文章</span><br><span>  1.<a class="is-size-6" href="/2020/08/04/docker%E4%BD%BF%E7%94%A8/" target="_blank">docker的使用</a><br></span><span>  2.<a class="is-size-6" href="/2020/08/03/mysql%E5%9F%BA%E7%A1%80/" target="_blank">mysql基础</a><br></span><span>  3.<a class="is-size-6" href="/2020/08/03/nginx%E5%9F%BA%E7%A1%80/" target="_blank">nginx基础</a><br></span><span>  4.<a class="is-size-6" href="/2020/08/04/python3%E5%9F%BA%E7%A1%80%E7%9F%A5%E8%AF%86%E9%87%8D%E7%82%B9/" target="_blank">python3基础知识重点</a><br></span><span>  5.<a class="is-size-6" href="/2023/05/07/Linux%E6%9C%8D%E5%8A%A1%E5%99%A8%E7%B3%BB%E7%BB%9F%E7%9B%91%E6%8E%A7/" target="_blank">Prometheus监控linux</a><br></span><span>  6.<a class="is-size-6" href="/2023/05/10/Prometheus%E4%BD%BF%E7%94%A8%E9%82%AE%E7%AE%B1%E6%8E%A5%E6%94%B6%E5%91%8A%E8%AD%A6%E9%80%9A%E7%9F%A5/" target="_blank">Prometheus使用邮件接收告警通知</a><br></span></div></div><link rel="stylesheet" href="https://cdnjs.loli.net/ajax/libs/social-share.js/1.0.16/css/share.min.css"><div class="social-share"></div><script src="https://cdnjs.loli.net/ajax/libs/social-share.js/1.0.16/js/social-share.min.js"></script></article></div><div class="card"><div class="card-content"><h3 class="menu-label has-text-centered">喜欢这篇文章？打赏一下作者吧</h3><div class="buttons is-centered"><a class="button is-info donate"><span class="icon is-small"><i class="fab fa-alipay"></i></span><span>支付宝</span><span class="qrcode"><img src="https://yichenxiu.com/tupian/tubiao/alipay1.jpg" alt="支付宝"></span></a><a class="button is-success donate"><span class="icon is-small"><i class="fab fa-weixin"></i></span><span>微信</span><span class="qrcode"><img src="https://i.328888.xyz/2023/03/05/dZXCk.jpeg" alt="微信"></span></a></div></div></div><nav class="post-navigation mt-4 level is-mobile"><div class="level-start"><a class="article-nav-prev level level-item link-muted" href="/2020/08/03/linux%E4%B8%AD%E4%B8%A2%E5%A4%B1grub.cfg%E5%BC%95%E5%AF%BC%E6%96%87%E4%BB%B6%E4%BF%AE%E5%A4%8D/"><i class="level-item fas fa-chevron-left"></i><span class="level-item">linux中丢失grub.cfg引导文件修复</span></a></div><div class="level-end"><a class="article-nav-next level level-item link-muted" href="/2020/08/03/linux%E7%A3%81%E7%9B%98%E7%AE%A1%E7%90%86/"><span class="level-item">linux磁盘管理</span><i class="level-item fas fa-chevron-right"></i></a></div></nav><div class="card"><div class="card-content"><h3 class="title is-5">评论</h3><div id="comment-container"></div><link rel="stylesheet" href="https://cdnjs.loli.net/ajax/libs/gitalk/1.6.0/gitalk.css"><script> $.getScript('/js/gitalk.min.js', function () { 
+            var gitalk = new Gitalk({
+            language:'zh-CN',
+            id: 'a19ad23dad16be3e131210f20920bb8e',
+            repo: 'issue_database',
+            owner: 'zhi666',
+            clientID: '1b861f81e9a79ee6028d',
+            clientSecret: 'cc629aff090aa9c60d5e13ddf7fcfce14f00a478',
+            admin: ["zhi666"],
+            createIssueManually: true,
+            distractionFreeMode: true,
+            perPage: 10,
+            pagerDirection: 'last',
+            proxy: 'https://cors-anywhere.azm.workers.dev/https://github.com/login/oauth/access_token',
+            
+            enableHotKey: true,
+            isLocked: false
+        })
+        gitalk.render('comment-container')});</script></div></div></div><div class="column column-left is-4-tablet is-4-desktop is-4-widescreen  order-1 is-sticky"><!--!--><div class="card widget"><div class="card-content"><nav class="level"><div class="level-item has-text-centered flex-shrink-1"><div><figure class="image is-128x128 mx-auto mb-2"><img class="is-rounded" src="/img/toudong.jpg" alt="逸尘秀"></figure><p class="title is-size-4 is-block line-height-inherit">逸尘秀</p><p class="is-size-6 is-block">只此一生 ， 必须快乐 ！</p><p class="is-size-6 is-flex justify-content-center"><i class="fas fa-map-marker-alt mr-1"></i><span>深圳</span></p></div></div></nav><nav class="level is-mobile"><div class="level-item has-text-centered is-marginless"><div><p class="heading">文章</p><a href="/archives"><p class="title">136</p></a></div></div><div class="level-item has-text-centered is-marginless"><div><p class="heading">分类</p><a href="/categories"><p class="title">17</p></a></div></div><div class="level-item has-text-centered is-marginless"><div><p class="heading">标签</p><a href="/tags"><p class="title">55</p></a></div></div></nav><div class="level"><a class="level-item button is-primary is-rounded" href="https://weibo.com/u/6155656382" target="_blank" rel="noopener">关注我</a></div><div class="level is-mobile"><a class="level-item button is-transparent is-white is-marginless" target="_blank" rel="noopener" title="Github" href="https://github.com/zhi666"><i class="fab fa-github"></i></a><a class="level-item button is-transparent is-white is-marginless" target="_blank" rel="noopener" title="Weibo" href="https://weibo.com/u/6155656382"><i class="fab fa-weibo"></i></a><a class="level-item button is-transparent is-white is-marginless" target="_blank" rel="noopener" title="Email" href="mailto:1378373724@qq.com"><i class="fa fa-envelope"></i></a><a class="level-item button is-transparent is-white is-marginless" target="_blank" rel="noopener" title="Next" href="https://zhi666.github.io/remove.io"><i class="fab fa-dribbble"></i></a><a class="level-item button is-transparent is-white is-marginless" target="_blank" rel="noopener" title="RSS" href="/atom.xml"><i class="fas fa-rss"></i></a></div><div><hr><p id="hitokoto">:D 一言句子获取中...</p><script type="text/javascript" defer>function getYiyan(){
+                                $.getJSON("https://v1.hitokoto.cn/", function (data) {
+                                if(data){
+                                    $('#hitokoto').html("");
+                                    $('#hitokoto').append("<strong style='color: #3273dc;'>"+data.hitokoto+"</strong>"+
+                                    "<p>"+"来源《"+data.from+"》</p><p>提供者-"+data.creator+"</p>");
+                                }});}
+                                $(function (){getYiyan();$('#hitokoto').click(function(){getYiyan();})});</script></div></div></div><div class="card widget"><div class="card-content"><h3 class="menu-label">最新评论</h3><span class="body_hot_comment">加载中，最新评论有1分钟缓存...</span></div></div><div class="card widget"><div class="card-content"><h3 class="menu-label">最新文章</h3><article class="media"><div class="media-content size-small"><p><time dateTime="2023-11-01T02:25:44.578Z">2023-11-01</time></p><p class="title is-6"><a class="link-muted" href="/2023/11/01/selenlium%E6%89%B9%E9%87%8F%E6%B7%BB%E5%8A%A0dns%E5%9F%9F%E5%90%8D/">批量添加dns域名解析</a></p><p class="is-uppercase"><i class="fas fa-folder-open has-text-grey"> </i><a class="link-muted" href="/categories/python/">python</a></p></div></article><article class="media"><div class="media-content size-small"><p><time dateTime="2023-05-17T01:45:36.000Z">2023-05-17</time></p><p class="title is-6"><a class="link-muted" href="/2023/05/17/Kubernetes%E9%AB%98%E5%8F%AF%E7%94%A8%E9%9B%86%E7%BE%A4%E4%BA%8C%E8%BF%9B%E5%88%B6%E9%83%A8%E7%BD%B2/">Kubernetes高可用集群二进制部署</a></p><p class="is-uppercase"><i class="fas fa-folder-open has-text-grey"> </i><a class="link-muted" href="/categories/linux3/">linux3</a></p></div></article><article class="media"><div class="media-content size-small"><p><time dateTime="2023-05-10T06:25:36.000Z">2023-05-10</time></p><p class="title is-6"><a class="link-muted" href="/2023/05/10/Prometheus%E4%BD%BF%E7%94%A8%E6%89%8B%E6%9C%BA%E7%94%B5%E8%AF%9D_%E7%9F%AD%E4%BF%A1%E6%8E%A5%E6%94%B6%E5%91%8A%E8%AD%A6%E9%80%9A%E7%9F%A5/">Prometheus使用手机电话_短信接收告警通知</a></p><p class="is-uppercase"><i class="fas fa-folder-open has-text-grey"> </i><a class="link-muted" href="/categories/linux2/">linux2</a></p></div></article><article class="media"><div class="media-content size-small"><p><time dateTime="2023-05-10T06:22:36.000Z">2023-05-10</time></p><p class="title is-6"><a class="link-muted" href="/2023/05/10/Prometheus%E4%BD%BF%E7%94%A8%E4%BC%81%E4%B8%9A%E5%BE%AE%E4%BF%A1%E6%8E%A5%E6%94%B6%E5%91%8A%E8%AD%A6%E9%80%9A%E7%9F%A5/">Prometheus使用企业微信接收告警通知</a></p><p class="is-uppercase"><i class="fas fa-folder-open has-text-grey"> </i><a class="link-muted" href="/categories/linux2/">linux2</a></p></div></article><article class="media"><div class="media-content size-small"><p><time dateTime="2023-05-10T06:20:36.000Z">2023-05-10</time></p><p class="title is-6"><a class="link-muted" href="/2023/05/10/Prometheus%E4%BD%BF%E7%94%A8%E4%BC%81%E4%B8%9A%E9%92%89%E9%92%89%E5%91%8A%E8%AD%A6%E9%80%9A%E7%9F%A5/">Prometheus使用企业钉钉接收告警通知</a></p><p class="is-uppercase"><i class="fas fa-folder-open has-text-grey"> </i><a class="link-muted" href="/categories/linux2/">linux2</a></p></div></article></div></div><div class="card widget"><div class="card-content"><div class="menu"><h3 class="menu-label">分类</h3><ul class="menu-list"><li><a class="level is-mobile is-marginless" href="/categories/English/"><span class="level-start"><span class="level-item">English</span></span><span class="level-end"><span class="level-item tag">1</span></span></a></li><li><a class="level is-mobile is-marginless" href="/categories/HTML/"><span class="level-start"><span class="level-item">HTML</span></span><span class="level-end"><span class="level-item tag">4</span></span></a></li><li><a class="level is-mobile is-marginless" href="/categories/JS/"><span class="level-start"><span class="level-item">JS</span></span><span class="level-end"><span class="level-item tag">2</span></span></a></li><li><a class="level is-mobile is-marginless" href="/categories/html/"><span class="level-start"><span class="level-item">html</span></span><span class="level-end"><span class="level-item tag">1</span></span></a></li><li><a class="level is-mobile is-marginless" href="/categories/linux1/"><span class="level-start"><span class="level-item">linux1</span></span><span class="level-end"><span class="level-item tag">15</span></span></a></li><li><a class="level is-mobile is-marginless" href="/categories/linux2/"><span class="level-start"><span class="level-item">linux2</span></span><span class="level-end"><span class="level-item tag">33</span></span></a></li><li><a class="level is-mobile is-marginless" href="/categories/linux3/"><span class="level-start"><span class="level-item">linux3</span></span><span class="level-end"><span class="level-item tag">27</span></span></a></li><li><a class="level is-mobile is-marginless" href="/categories/python/"><span class="level-start"><span class="level-item">python</span></span><span class="level-end"><span class="level-item tag">12</span></span></a></li><li><a class="level is-mobile is-marginless" href="/categories/web/"><span class="level-start"><span class="level-item">web</span></span><span class="level-end"><span class="level-item tag">1</span></span></a></li><li><a class="level is-mobile is-marginless" href="/categories/work/"><span class="level-start"><span class="level-item">work</span></span><span class="level-end"><span class="level-item tag">7</span></span></a></li><a class="level is-mobile is-marginless" href="/categories/"><span class="level-start"><span class="level-item">查看全部&gt;&gt;</span></span></a></ul></div></div></div><div class="card widget"><div class="card-content"><div class="menu"><h3 class="menu-label">归档</h3><ul class="menu-list"><li><a class="level is-mobile is-marginless" href="/archives/2023/11/"><span class="level-start"><span class="level-item">十一月 2023</span></span><span class="level-end"><span class="level-item tag">5</span></span></a></li><li><a class="level is-mobile is-marginless" href="/archives/2023/05/"><span class="level-start"><span class="level-item">五月 2023</span></span><span class="level-end"><span class="level-item tag">13</span></span></a></li><li><a class="level is-mobile is-marginless" href="/archives/2023/04/"><span class="level-start"><span class="level-item">四月 2023</span></span><span class="level-end"><span class="level-item tag">2</span></span></a></li><li><a class="level is-mobile is-marginless" href="/archives/2023/02/"><span class="level-start"><span class="level-item">二月 2023</span></span><span class="level-end"><span class="level-item tag">1</span></span></a></li><li><a class="level is-mobile is-marginless" href="/archives/2022/06/"><span class="level-start"><span class="level-item">六月 2022</span></span><span class="level-end"><span class="level-item tag">3</span></span></a></li><a class="level is-mobile is-marginless" href="/archives/"><span class="level-start"><span class="level-item">查看全部&gt;&gt;</span></span></a></ul></div></div></div><div class="card widget"><div class="card-content"><div class="menu"><h3 class="menu-label">标签</h3><div class="field is-grouped is-grouped-multiline"><div class="control"><a class="tags has-addons" href="/tags/linux/"><span class="tag">linux</span><span class="tag is-grey-lightest">18</span></a></div><div class="control"><a class="tags has-addons" href="/tags/docker/"><span class="tag">docker</span><span class="tag is-grey-lightest">16</span></a></div><div class="control"><a class="tags has-addons" href="/tags/Prometheus/"><span class="tag">Prometheus</span><span class="tag is-grey-lightest">14</span></a></div><div class="control"><a class="tags has-addons" href="/tags/html/"><span class="tag">html</span><span class="tag is-grey-lightest">14</span></a></div><div class="control"><a class="tags has-addons" href="/tags/python/"><span class="tag">python</span><span class="tag is-grey-lightest">12</span></a></div><div class="control"><a class="tags has-addons" href="/tags/web/"><span class="tag">web</span><span class="tag is-grey-lightest">12</span></a></div><div class="control"><a class="tags has-addons" href="/tags/nginx/"><span class="tag">nginx</span><span class="tag is-grey-lightest">9</span></a></div><div class="control"><a class="tags has-addons" href="/tags/mysql/"><span class="tag">mysql</span><span class="tag is-grey-lightest">7</span></a></div><div class="control"><a class="tags has-addons" href="/tags/%E5%AE%B9%E5%99%A8/"><span class="tag">容器</span><span class="tag is-grey-lightest">7</span></a></div><div class="control"><a class="tags has-addons" href="/tags/%E6%95%B0%E6%8D%AE%E5%BA%93/"><span class="tag">数据库</span><span class="tag is-grey-lightest">7</span></a></div><div class="control"><a class="tags has-addons" href="/tags/%E7%A7%91%E5%AD%A6%E4%B8%8A%E7%BD%91/"><span class="tag">科学上网</span><span class="tag is-grey-lightest">6</span></a></div><div class="control"><a class="tags has-addons" href="/tags/work/"><span class="tag">work</span><span class="tag is-grey-lightest">5</span></a></div><div class="control"><a class="tags has-addons" href="/tags/%E8%87%AA%E5%8A%A8%E5%8C%96/"><span class="tag">自动化</span><span class="tag is-grey-lightest">5</span></a></div><div class="control"><a class="tags has-addons" href="/tags/%E5%8D%9A%E5%AE%A2/"><span class="tag">博客</span><span class="tag is-grey-lightest">4</span></a></div><div class="control"><a class="tags has-addons" href="/tags/%E5%B7%A5%E4%BD%9C/"><span class="tag">工作</span><span class="tag is-grey-lightest">4</span></a></div><div class="control"><a class="tags has-addons" href="/tags/%E5%B7%A5%E5%85%B7/"><span class="tag">工具</span><span class="tag is-grey-lightest">4</span></a></div><div class="control"><a class="tags has-addons" href="/tags/ssl/"><span class="tag">ssl</span><span class="tag is-grey-lightest">3</span></a></div><div class="control"><a class="tags has-addons" href="/tags/%E6%96%87%E4%BB%B6%E7%B3%BB%E7%BB%9F/"><span class="tag">文件系统</span><span class="tag is-grey-lightest">3</span></a></div><div class="control"><a class="tags has-addons" href="/tags/%E6%97%A5%E5%BF%97/"><span class="tag">日志</span><span class="tag is-grey-lightest">3</span></a></div><div class="control"><a class="tags has-addons" href="/tags/%E6%97%A5%E5%BF%97%E5%8A%A0%E5%AF%86/"><span class="tag">日志加密</span><span class="tag is-grey-lightest">3</span></a></div></div><div class="field is-grouped is-grouped-multiline"><a class="tags has-addons" href="/tags/"><span class="tag">查看全部&gt;&gt;</span></a></div></div></div></div><div class="card widget"><div class="card-content"><div class="menu"><h3 class="menu-label">订阅更新</h3><form action="https://feedburner.google.com/fb/a/mailverify" method="post" target="popupwindow" onsubmit="window.open(&#039;https://feedburner.google.com/fb/a/mailverify?uri=zhi666FeedsId&#039;,&#039;popupwindow&#039;,&#039;scrollbars=yes,width=550,height=520&#039;);return true"><input type="hidden" value="zhi666FeedsId" name="uri"><input type="hidden" name="loc" value="en_US"><div class="field has-addons"><div class="control has-icons-left is-expanded"><input class="input" name="email" type="email" placeholder="Email"><span class="icon is-small is-left"><i class="fas fa-envelope"></i></span></div><div class="control"><input class="button is-primary" type="submit" value="订阅"></div></div><p class="help">输入邮箱开始订阅，更博后邮件通知！</p></form></div></div></div></div></div></div></section><footer class="footer"><div class="container"><div class="level"><div class="level-start"><a class="footer-logo is-block mb-2" href="/"><img src="/img/logo.png" alt="逸尘秀" height="28"></a><p class="size-small"><span>&copy; 2023 yichen</span>  Powered by <a href="https://hexo.io/" target="_blank">Hexo</a> &amp; <a href="https://github.com/ppoffice/hexo-theme-icarus" target="_blank">Icarus</a>,Modify by <a href="https://github.com/removeif/hexo-theme-amazing" target="_blank">removeif</a> <br><span>© 版权说明：[本网站所有内容均收集于互联网或自己创作,<br />&nbsp;&nbsp;&nbsp;&nbsp;方便于网友与自己学习交流，如有侵权，请<a href="/message" target="_blank">留言</a>，立即处理]<br /></span><span><span id="statistic-times">loading...</span><script>function createTime(time) {
+            var n = new Date(time);
+            now.setTime(now.getTime() + 250),
+                days = (now - n) / 1e3 / 60 / 60 / 24,
+                dnum = Math.floor(days),
+                hours = (now - n) / 1e3 / 60 / 60 - 24 * dnum,
+                hnum = Math.floor(hours),
+            1 == String(hnum).length && (hnum = "0" + hnum),
+                minutes = (now - n) / 1e3 / 60 - 1440 * dnum - 60 * hnum,
+                mnum = Math.floor(minutes),
+            1 == String(mnum).length && (mnum = "0" + mnum),
+                seconds = (now - n) / 1e3 - 86400 * dnum - 3600 * hnum - 60 * mnum,
+                snum = Math.round(seconds),
+            1 == String(snum).length && (snum = "0" + snum),
+                document.getElementById("statistic-times").innerHTML = "❤️本站自 <strong>"+time.split(" ")[0].replace(/\//g,".")+"</strong> 已运行 <strong>" + dnum + "</strong> 天 <strong>" + hnum + "</strong> 小时 <strong>" + mnum + "</strong> 分 <strong>" + snum + "</strong> 秒！❤️";
+        }var now = new Date();setInterval("createTime('2020/08/02 00:00:00')", 250,"");</script><br></span><div class="size-small"><span>❤️感谢 <strong><span id="busuanzi_value_site_uv">99+</span></strong> 小伙伴的 <strong><span id="busuanzi_value_site_pv">99+</span></strong> 次光临！❤️</span></div></p></div><div class="level-end"><div class="field has-addons"><p class="control"><a class="button is-transparent is-large" target="_blank" rel="noopener" title="Creative Commons" href="https://creativecommons.org/"><i class="fab fa-creative-commons"></i></a></p><p class="control"><a class="button is-transparent is-large" target="_blank" rel="noopener" title="Attribution 4.0 International" href="https://creativecommons.org/licenses/by/4.0/"><i class="fab fa-creative-commons-by"></i></a></p><p class="control"><a class="button is-transparent is-large" target="_blank" rel="noopener" title="Download on GitHub" href="https://github.com/zhi666"><i class="fab fa-github"></i></a></p></div><div class="sideMusic"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/aplayer/dist/APlayer.min.css"><script src="/js/APlayer.min.js"></script><script src="https://cdn.jsdelivr.net/npm/meting@2/dist/Meting.min.js"></script><meting-js style="width: auto;height: 2000px;" server="netease" type="playlist" id="2364053447" theme="#2980b9" loop="all" autoplay="false" order="list" storageName="aplayer-setting" lrctype="0" list-max-height="400px" fixed="true"></meting-js></div></div></div></div></footer><script src="https://cdnjs.loli.net/ajax/libs/moment.js/2.22.2/moment-with-locales.min.js"></script><script>moment.locale("zh-CN");</script><script>var IcarusThemeSettings = {
+            site: {
+                url: 'https://yc6.cool',
+                external_link: {"enable":true,"exclude":[]}
+            },
+            article: {
+                highlight: {
+                    clipboard: true,
+                    fold: 'unfolded'
+                }
+            }
+        };</script><script src="https://cdnjs.loli.net/ajax/libs/clipboard.js/2.0.4/clipboard.min.js" defer></script><script src="/js/animation.js"></script><a id="back-to-top" title="回到顶端" href="javascript:;"><i class="fas fa-chevron-up"></i></a><script src="/js/back-to-top.js" defer></script><!--!--><!--!--><script src="https://cdnjs.loli.net/ajax/libs/lightgallery/1.6.12/js/lightgallery-all.min.js" defer></script><script src="https://cdnjs.loli.net/ajax/libs/justifiedGallery/3.7.0/js/jquery.justifiedGallery.min.js" defer></script><!--!--><!--!--><!--!--><script src="/js/toc.js" defer></script><script src="/js/main.js" defer></script><script>$.getScript('/js/comment-issue-data.js',function(){loadIssueData('1b861f81e9a79ee6028d','cc629aff090aa9c60d5e13ddf7fcfce14f00a478','zhi666','issue_database',false);})</script><link rel="stylesheet" href="/css/insight.css"><div class="searchbox ins-search"><div class="searchbox-container ins-search-container"><div class="searchbox-input-wrapper"><input class="searchbox-input ins-search-input" type="text" placeholder="想要查找什么..."><span class="searchbox-close ins-close ins-selectable"><i class="fa fa-times-circle"></i></span></div><div class="searchbox-result-wrapper ins-section-wrapper"><div class="ins-section-container"></div></div></div></div><script>(function (window) {
+            var INSIGHT_CONFIG = {
+                TRANSLATION: {
+                    POSTS: '文章',
+                    PAGES: '页面',
+                    CATEGORIES: '分类',
+                    TAGS: '标签',
+                    UNTITLED: '(无标题)',
+                },
+                CONTENT_URL: '/content.json',
+            };
+            window.INSIGHT_CONFIG = INSIGHT_CONFIG;
+        })(window);</script><script src="/js/insight.js" defer></script></body></html>

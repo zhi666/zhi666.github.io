@@ -1,0 +1,1266 @@
+<!doctype html>
+<html lang="zh"><head><meta charset="utf-8"><meta name="generator" content="Hexo 4.2.0"><meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"><meta><meta name="keywords" content="[object Object]"><meta name="description" content="SHELL编程编程语言   机器语言                01010101低级语言(汇编语言)      助记词(转义器 将助记词编译成机器语言)高级语言                跨平台            编译型(编译器)      将标准文档转成对应平台的汇编                C / C++
+        解析型(解析器)      将文档实时转义成平台指令
+            Shell PHP Python JavaScript, GO
+
+        编译解析型(编译器/虚拟机)
+            Java C# PHP Python JS, 易, OC, swift"><meta name="author" content="zhi666"><title>linux_shell编程 - 逸尘秀</title><meta description="SHELL编程编程语言   机器语言                01010101低级语言(汇编语言)      助记词(转义器 将助记词编译成机器语言)高级语言                跨平台            编译型(编译器)      将标准文档转成对应平台的汇编                C &amp;#x2F; C++         解析型(解析器)      将文档实时转义成平台指令"><meta property="og:type" content="article"><meta property="og:title" content="linux_shell编程"><meta property="og:url" content="https://yc6.cool/2020/08/03/linux_shell%E7%BC%96%E7%A8%8B/"><meta property="og:site_name" content="逸尘秀"><meta property="og:description" content="SHELL编程编程语言   机器语言                01010101低级语言(汇编语言)      助记词(转义器 将助记词编译成机器语言)高级语言                跨平台            编译型(编译器)      将标准文档转成对应平台的汇编                C &amp;#x2F; C++         解析型(解析器)      将文档实时转义成平台指令"><meta property="og:locale" content="zh_CN"><meta property="article:published_time" content="2020-08-03T08:53:42.000Z"><meta property="article:modified_time" content="2023-11-01T02:25:44.565Z"><meta property="article:author" content="zhi666"><meta property="article:tag" content="linux"><meta property="article:tag" content="shell"><meta property="twitter:card" content="summary"><meta property="twitter:image" content="https://yc6.cool/img/avatar.png"><script type="application/ld+json">{"@context":"https://schema.org","@type":"BlogPosting","mainEntityOfPage":{"@type":"WebPage","@id":"https://yc6.cool/2020/08/03/linux_shell%E7%BC%96%E7%A8%8B/"},"headline":"linux_shell编程","image":["https://yc6.cool/img/avatar.png"],"datePublished":"2020-08-03T08:53:42.000Z","dateModified":"2023-11-01T02:25:44.565Z","author":{"@type":"Person","name":"zhi666"},"description":"SHELL编程编程语言   机器语言                01010101低级语言(汇编语言)      助记词(转义器 将助记词编译成机器语言)高级语言                跨平台            编译型(编译器)      将标准文档转成对应平台的汇编                C &#x2F; C++         解析型(解析器)      将文档实时转义成平台指令"}</script><link rel="alternative" href="/atom.xml" title="逸尘秀" type="application/atom+xml"><link rel="icon" href="/img/favicon.png"><link rel="stylesheet" href="https://cdnjs.loli.net/ajax/libs/font-awesome/5.12.0/css/all.min.css"><link rel="stylesheet" href="https://fonts.loli.net/css?family=Ubuntu:400,600|Source+Code+Pro|Monda:300,300italic,400,400italic,700,700italic|Roboto Slab:300,300italic,400,400italic,700,700italic|Microsoft YaHei:300,300italic,400,400italic,700,700italic|PT Mono:300,300italic,400,400italic,700,700italic&amp;amp;subset=latin,latin-ext|Inconsolata|Itim|Lobster.css"><link rel="stylesheet" href="https://cdnjs.loli.net/ajax/libs/highlight.js/9.12.0/styles/atom-one-dark.min.css"><style>body>.footer,body>.navbar,body>.section{opacity:0}</style><!--!--><!--!--><script src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js" defer></script><link rel="stylesheet" href="https://cdnjs.loli.net/ajax/libs/lightgallery/1.6.12/css/lightgallery.min.css"><link rel="stylesheet" href="https://cdnjs.loli.net/ajax/libs/justifiedGallery/3.7.0/css/justifiedGallery.min.css"><!--!--><!--!--><script src="https://cdnjs.loli.net/ajax/libs/pace/1.0.2/pace.min.js"></script><link rel="stylesheet" href="/css/style.css"><script src="https://cdnjs.loli.net/ajax/libs/jquery/3.3.1/jquery.min.js"></script><script src="/js/globalUtils.js"></script><link rel="stylesheet" href="/live2d/waifu.css"><script type="text/javascript" async src="/live2d/autoload.js"></script></head><body class="is-3-column has-navbar-fixed-top"><nav class="navbar navbar-main is-fixed-top"><div class="container"><div class="navbar-brand justify-content-center"><a class="navbar-item navbar-logo" href="/"><img src="/img/logo.png" alt="逸尘秀" height="28"></a></div><div class="navbar-menu"><div class="navbar-start"><a class="navbar-item" href="/">首页</a><a class="navbar-item" href="/archives">归档</a><a class="navbar-item" href="/categories">分类</a><a class="navbar-item" href="/tags">标签</a><a class="navbar-item" href="/media">影音</a><a class="navbar-item" href="/album">相册</a><a class="navbar-item" href="/friend">友链</a><a class="navbar-item" href="/self-talking">碎碎念</a><a class="navbar-item" href="/message">留言</a><a class="navbar-item" href="/about">关于</a></div><div class="navbar-end"><a class="navbar-item" target="_blank" rel="noopener" title="Download on GitHub" href="https://github.com/zhi666"><i class="fab fa-github"></i></a><a class="navbar-item search" title="搜索" href="javascript:;"><i class="fas fa-search"></i></a><a class="navbar-item" id="night-nav" title="Night Mode" href="javascript:;"><i class="fas fa-moon" id="night-icon"></i></a></div></div></div></nav><script type="text/javascript" src="/js/theme-setting.js"></script><section class="section"><div class="container"><div class="columns"><div class="column order-2 column-main is-8-tablet is-8-desktop is-9-widescreen"><div class="card"><article class="card-content article" role="article"><div class="article-meta size-small is-uppercase level is-mobile"><div class="level-left"><i class="far fa-calendar-plus"> </i>2020-08-03  <a class="commentCountImg" href="/2020/08/03/linux_shell%E7%BC%96%E7%A8%8B/#comment-container"><span class="display-none-class">6c054be130433ccb02eff0442e8013dc</span><i class="far fa-comment-dots"></i> <span class="commentCount" id="6c054be130433ccb02eff0442e8013dc">99+</span>  </a><span class="level-item"><i class="far fa-clock"> </i>1 小时  <i class="fas fa-pencil-alt"> </i>10.4 k</span><span class="level-item" id="busuanzi_container_page_pv"><i class="far fa-eye"></i>&nbsp;&nbsp;<span id="busuanzi_value_page_pv">0</span>次访问</span></div></div><h1 class="title is-3 is-size-4-mobile">linux_shell编程</h1><div class="content"><h1 id="SHELL编程"><a href="#SHELL编程" class="headerlink" title="SHELL编程"></a>SHELL编程</h1><p><strong>编程语言</strong><br>   <strong>机器语言</strong>                01010101<br><strong>低级语言(汇编语言)</strong>      助记词(转义器 将助记词编译成机器语言)<br><strong>高级语言</strong>                跨平台<br>            编译型(编译器)      将标准文档转成对应平台的汇编<br>                C / C++</p>
+<pre><code>        解析型(解析器)      将文档实时转义成平台指令
+            Shell PHP Python JavaScript, GO
+
+        编译解析型(编译器/虚拟机)
+            Java C# PHP Python JS, 易, OC, swift</code></pre>
+<a id="more"></a>    
+<pre><code>编程入口
+    编辑文档, 文档的第一行开始，逐行解析
+
+SHELL解析器     /bin/bash
+    #!/bin/bash
+    快捷键
+        快捷键模式
+            emacs       默认
+                ctrl + a
+                ctrl + e
+                ctrl + d
+                ...
+            vi
+
+            临时更换模式: set -o vi
+
+        tab键补全</code></pre>
+<h2 id="特殊符号"><a href="#特殊符号" class="headerlink" title="特殊符号"></a>特殊符号</h2><pre><code>        *           通配符
+        \           转义符, 去除后面字符的特殊意义
+        &quot;&quot;          批量转义符, 去除引号引起来的内容大部分特殊字符的特殊意义
+        &#39;&#39;          批量完成转义符, 去除引号引起来的内容所有特殊字符的特殊意义
+        ``          引起来内容当作shell命令去执行并且将执行标准输出替换, 尽量使用$()
+                    $()可以嵌套， 反引号不能嵌套
+                    ``和$()都是开新进程去执行
+
+        {}          展开，代表多个的意思
+            字符串截取
+            数组的增. 删. 改. 查
+            变量的默认值
+            正则表达式匹配
+            awk
+        ()          子程序
+            $()
+        &amp;           将程序放入后台执行(多进程)
+        !           命令历史特殊符号
+        ~           当前登录用户的家目录
+        /           根
+        #           注释符
+        -           选项(标准输入)
+        $           组合使用， 访问变量
+        |           管道
+        &lt; &gt; &gt;&gt;..    重定向
+        .           当前目录
+        ..          上一级目录
+        [  ]        判断表达式
+        :           永真(if while)
+        ;           一条命令的结束
+        &amp;&amp;          逻辑与
+            前面的是&quot;真&quot;的才是会执行后面的
+        ||          逻辑或
+            前面的是&quot;假&quot;的才是会执行后面的
+
+    命令历史
+        查看命令历史
+            history
+            history 10
+
+        存储命令历史
+            history -w /tmp/history.txt
+
+        读取命令历史
+            history -r /tmp/history.txt
+
+        删除命令历史
+            history -c
+
+        执行命令执行
+            执行最后一条命令历史
+                !!
+
+            执行109的命令
+                !109
+
+            执行root开头的命令
+                !root
+
+            获取最后一条命令历史的最后一个参数
+                !$
+
+        命令历史的环境变量
+            HISTFILE        控制命令历史默认写入的文件(~/.bash_history)
+                echo $HISTFILE  打印环境变量的值
+            HISTFILESIZE    控制命令历史写入文件的最大条目
+                echo $HISTFILESIZE  打印环境变量的值
+            HISTSIZE        控制命令历史最大条目数
+            HISTTIMEFORMAT  控制命令历史时间显示格式
+                export HISTTIMEFORMAT=&quot;%F %T &quot;</code></pre>
+<h3 id="命令别名-alias"><a href="#命令别名-alias" class="headerlink" title="命令别名 alias"></a>命令别名 alias</h3><pre><code>        简化命令的输入, 只影响当前终端
+
+        创建命令别名
+            格式: alias 别名=&#39;执行命令名字及参数&#39;
+            例:
+                alias i=&#39;ifconfig enp0s25&#39;
+                alias p=&#39;ping -c 3 192.168.2.1&#39;
+                alias pb=&#39;ping -c 3 www.baidu.com&#39;
+
+        删除命令别名
+            格式: unalias 别名
+
+        查看命令别名
+            alias</code></pre>
+<p>​<br>**<em>环境变量**</em><br>​            提升程序运行效率, 将系统环境相关的信息存储到变量里，减少与内核交互<br>​            会影响子进程(将自己的环境变量复制给子进程)<br>​<br>​            输出当前shell所有环境变量<br>​                env<br>​<br>​            访问环境变量的值<br>​                echo $环境变量名<br>​<br>​            定义和修改环境变量的值(PPP0)<br>​                export 环境变量名=值<br>​<br>​            删除环境变量<br>​                unset 环境变量名<br>​<br>​        配置文件<br>​            bash启动时会执行配置文件(shell脚本)<br>​                <del>/.bashrc<br>​<br>​            当bash结束时会自动将命令历史写入</del>/.bash_history</p>
+<hr>
+<p>学习编程语言的流程:<br>    了解准备学习的语言概述<br>    编程入口<br>    变量的使用(数据类型)<br>    操作符(操作变量) -&gt; 语句<br>    流程控制语句(分支 循环)<br>    函数(代码的打包)<br>    数组<br>    字符串处理<br>    I/O文件操作</p>
+<hr>
+<p>变量<br>    变量默认没有数据类型之分, 一切皆于字符串</p>
+<pre><code>变量 : 以一组文字或符号来替换一些比较复杂或者容易变动的数据
+
+变量的用途
+
+    简单的用途就是为了方便搜索
+    常用于编程里，对经常使用的值使用变量，方便引用
+
+变量的分类
+
+    自定义变量                  不影响子进程
+
+    环境变量                    影响子进程
+
+自定义变量转环境变量
+
+    export  自定义变量名
+
+变量命名规则:
+    严格区分大小写，同名称但大小写不同的变量名是不同的变量
+    变量名可以是数字 字母特殊字符进行组合，
+        但不能以数字和特殊字符开头, 最好别用下划线开头更不能以纯数字为变量名
+    定义变量时两边不能有空格，有空格的字符串要用引号引起来
+    单引号和双引号的区别，单引号会转义所有特殊字符
+    尽可能描述变量存储的值(见名知意)
+
+定义变量
+    变量名=值
+        =两边不能有空格
+        例:
+            a=123
+            a=&quot;hello world&quot;
+            a=34.6778
+        特殊的变量定义方式：
+            var=`ls -l`     把ls -l的标准输出结果赋给var变量
+            a=$(ls -l)      将命令执行标准输出赋值给a变量
+
+更新变量值
+    变量名=新值
+        num1=2333
+        num2=$(($num1 + 1000))  结果是3333
+        num2=$[num1 + 1000]
+        let num2=($num1 + 1000)   结果是3333
+
+        str1=&quot;hello world &quot;
+        str2=$str1&quot;hello shell&quot;  hello world hello shell
+
+    变量名+=追加值
+
+
+获取变量值(PPP1)
+    $变量名
+        或
+    ${变量名}
+
+删除变量
+    unset 变量名
+
+${}的特殊访问
+    解决变量与其它字符串连接混乱问题
+
+    按位置进行截取(PPP2)
+        ${变量名:起始值:截取个数}
+        ${变量名:起始值:-从后面定位结束值}
+        ${a:7}          从第8个开始到结束
+        ${var:0-7:3}    从倒数第7个开始， 截取3个
+        ${var:0-7}      从倒数第7个开始， 截取到最后
+
+    按关键词进行截取(PPP3)(PPP4)
+        ${变量名#*关键词}       截取第一个关键词后面内容
+        ${变量名##*关键词}      截取最后一个关键词后面内容
+        ${变量名%关键词*}       截取最后一个关键词前面内容
+        ${变量名%%关键词*}      截取第一个关键词前面内容
+
+    获取字符串长度
+        ${#变量名}
+
+    替换(PPP5)
+        ${变量名/查找关键词/替换关键词}     替换第一个关键词
+        ${变量名//查找关键词/替换关键词}    替换全部关键词
+
+    变量默认值(PPP6)
+        echo ${变量名-默认值}
+            此变量名值为空或不存在，默认值才会使用
+        num=${1-$0}</code></pre>
+<p><strong>source或   .</strong>   内部命令, 使用本进程执行脚本, (默认情况下执行程序都开新进程)</p>
+<p><strong>内置变量</strong><br>$$          代表本脚本的PID(进程标识符) (PPPz)<br>            终端的pid是这个终端运行的脚本的PPID，<br>            这个脚本中运行的sleep命令会开启子进程去运行，<br>            脚本退出之后，里面sleep进程还是会继续运行， 只是变成了孤儿进程</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br></pre></td><td class="code"><pre><span class="line">$0          代表本脚本名</span><br><span class="line">$1          代表脚本的第一个参数</span><br><span class="line">$2          代表脚本的第二个参数</span><br><span class="line">$3          代表脚本的第三个参数</span><br><span class="line">...</span><br><span class="line">$&#123;10&#125;       代表脚本的第十个参数</span><br><span class="line">...</span><br><span class="line">$n          代表脚本的第n个参数</span><br><span class="line">    </span><br><span class="line">$*          代表脚本的所有参数</span><br><span class="line">$@          代表脚本的所有参数</span><br><span class="line">    假设在脚本运行时写了三个参数 1、2、3，</span><br><span class="line">    则 &quot; * &quot; 等价于 &quot;1 2 3&quot;(传递了一个参数),</span><br><span class="line">    而 &quot;@&quot; 等价于 &quot;1&quot; &quot;2&quot; &quot;3&quot;(传递了三个参数).</span><br><span class="line">    </span><br><span class="line">$?          代表上一条命令执行返回码</span><br><span class="line">            (0代表正确，非0代表错误)(非0退出就是上条命令有问题)</span><br><span class="line">            赋值没有返回码</span><br><span class="line">      命令结果赋值的时候， 会把命令返回码的值作为$?的值</span><br></pre></td></tr></table></figure>
+
+<h1 id="输入-输出语句-PPP7"><a href="#输入-输出语句-PPP7" class="headerlink" title="输入/输出语句(PPP7)"></a>输入/输出语句(PPP7)</h1><pre><code>echo/printf
+
+echo(见练习echo)
+    -n 不换行输出
+    -e 启用反斜杠转义解释
+
+    \c 最后不加上换行符号
+
+
+printf &quot;%d%s\n&quot; 34 &quot;hello&quot;
+    &quot;%10d&quot;      按10个空位右对齐, 整个字符占10个位置， 不足补空格
+    &quot;%-10d&quot;     按10个空位左对齐， 整个字符占10个位置， 不足补空格
+    &quot;%010d&quot;     按10 个空位右对齐, 前面补0
+    &quot;%10.2f&quot;    按10个空位右对齐, 保留两位小数点
+
+read
+    -p      指定输入提示信息
+    -s      关闭回显
+    -n      指定输入最大字符个数
+    -t      指定超时时间(秒)
+    如果在read命令行中不指定变量的话，read命令会将它接收到的所有参数放到特殊环境变量REPLY中。
+
+    read var                    等待用户给var变量赋值
+
+    read -p &quot;input your name:&quot; var  提示信息等待用户给var变量赋值
+
+    read -p &quot;input your name:&quot; -t 10 var  提示信息等待用户给var变量赋值,10秒不输入的话直接跳过
+
+    read -s -p &quot;input your password:&quot; passwd    提示信息等待用户给passwd变量赋值并且隐藏显示</code></pre>
+<hr>
+<p>一行多条命令执行<br>    ;        以分号分隔多条命令顺序执行<br>    &amp;&amp;      前面命令执行成功才会执行后面命令<br>    ||      前面命令执行失败才会执行后面命令</p>
+<hr>
+<h2 id="代码规范-可读性"><a href="#代码规范-可读性" class="headerlink" title="代码规范(可读性)"></a>代码规范(可读性)</h2><pre><code>加空行      使代码具有段落感
+    解析器和第一行代码之间要加空行
+    假如有连续定义多行变量， 在这之后要加空行
+    if/while/for/until/case 之间加空行
+    函数之间加空行
+    按代码功能分段加空行
+
+缩进对齐    使代码具有层次感
+    缩进量为4个空格, 遇到if/while/for/until/case语句，里面内容进行缩进对齐
+    函数内部要缩进
+
+加空格      使代码更清晰
+    双目操作符两边加空格(有左值右值的操作符)
+
+命名规则    尽量能描述存储数据或功能
+    首字母小写驼峰法    gameStatus      inputNum
+    首字母大写驼峰法    GameStatus      InputNum
+    下划线连接          game_status     input_num
+
+    强烈不建议使用中文和拼音
+
+折行        一行不要超过80个字符(包含空白字符)
+    使用 \ 进行连接行, \后不能跟任何字符</code></pre>
+<hr>
+<h1 id="流程控制语句"><a href="#流程控制语句" class="headerlink" title="流程控制语句"></a>流程控制语句</h1><pre><code>分支(PPP8)
+    格式:
+        if 命令; then
+            命令成功要执行的代码块
+        fi
+
+        if 命令; then
+            命令成功要执行的代码块
+        else
+            命令失败要执行的代码块
+        fi
+
+        if 命令1; then
+            命令1成功要执行的代码块
+        elif 命令2; then
+            命令2成功要执行的代码块
+        elif 命令3; then
+            命令3成功要执行的代码块
+        ...
+        else
+            命令失败要执行的代码块
+        fi
+
+    test命令(判断 条件表达式)
+        test &quot;$a&quot; = &quot;$b&quot;
+            或
+        [ &quot;$a&quot; = &quot;$b&quot; ]
+            或
+        ((&quot;$a&quot; == &quot;$b&quot;))
+        [[ &quot;$a&quot; == &quot;$b&quot; ]]
+
+        得到条件表达式所有帮助
+            man test
+
+        整型数据比较: -le -lt -ge -gt -ne -eq
+            -eq  等于,如:if [ &quot;$a&quot; -eq &quot;$b&quot; ]
+                equal
+
+            -ne  不等于,如:if [ &quot;$a&quot; -ne &quot;$b&quot; ]
+                no equal
+
+            -gt  大于,如:if [ &quot;$a&quot; -gt &quot;$b&quot; ]
+                greater than
+
+            -ge  大于等于,如:if [ &quot;$a&quot; -ge &quot;$b&quot; ]
+                greater equal
+
+           -lt   小于,如:if [ &quot;$a&quot; -lt &quot;$b&quot; ]
+                less than
+
+           -le  小于等于,如:if [ &quot;$a&quot; -le &quot;$b&quot; ]
+                less equal
+            &lt;   小于(需要双括号),如:((&quot;$a&quot; &lt; &quot;$b&quot;))
+            &lt;=  小于等于(需要双括号),如:((&quot;$a&quot; &lt;= &quot;$b&quot;))
+            &gt;   大于(需要双括号),如:((&quot;$a&quot; &gt; &quot;$b&quot;))
+            &gt;=  大于等于(需要双括号),如:((&quot;$a&quot; &gt;= &quot;$b&quot;))
+
+        字符串比较: = != ==  (演练)
+            = 等于,如:if [ &quot;$a&quot; = &quot;$b&quot; ]
+            == 等于,如:if [ &quot;$a&quot; == &quot;$b&quot; ],与=等价
+            != 不等于， 如: if [ &quot;$a&quot; != &quot;$b&quot; ]
+
+
+        逻辑比较: -a -o !
+            !   非，后面要跟空格
+            -o  或, 条件只要达成1个就是真(or)
+            -a  且，条件必须全部达成才是真(and)</code></pre>
+<h2 id="一些特殊的参数"><a href="#一些特殊的参数" class="headerlink" title="一些特殊的参数:"></a>一些特殊的参数:</h2><pre><code>             -a     文件存在。
+             -e     文件存在（与-a相同）。
+             -n     字符串长度不是零。
+             -z     字符串长度为零。
+
+             -r     文件存在并且可由当前进程读取。
+             -w     文件存在并且可由当前进程写入。
+             -x     文件存在并且可由当前进程执行。
+
+             -d     文件存在并且是一个目录。
+             -f     文件存在并且是一个常规文件。
+             -s     文件存在且大小大于零。
+             -b     文件存在，是一个块特殊文件。
+             -c     文件存在，是一个字符特殊文件。
+             -G     文件存在，并具有与此进程相同的组ID。
+             -O     文件存在，并由该进程的用户ID拥有。
+             -l     文件存在，是一个符号链接。
+             -p     文件存在，是一个先入先出（FIFO）的特殊文件或命名管道。
+             -S     文件存在，是一个套接字。
+
+            if test -d &quot;/tmp&quot;; then
+                echo &quot;判断/tmp是否存在且是个目录&quot;
+            fi
+
+            if [ -d &quot;/tmp&quot;]; then
+                echo &quot;判断/tmp是否存在且是个目录&quot;
+            fi
+
+
+        对变量最好使用双引号引起来， 保护起来， 以免报语法错误</code></pre>
+<h2 id="case-处理菜单使用-多路匹配-PPP9"><a href="#case-处理菜单使用-多路匹配-PPP9" class="headerlink" title="case(处理菜单使用, 多路匹配)(PPP9)"></a>case(处理菜单使用, 多路匹配)(PPP9)</h2><pre><code>        格式:
+            简略版：
+            case &quot;$num&quot; in
+                A|a) echo &quot;A&quot;;;
+                B|b) echo &quot;B&quot;;;
+                C|c) echo &quot;C&quot;;;
+                *) echo &quot;Other&quot;;;
+            esac
+
+            完整版:
+            case &quot;$num&quot; in
+                A|a)
+                    echo &quot;A&quot;
+                    ;;
+                B|b)
+                    echo &quot;B&quot;
+                    ;;
+                C|c)
+                    echo &quot;C&quot;
+                    ;;
+                *)
+                    echo &quot;Other&quot;
+                    ;;
+            esac</code></pre>
+<h2 id="循环-PPP11-PPP10"><a href="#循环-PPP11-PPP10" class="headerlink" title="循环(PPP11 PPP10)"></a>循环(PPP11 PPP10)</h2><pre><code>    循环控制语句
+        break           退出循环
+        continue        跳过本次循环
+    while(演练目录)
+        格式:
+            while 命令(条件表达式); do
+                循环代码块
+            done
+
+            命令成功或条件表达式为真才会执行循环体
+
+    until
+        格式:
+            until 命令(条件表达式); do
+                循环代码块
+            done
+
+            命令失败或条件表达式为假才会执行循环体
+
+    for(用for循环去做PPP5)
+        格式:
+            for 迭代变量 in 迭代对象 ; do
+                循环代码块
+            done
+
+            迭代对象是以空格为分隔符序列
+
+            for i in 1 2 3 4 5 6 7 8 9 10; do
+                echo $i
+            done
+
+            for i in 1 2.334 &quot;hello&quot; &quot;1.txt&quot; 5 678.45 7 8 9 10; do
+                echo $i
+            done
+
+            for ((i = 0; i &lt; 5; i++)); do
+                echo $i
+            done
+    seq
+        产生一个序列， 可进行迭代
+        count=18
+        for i in $(seq 0 $count); do
+            echo $i
+        done</code></pre>
+<hr>
+<h1 id="函数-打包代码-PPP23-PPP24"><a href="#函数-打包代码-PPP23-PPP24" class="headerlink" title="函数    打包代码(PPP23 PPP24)"></a>函数    打包代码(PPP23 PPP24)</h1><p>函数定义格式:<br>    [function] 函数名 () {<br>        函数代码块<br>    }</p>
+<p>函数调用格式:<br>    函数名 [参数]…</p>
+<p>函数就是命令，与命令用法一样</p>
+<p>exit和return后面接的必须是0-255的数字<br>    小于0会报错， 且最终的值是一个1-255的随机数字， 大多数是2<br>    大于255, 最终的值是一个1-255的随机数字， 大多数是1<br>    返回的不是数字， 会报错， 且返回的状态码是1-255之间的一个随机数字<br>    函数中出现了return， 执行到这一行的时候就会结束，这个函数下面的代码不会执行了<br>    在脚本中， 碰到exit会直接退出脚本， 下面的代码不会再执行</p>
+<pre><code>注意点:
+    1. shell是面向过程的语言， 从上到下依次执行(类似C语言)
+    2. 定义的变量要在使用之前，不然值是空的
+    3. 定义函数要在使用之前， 不然会报错
+    4. 函数外和函数内通信可以以传参的形式, 改变共同使用的变量
+    5. 函数内和函数外通信可以使用的标准输出的形式(echo/printf)和return/exit
+    6. 函数名要和变量名的起名规则是一样的， 做到见名知意
+    7. 函数不调用不执行
+    8. 假如函数名和linux的命令起冲突的时候， 会先执行自定义的函数</code></pre>
+<hr>
+<p>数组<br>    与变量一样是存储数据<br>    批量操作同类型的数据<br>    SHELL只支持一维数组<br>    数组不能直接作为函数参数进行传递</p>
+<p>   定义<br>        1. 索引数组<br>            declare -a 数组名<br>            数组名=(值1 值2 值3…)<br>        2. 键值对数组<br>            declare -A 数组名<br>            数组名=([“name1”]=soul [“name2”]=shell)<br>            数组名[键]=值</p>
+<pre><code>    3. 索引键值对混合数组(强烈不建议使用)
+        只是shell的语法允许这样做，但是正常使用的时候不要这样用
+        数组名[键]=值
+        数组名=(值1 值2 值3...)
+
+访问(演练)
+    访问指定元素
+        echo ${数组名[下标]}
+            下标是正整数, 从0开始描述数组的第几个元素
+            下标是负整数, 倒数第几个， 从1开始
+            下标是-0就相当于是0
+            下标是浮点数会报错
+        echo ${数组名[键名]}
+
+    访问所有元素
+        echo ${数组名[*]}
+        echo ${数组名[@]}
+
+    访问数组长度
+        ${#数组名[*]}
+        ${#数组名[@]}
+
+    访问数组所有键名
+        ${!数组名[*]}
+        ${!数组名[@]}
+        索引数组的键名类似于{0..n}
+
+更新
+    更新数组的指定元素
+        数组名[下标]=新值
+
+        数组名+=(追加值1 追加值2...)
+        给数组追加一个变量
+        a=(1 2 3 4)
+        num=5
+        a[${#a[*]}]=$num
+
+删除(PPP12)
+    删除数组指定元素
+        unset 数组名[下标]
+
+        只是清空对应下标元素的值, 并不会改变数组其它元素的位置
+        a=(1 2 3 4 5)
+        len1=${#a[*]}   &lt;-- 5
+        unset a[3]      &lt;-- 删除下标为3的元素
+        len2=${#a[*]}   &lt;-- 4
+        for i in &quot;${a[*]}&quot;; do
+            echo &quot;$i&quot;               &lt;-- 这种算法不能把a[3]的实际值打出来
+                                        这个时候打印的第4个数字只是第4个数字
+                                        而不是a[3]的值
+        done
+
+        x=0
+        for i in &quot;${a[*]}&quot;; do
+            echo &quot;下标为$x&quot;&quot;的值是: ${a[$x]}&quot;   &lt;-- 这个时候打印的第4个数字才是a[3]的值
+            let x+=1
+        done
+
+
+    删除整个数组
+        unset 数组名</code></pre>
+<hr>
+<p>declare</p>
+<pre><code>定义只读变量(常量)
+    declare -r 只读变量名=值
+
+定义索引数组
+    declare -a 数组名
+
+定义键值对数组
+
+    declare -A 数组名
+
+定义自动转化大写的变量
+    declare -u 变量名
+        给此变量名赋值，会自动转成大写
+
+定义自动转化小写的变量
+    declare -l 变量名
+        给此变量名赋值，会自动转成小写
+
+定义环境变量
+    declare -x 环境变量名</code></pre>
+<hr>
+<p>变量作用域<br>    $* 和 $@的区别: 它们的区别在于使用双引号, $*代表一个元素， $@代表多个元素</p>
+<pre><code>函数直接可以访问和修改函数外的变量
+shell里的变量都是全局变量, 在函数里定义的变量在函数调用后也可以直接访问
+
+在函数内可以使用local关键词定义局部变量 (只能在函数中使用)</code></pre>
+<hr>
+<h1 id="查找命令"><a href="#查找命令" class="headerlink" title="查找命令"></a>查找命令</h1><h3 id="which-查找-PATH变量指定的目录里的命令"><a href="#which-查找-PATH变量指定的目录里的命令" class="headerlink" title="which                           查找$PATH变量指定的目录里的命令"></a>which                           查找$PATH变量指定的目录里的命令</h3><pre><code>    which ifconfig              查出ifconfig命令的路径</code></pre>
+<h3 id="whereis-查找命令，显示命令更多的信息"><a href="#whereis-查找命令，显示命令更多的信息" class="headerlink" title="whereis                         查找命令，显示命令更多的信息"></a>whereis                         查找命令，显示命令更多的信息</h3><pre><code>    whereis ifconfig            命令路径，帮助文档等</code></pre>
+<h3 id="locate-文件查找命令"><a href="#locate-文件查找命令" class="headerlink" title="locate                          文件查找命令"></a>locate                          文件查找命令</h3><pre><code>    速度快，通过系统自带的一个数据库去查找
+
+        /var/lib/mlocate/mlocate.db
+
+    locate hello                查找带hello的文件,如果hello是刚刚新建的就找不到，因为数据库还没有没保存现在的信息
+
+    updatedb                    手动更新查找数据库，然后再查找就会很快找到刚刚新建的hello文件</code></pre>
+<h3 id="find"><a href="#find" class="headerlink" title="find"></a>find</h3><p><strong>文件查找命令，功能最强大，速度慢，因为会扫描整个查找的范围</strong></p>
+<pre><code>    find 范围 参数 关键字
+
+    find /etc -name grub.conf   查找/etc目录下的grub.conf文件
+
+    find / -name &quot;*.conf&quot;       查找/下所有.conf文件
+
+    find / -iname grub.conf    查找/目录下的grub.conf文件，忽略大小写
+
+    find / -maxdepth 2 -name grub.conf     可以使用-maxdepath参数来控制查找的层次，就是说只查当前目录和子目录,最多查2级目录
+    find / -mindepth 2 -name grub.conf     最少查二级目录
+
+    find /etc -type d           查找/etc/下所有的目录
+
+    find /etc -type f           查找/etc/下的所有普通文件
+
+    find /etc -type l -name &quot;*.conf&quot;      查找/etc/下软链接文件是.conf结尾的文件
+
+    find /etc -type s           查找/etc/下所有socket文件
+
+    find /etc -type c           查找/etc/下的所有字符设备文件
+
+    find /etc -type p           查找/etc/下所有管道文件
+
+    find /etc -user root        查找/etc/所属用户是root的文件
+
+    find /etc -group root       查找/etc/所属用户组是root的文件
+
+    find /etc -uid 500          查找/etc/下uid是500的文件,和-user类似
+
+    find /etc -gid 500          查找/etc/下gid是500的文件,和-group类似
+
+    find /etc -nouser           查找没有所属用户的文件
+
+    find /etc -nogroup          查找没有所属用户组的文件
+
+    find /etc -perm 777 -type d    查找/etc/下权限为777的目录
+
+    find . -perm  111           查找权限是111的文件
+
+    find . -size +10M           查找当前目录下大于10M的文件，单位可以有K,M,G,b等
+
+    find / -size -2M            查找根目录下少于2M的文件
+    find / -size +10M -size -100M   查找跟目录下面大于10M且小于100M的文件
+
+    find / -mtime 1             查找根目录下1小时以前修改的所有文件
+
+    find / -mtime +2            查找根目录下2个多小时以前修改的所有文件
+
+    find / -mtime -3            查找根目录下最近3小时内修改的所有文件
+
+    find / -atime 1             查找根目录下1天以前访问或读过的所有文件
+
+    find / -atime -1            查找根目录下最近1天内读过或访问的文件
+
+    find / -ctime -3            查找根目录下最近3天内状态发生改变的文件
+
+    find / -cmin -3             查找根目录下最近3分钟内状态发生改变的文件
+
+    find / -empty               查找根目录下所有空白文件或者空目录
+
+    find / -false               查找根目录下总是错误的文件
+
+    find / -false -exec ls -l {} \;   查找根目录下总是错误的文件并且用ls -l查看
+
+    exec
+        把前面命令的输出作为后面命令的参数
+        对find出来的文件进行进一步的操作
+        用ls -hl格式化输出/root下面属于root的大于10M的普通文件
+        find / -size +10M -user root -type f 2&gt; /dev/null -exec ls -hl &quot;{}&quot; \;
+
+    PPP13</code></pre>
+<hr>
+<h2 id="文本处理工具"><a href="#文本处理工具" class="headerlink" title="文本处理工具"></a>文本处理工具</h2><p>wc                                      统计命令</p>
+<pre><code>wc -c /etc/passwd                   统计/etc/passwd文件里有多少个字符
+
+wc -w /etc/passwd                   统计/etc/passwd文件里有多少个单词
+
+wc -l /etc/passwd                   统计/etc/passwd文件里有多少行</code></pre>
+<p>sort                                    排序命令</p>
+<pre><code>sort -f /etc/passwd                 忽略大小写排序
+
+sort -b /etc/passwd                 忽略最前面的空格符部分
+
+sort -n /etc/passwd                 按数字大小排序
+
+sort -u /etc/passwd                 去除重复行显示
+
+sort -r /etc/passwd                 反向排序
+
+sort -n -k5 /etc/passwd             指定第五列进行按数字大小排序
+
+sort -t: -n -k5 /etc/passwd         以:为分隔符指定第五列按数字大小排序</code></pre>
+<h3 id="cut-字段截取"><a href="#cut-字段截取" class="headerlink" title="cut                                     字段截取"></a>cut                                     字段截取</h3><pre><code>cut -d: -f1 /etc/passwd             以：为分隔符， 只显示第一列数据
+
+cut -d: -f1,2,5 /etc/passwd         只显示第一列，第二列，第五列的数据
+
+cut -d: -f1,2 /etc/passwd           以:为分隔符只显示第一列，第二列的数据</code></pre>
+<p>uniq                                    去除文件中相邻的重复行</p>
+<pre><code>uniq -u /etc/passwd                 只显示没有被重复过的行
+                                        重复行不显示
+
+uniq -d /etc/passwd                 只显示被重复过的行
+                                        重复的行中间只显示一行
+
+uniq -i /etc/passwd                 忽略大小写去除文件中相邻的重复行
+                                        重复的行中间只显示一行
+
+uniq -c /etc/passwd                 统计相邻重复行数</code></pre>
+<h3 id="diff-比较文件差异"><a href="#diff-比较文件差异" class="headerlink" title="diff                                    比较文件差异"></a>diff                                    比较文件差异</h3><pre><code>diff -B /etc/passwd passwd          忽略空行造成的不同
+
+3a4,6    表示4行和6行文件内容不一样，
+&gt; i     表示不一样的字符内容
+&gt; 
+&gt; 9  
+
+   -c 　显示全部内文，并标出不同之处,用!号标出
+diff -c /etc/passwd passwd
+
+说明：
+
+&quot;|&quot;表示前后2个文件内容有不同
+&quot;&lt;&quot;表示后面文件比前面文件少了1行内容
+&quot;&gt;&quot;表示后面文件比前面文件多了1行内容</code></pre>
+<p>tr                                      替换字符</p>
+<pre><code>cat /etc/passwd | tr a b            查看/etc/passwd文件并把里面的a替换成b
+
+tr a-z A-Z &lt; /etc/passwd            把/etc/passwd文件里的小写全转成大写
+不会修改源文件，输出到标准输出</code></pre>
+<h3 id="grep-文本查找-查找到结果打印对应行"><a href="#grep-文本查找-查找到结果打印对应行" class="headerlink" title="grep        文本查找(查找到结果打印对应行)"></a>grep        文本查找(查找到结果打印对应行)</h3><pre><code>格式: grep 参数 关键词 [文件路径]...
+
+    当有参数r的时候, 没有写文件路径的话就是在当前文件
+参数
+    -r      递归查找文件
+    -n      输出行号
+    -i      忽略大小写
+    -l      只输出路径
+    -w      完全匹配
+    -q      查找的结果不输出
+    -A      输出结果后面的行(包括查找结果行)
+    -B      输出结果前面的行(包括查找结果行)
+    -v      输出没有关键词的行
+    -o      代表的是只输出匹配的选项。
+在passwd文件中查找root输出对应行内容
+    grep root /etc/passwd
+
+在passwd文件中查找root输出对应行内容并且带行号
+    grep -n root /etc/passwd
+
+在passwd文件中查找nfs输出结果后3行(包含查找结果行)
+    grep -A 3 nfs /etc/passwd
+
+在passwd文件中查找nfs输出结果前3行
+    grep -B 3 nfs /etc/passwd
+
+在passwd文件中查找nfs输出结果前3行后2行
+    grep -A 2 -B 3 nfs /etc/passwd
+
+在多个文件中查找root关键词并且带颜色输出结果(文件名:行号:行内容)
+    grep -rn root ./
+
+在一个目录下所有文件查找root关键词
+    grep -r root ./
+
+在一个目录下的所有文件查找root关键词，只输出有结果的文件路径
+    grep -rl root ./
+
+查找没有root关键词的行  小写-v
+    grep -v root /etc/passwd
+
+查找多个关键词(逻辑或的关系)
+    grep --color=auto -e &#39;bin&#39; -e &#39;nologin&#39; /etc/passwd
+
+查找单词(关键词)
+    grep -w root /etc/passwd
+
+忽略大小写查找
+    grep -i root /etc/passwd
+
+关闭输出查找(用于shell判断使用)
+    grep -q root /etc/passwd
+
+使用扩展正则表达式(egrep)
+    grep -E &#39;a+&#39; /etc/passwd
+        或
+    egrep &#39;a+&#39; /etc/passwd
+
+ 2 : egrep = grep -E 可以使用基本的正则表达外, 还可以用扩展表达式. 注意区别.
+扩展表达式:
++ 匹配一个或者多个先前的字符, 至少一个先前字符.
+? 匹配0个或者多个先前字符.
+a|b|c 匹配a或b或c
+() 字符组, 如: &quot;love(able|ers)&quot; 匹配loveable或lovers.
+(..)(..)\1\2 模板匹配. \1代表前面第一个模板, \2代第二个括弧里面的模板.
+x{m,n} =x\{m,n\} x的字符数量在m到n个之间.</code></pre>
+<p>basename $(pwd)      取得当前目录名<br>    pwd | awk -F ‘/‘ ‘{print $NF}’</p>
+<p>dirname $(pwd)       取得当前路径，不包含当前目录名<br>    pwd | sed -nr ‘s/(.<em>)(/)(.</em>)$/\1\2/p’</p>
+<p>script_dir=$( cd $(dirname “$0”) &amp;&amp; pwd )   表示脚本所在目录的</p>
+<p>tac                 倒转文件里的内容</p>
+<p>rev                 倒转文件里的单词顺序</p>
+<hr>
+<h1 id="正则表达式-字符串匹配-模糊匹配"><a href="#正则表达式-字符串匹配-模糊匹配" class="headerlink" title="正则表达式 (字符串匹配 模糊匹配)"></a>正则表达式 (字符串匹配 模糊匹配)</h1><pre><code>名字叫正规表示法
+
+.           代表任意一个字符
+    r...    代表r开头的任意四个字符
+
+\&lt;root      代表root开头的单词
+root\&gt;      代表root结尾的单词
+\&lt;root\&gt;    代表完全匹配root单词
+\b          &lt;-- 单词边界
+\B          &lt;-- 非单词边界
+
+^           代表行开头
+    ^root   代表以root开头的行
+$           代表行结尾
+    root$   代表以root结尾的行
+
+*           匹配前一个字符0次或n次
+    a*      匹配0个a到多个a
+    .*      匹配0个到n个任意字符
++           匹配前一个字符1次或n次(至少要有一个)
+    a+      匹配至少一个a
+?           匹配前一个字符0次或1次
+    a?      匹配一个a或没有a
+
+        默认情况下，数量表示符只作用于前面的【一个】字符，如果需要作用于
+            前面的多个字符，可以使用(...)把前面的字符括起来
+        ab+         匹配ab, abb, abbb, abbbb...
+        (ab)+       匹配ab, abab, ababab, abababab...
+{}          匹配前一个字符指定次数
+    a{1}    匹配一个a
+    a{0,1}  与a?功能相同
+    a{0,}   与a*功能相同
+    a{1,}   与a+功能相同
+    a{1,3}  匹配一个a 或 二个a 或三个a
+        这些数字可以是任意的正整数
+
+[]   字符类       匹配一个字符
+    [abc]           匹配这个字符必须是a或b或c
+    [^abc]          匹配这个字符不是abc的其它任意字符
+    [a-z]           匹配26个小写字母
+    [0-9]           匹配0到9的字符
+    [a-zA-Z0-9_]    匹配数字 大小写字母和下划线
+    [a-zA-Z]+       匹配单词
+    [^a-zA-Z]+      匹配单词分隔符
+
+    预定义字符类
+        [[:alnum:]]     字母和数字的组合，相当于[a-zA-Z0-9]
+        [[:digit:]]     十进制数字 [0-9]
+        [[:alpha:]]     字母组合 [a-zA-Z]
+        [[:blank:]]     空格和制表符
+        [[:punct:]]     特殊字符集合
+        ...
+
+\           转义
+    \.      取消.的特殊意义
+    \n      代表换行
+
+    \d      任意一个十进制数字 [0-9]
+    \D      任意一个不是数字的字符 [^0-9]
+    \s      任意一个空白字符 [ \f\n\r\t]
+    \w      任意一个单词字符 [a-zA-Z0-9_]
+    \W      [^a-zA-Z0-9_]
+
+|           代表或
+    a|b     匹配a或b
+
+()          子表达式
+    (root)|(kyo)    匹配root或kyo
+
+默认情况下，数量表示符是最大匹配，好的正则表达式引擎支持用问号 ? 来启用最小匹配
+.*b   匹配 aaabababa      &lt;-- 最大匹配
+           ^^^^^^^^
+.*?b  匹配 aaabababa      &lt;-- 最小匹配
+           ^^^^
+
+引用表示法
+--------------------------------------------------------------
+从左边开始数左小括号(openning brace)，数字从1开始，被第一对括号匹配的字符
+    可以用\1 来引用，第二对可以用\2 来引用，以此类推。
+echo abcabcabcaabb | grep -E &#39;(a(bc)){2}\1&#39; --color
+    abcabcabcaabb
+echo abcabcabcaabb | grep -E &#39;(a(bc)){2}a\2&#39; --color
+    abcabcabcaabb
+echo &quot;hello world, hello world, hello beautiful world&quot;      \
+    | grep -E --color &#39;((hello) (world)), \1, \2 .* \3&#39;
+
+    hello world, hello world, hello beautiful world
+
+PPP14</code></pre>
+<hr>
+<h2 id="sed-流编辑器"><a href="#sed-流编辑器" class="headerlink" title="sed     流编辑器"></a>sed     流编辑器</h2><pre><code>格式: sed 参数 &quot;表达式&quot; [操作文件]...
+
+基本格式包含以下部分：
+1. 指定范围，不明确指定的话，默认是所有的行，可以是行号，或者正则表达式
+2. 指定动作，常用的有d, s, p, i, a
+    d: delete, 删除
+    s: substitute, 替换
+    p: print, 打印
+    i: insert, 在前面插入
+    a: append, 在后面添加
+
+选项:
+    -e          表达式
+    -n          取消非匹配行的文件输出
+    -i          操作原文件(慎用)
+    -r          支持更多正则表达式
+
+    ()      域, 匹配子表达式，用于替换引用
+        第一个小括号对应\1来引用
+        第二个小括号对应\2来引用
+        ...
+        以此类推
+
+        有-r参数， 小括号不需要转义, 没有-r参数需要转义 \(...\)
+
+输出    p(PPP15)
+
+    输出第3行内容
+        sed -n &#39;3p&#39; /etc/passwd
+
+    输出第3行和第7行内容，中间为;表示单独的操作
+        sed -n &#39;3p;7p&#39; /etc/passwd
+
+    输出第3行到第5行和第7行内容，中间为逗号，表示范围
+        sed -n &#39;3,5p;7p&#39; /etc/passwd
+
+    输出有root关键词的行
+        sed -n &#39;/root/p&#39; /etc/passwd
+
+    输出以root开头的行
+        sed -n &#39;/^root/p&#39; /etc/passwd
+
+    输出有数字的行
+        sed -n &#39;/[0-9]/p&#39; /etc/passwd
+
+    打印非空格开头的行
+        sed -n &#39;/^[^[:blank:]]/p&#39; passwd
+            或
+        sed -n &#39;/^[^\ ]/p&#39; passwd
+
+增加 i a (PPP16)
+    在第2行的上面， 也就是第2行加上一行内容
+        sed -i &#39;2i sfasdfdsf&#39; passwd
+
+    在第2行的下面， 也就是在第3行加一行内容
+        sed -i &#39;2a sfasdfdsf&#39; passwd
+
+    i和a的区别:
+        i是指定几行就在几行加，
+        a是指定几行就在几行的下一行加
+
+删除    d
+
+    删除第3行
+        sed &#39;3d&#39; mypasswd
+
+    删除第10行到第30行
+        cat -n /etc/passwd | sed &#39;10, 30d&#39;
+
+    删除第3行, 影响原文件
+        sed -i &#39;3d&#39; mypasswd
+
+    删除第二行到第三行
+        cat -n passwd | sed -e &#39;2,3d&#39;
+
+    删除第一行和第五行
+        cat -n passwd | sed -e &#39;1d;5d&#39;
+
+    删除空行
+        cat passwd | sed -e &#39;/^$/d&#39;
+
+    删除空格开始的行
+        cat /etc/passwd |sed -e &#39;/^[[:blank:]]/d&#39; --删除以空格开头的
+        cat /etc/passwd |sed -e &#39;/^ /d&#39;    --同上
+        cat /etc/passwd |sed -e &#39;/^\ /d&#39;    --同上
+
+    删除/etc/passwd的空行和注释
+        cat passwd |sed -e &#39;/^#/d;/^$/d&#39;
+    ...
+
+    删除一个字符串中指定位置的字符(PPP17)
+    删除第3至第5的字符
+ echo 123456789ABCDEF | sed -r &#39;s/^(..)...(.*)$/\1\2/&#39;  保留第1小括号和第2个的内容
+    删除第3个字符
+  echo 123456789ABCDEF | sed -r &#39;s/^(.{2}).(.*)$/\1\2/&#39;
+    删除从3个字符开始的10个字符
+    echo 123456789ABCDEF | sed -r &#39;s/^(.{2}).{10}(.*)$/\1\2/&#39;</code></pre>
+<h3 id="替换-s-PPP18-PPP19"><a href="#替换-s-PPP18-PPP19" class="headerlink" title="替换    s(PPP18)(PPP19)"></a>替换    s(PPP18)(PPP19)</h3><pre><code>    将每行的第一个root替换成soul
+        sed -e &#39;s/root/soul/&#39; mypasswd
+
+    将每行的第二个root替换成soul
+        sed -e &#39;s/root/soul/2&#39; mypasswd
+
+    将每行的所有root替换成soul
+        sed -e &#39;s/root/soul/g&#39; mypasswd
+
+    将每行的开头的空格删掉
+        cat -n /etc/passwd | sed -e &#39;s/^[ ]*//g&#39;
+
+    将1到10行的所有root替换成soul
+        sed -e &#39;1,10s/root/soul/g&#39; mypasswd
+
+    将10到最后行的所有root替换成soul
+        sed -e &#39;10,$s/root/soul/g&#39; mypasswd
+
+    将10到最后行的所有小写字母替换K
+        sed -e &#39;10,$s/[a-z]/K/g&#39; mypasswd
+
+    删除每行中第一个字符
+        sed -e &quot;s/^.//&quot; mypasswd
+
+    将每行中第一个字符替换成A
+        sed -e &quot;s/^./A/&quot; mypasswd
+
+    删除每行中第二个字符
+        sed -r -e &quot;s/^(.)./\1/&quot; mypasswd
+
+    删除每行中第一个有效字符(非空白字符)
+        sed -e &quot;s/^([[:blank:]]*)./\1/&quot; mypasswd
+            或者
+        sed -r -e &#39;s/^([ ]*)./\1/&#39; mypasswd
+
+    删除每行最后一个字符
+        sed -e &#39;s/.$//&#39; mypasswd</code></pre>
+<hr>
+<pre><code>    从左边开始数左小括号(openning brace)，数字从1开始，被第一对括号匹配的字符
+        可以用\1 来引用，第二对可以用\2 来引用，以此类推。</code></pre>
+<hr>
+<pre><code>    删除每行倒数第二个字符
+        sed -r -e &#39;s/.(.)$/\1/&#39; mypasswd
+            把倒数第一个和倒数二个换成了倒数第一个
+
+    删除每行的第二个数字
+        sed -r -e &#39;s/[0-9]+//2&#39; passwd
+
+    练习:
+        2018-9-24
+        2018-12-1
+        2018-1-4
+        2018-10-1
+
+        把上面的日期格式替换成2018-10-01的形式
+
+
+    删除每行第二个单词([a-zA-Z]+)
+        sed -re &#39;s/^([a-Z]+)([^a-Z])([a-Z]+)/\1\2/&#39; 1_passwd.txt
+            或者
+        sed -re &#39;s/[a-Z]+//2&#39; 1_passwd.txt
+
+    删除每行第3个非单词
+        sed -re &#39;s/[^a-Z]+//3&#39; 1_passwd.txt
+
+    PPP20
+    PPP21
+
+
+查找有线网卡设备名
+    ifconfig | sed -rn &#39;s/^(e[0-9a-zA-Z]+).*$/\1/p&#39;
+截取IP地址(一行命令)
+    输出结果格式: 192.168.0.183/255.255.255.0
+    #!/bin/bash
+
+    # 再脚本运行的进程里，把语言环境改成英文，就不会受到语言环境的影响
+    export LANG=en_US.UTF-8
+    export LANGUAGE=en_US:en
+
+    # 截取出正在上网的网卡名称
+    link=$(route -n  | sed -n &#39;/UG/p&#39; | sed -re &#39;s/(.*)(\b[a-Z0-9]+$)/\2/&#39;)
+            或者
+    link=$(route -n | sed -n &#39;/UG/p&#39; | awk &#39;{print $NF}&#39;)
+    # 截取出ip和子网掩码， 用/分开
+    ip=$(ifconfig $link | sed -n &#39;/Mask/p&#39; | sed -r &#39;s/^([^0-9]+)([0-9.]+)(.*)([^0-9.]+)([0-9.]+$)/\2\/\5/&#39;)
+    echo $ip</code></pre>
+<hr>
+<h1 id="Awk"><a href="#Awk" class="headerlink" title="Awk"></a>Awk</h1><pre><code>Awk是一门编程语言，有很多版本，我们用的是GNU的gawk
+
+    以:为分隔符打印第三列
+
+        awk -F &quot;:&quot; &#39;{print $3}&#39; /etc/passwd</code></pre>
+<p><strong>awk 命令的基本格式为：</strong></p>
+<p> awk [选项] ‘脚本命令’ 文件名</p>
+<p>此命令常用的选项以及各自的含义，如表 1 所示。</p>
+<table>
+<thead>
+<tr>
+<th>选项</th>
+<th>含义</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>-F fs</td>
+<td>指定以 fs 作为输入行的分隔符，awk 命令默认分隔符为空格或制表符。</td>
+</tr>
+<tr>
+<td>-f file</td>
+<td>从脚本文件中读取 awk 脚本指令，以取代直接在命令行中输入指令。</td>
+</tr>
+<tr>
+<td>-v var=val</td>
+<td>在执行处理过程之前，设置一个变量 var，并给其设备初始值为 val。</td>
+</tr>
+</tbody></table>
+<p>awk 的强大之处在于脚本命令，它由 2 部分组成，分别为匹配规则和执行命令，如下所示：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">&#39;匹配规则&#123;执行命令&#125;&#39;</span><br></pre></td></tr></table></figure>
+
+<p>这里的匹配规则，和 sed 命令中的 address 部分作用相同，用来指定脚本命令可以作用到文本内容中的具体行，可以使用字符串（比如 /demo/，表示查看含有 demo 字符串的行）或者正则表达式指定。另外需要注意的是，整个脚本命令是用单引号（’’）括起，而其中的执行命令部分需要用大括号（{}）括起来。</p>
+<p>在 awk 程序执行时，如果没有指定执行命令，则默认会把匹配的行输出；如果不指定匹配规则，则默认匹配文本中所有的行。</p>
+<p>举个简单的例子：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">awk &#39;&#x2F;^$&#x2F; &#123;print &quot;Blank line&quot;&#125;&#39; test.txt</span><br></pre></td></tr></table></figure>
+
+<p>在此命令中，<code>/^$/</code> 是一个正则表达式，功能是匹配文本中的空白行，同时可以看到，执行命令使用的是 print 命令，此命令经常会使用，它的作用很简单，就是将指定的文本进行输出。因此，整个命令的功能是，如果 test.txt 有 N 个空白行，那么执行此命令会输出 N 个 Blank line。</p>
+<h2 id="awk-使用数据字段变量"><a href="#awk-使用数据字段变量" class="headerlink" title="awk 使用数据字段变量"></a>awk 使用数据字段变量</h2><p>awk 的主要特性之一是其处理文本文件中数据的能力，它会自动给一行中的每个数据元素分配一个变量。</p>
+<p>默认情况下，awk 会将如下变量分配给它在文本行中发现的数据字段：</p>
+<ul>
+<li>$0 代表整个文本行；</li>
+<li>$1 代表文本行中的第 1 个数据字段；</li>
+<li>$2 代表文本行中的第 2 个数据字段；</li>
+<li>$n 代表文本行中的第 n 个数据字段。</li>
+</ul>
+<p>前面说过，在 awk 中，默认的字段分隔符是任意的空白字符（例如空格或制表符）。 在文本行中，每个数据字段都是通过字段分隔符划分的。awk 在读取一行文本时，会用预定义的字段分隔符划分每个数据字段。</p>
+<p>所以在下面的例子中，awk 程序读取文本文件，只显示第 1 个数据字段的值：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">[root@localhost ~]# cat data2.txt</span><br><span class="line">One line of test text.</span><br><span class="line">Two lines of test text.</span><br><span class="line">Three lines of test text.</span><br><span class="line">[root@localhost ~]# awk &#39;&#123;print $1&#125;&#39; data2.txt</span><br><span class="line">One</span><br><span class="line">Two</span><br><span class="line">Three</span><br></pre></td></tr></table></figure>
+
+<p>该程序用 $1 字段变量来表示“仅显示每行文本的第 1 个数据字段”。当然，如果你要读取采用了其他字段分隔符的文件，可以用 -F 选项手动指定。</p>
+<h2 id="awk-脚本命令使用多个命令"><a href="#awk-脚本命令使用多个命令" class="headerlink" title="awk 脚本命令使用多个命令"></a>awk 脚本命令使用多个命令</h2><p>awk 允许将多条命令组合成一个正常的程序。要在命令行上的程序脚本中使用多条命令，只要在命令之间放个分号即可，例如：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"> echo &quot;My name is luke&quot; | awk &#39;&#123;$4&#x3D;&quot;yichen&quot;; print $0&#125;&#39;</span><br><span class="line">My name is yichen</span><br></pre></td></tr></table></figure>
+
+<p>第一条命令会给字段变量 $4 赋值。第二条命令会打印整个数据字段。可以看到，awk 程序在输出中已经将原文本中的第四个数据字段替换成了新值。</p>
+<p>除此之外，也可以一次一行地输入程序脚本命令，比如说：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">[root@server1 ~]# awk &#39;&#123;</span><br><span class="line">&gt; $4&#x3D;&quot;yichen&quot;</span><br><span class="line">&gt; print $0&#125;&#39;</span><br><span class="line">My name is luke</span><br><span class="line">My name is yichen</span><br></pre></td></tr></table></figure>
+
+<p>在你用了表示起始的单引号后，bash shell 会使用 &gt; 来提示输入更多数据，我们可以每次在每行加一条命令，直到输入了结尾的单引号。</p>
+<p><strong>注意</strong>，此例中因为没有在命令行中指定文件名，awk 程序需要用户输入获得数据，因此当运行这个程序的时候，它会一直等着用户输入文本，此时如果要退出程序，只需按下 Ctrl+D 组合键即可。</p>
+<h2 id="awk从文件中读取程序"><a href="#awk从文件中读取程序" class="headerlink" title="awk从文件中读取程序"></a>awk从文件中读取程序</h2><p>跟 sed 一样，awk 允许将脚本命令存储到文件中，然后再在命令行中引用，比如：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line">cat awk.sh</span><br><span class="line">&#123;print $1 &quot;&#39;s home directory is &quot; $6&#125;</span><br><span class="line"></span><br><span class="line">awk -F: -f awk.sh &#x2F;etc&#x2F;passwd</span><br><span class="line"></span><br><span class="line">root&#39;s home directory is &#x2F;root</span><br><span class="line">bin&#39;s home directory is &#x2F;bin</span><br><span class="line">daemon&#39;s home directory is &#x2F;sbin</span><br><span class="line">adm&#39;s home directory is &#x2F;var&#x2F;adm</span><br><span class="line">lp&#39;s home directory is &#x2F;var&#x2F;spool&#x2F;lpd</span><br><span class="line">...</span><br><span class="line">Christine&#39;s home directory is &#x2F;home&#x2F;Christine</span><br><span class="line">Samantha&#39;s home directory is &#x2F;home&#x2F;Samantha</span><br><span class="line">Timothy&#39;s home directory is &#x2F;home&#x2F;Timothy</span><br></pre></td></tr></table></figure>
+
+<p>awk.sh 脚本文件会使用 print 命令打印 /etc/passwd 文件的主目录数据字段（字段变量 $6），以及 userid 数据字段（字段变量 $1）。注意，在程序文件中，也可以指定多条命令，只要一条命令放一行即可，之间不需要用分号。</p>
+<h2 id="awk-BEGIN关键字"><a href="#awk-BEGIN关键字" class="headerlink" title="awk BEGIN关键字"></a>awk BEGIN关键字</h2><p>awk 中还可以指定脚本命令的运行时机。默认情况下，awk 会从输入中读取一行文本，然后针对该行的数据执行程序脚本，但有时可能需要在处理数据前运行一些脚本命令，这就需要使用 BEGIN 关键字。</p>
+<p>BEGIN 会强制 awk 在读取数据前执行该关键字后指定的脚本命令，例如：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line">[root@localhost ~]# cat data3.txt</span><br><span class="line">Line 1</span><br><span class="line">Line 2</span><br><span class="line">Line 3</span><br><span class="line">[root@localhost ~]# awk &#39;BEGIN &#123;print &quot;The data3 File Contents:&quot;&#125;</span><br><span class="line">\&gt; &#123;print $0&#125;&#39; data3.txt</span><br><span class="line">The data3 File Contents:</span><br><span class="line">Line 1</span><br><span class="line">Line 2</span><br><span class="line">Line 3</span><br></pre></td></tr></table></figure>
+
+<p>可以看到，这里的脚本命令中分为 2 部分，BEGIN 部分的脚本指令会在 awk 命令处理数据前运行，而真正用来处理数据的是第二段脚本命令。</p>
+<h2 id="awk-END关键字"><a href="#awk-END关键字" class="headerlink" title="awk END关键字"></a>awk END关键字</h2><p>和 BEGIN 关键字相对应，END 关键字允许我们指定一些脚本命令，awk 会在读完数据后执行它们，例如：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">[root@localhost ~]# awk &#39;BEGIN &#123;print &quot;The data3 File Contents:&quot;&#125;</span><br><span class="line">\&gt; &#123;print $0&#125;</span><br><span class="line">\&gt; END &#123;print &quot;End of File&quot;&#125;&#39; data3.txt</span><br><span class="line">The data3 File Contents:</span><br><span class="line">Line 1</span><br><span class="line">Line 2</span><br><span class="line">Line 3</span><br><span class="line">End of File</span><br></pre></td></tr></table></figure>
+
+<p>可以看到，当 awk 程序打印完文件内容后，才会执行 END 中的脚本命令。</p>
+<pre><code>    以:为分隔符统计/sbin/nologin有多少个
+
+        awk &#39;BEGIN{FS=&quot;:&quot; ;count=0}{if($7 = &quot;/sbin/nologin&quot;)count+=1}END{print count}&#39; /etc/passwd
+
+            BEGIN      在读记录之前执行
+            END        在读完记录后再执行
+            $0         代表所有记录
+            $1-n       代表一个记录的第n个字段
+
+    使用awk脚本
+
+        #!/bin/awk
+
+        BEGIN{
+            FS=:
+            count=0         定义变量
+        }
+
+        {
+            if($7 == &quot;/sbin/nologin&quot;)
+            {
+                count += 1
+                print $0
+            }
+        }
+
+        END{
+            print &quot;count=&quot;count
+        }
+
+        awk -f 1.awk /etc/passwd        运行上面的脚本
+
+        FNR         当前处理到第几个文件
+        NF          当前多少个字段
+        NR          多少行
+        OFS         输入指定字段分隔符
+        ORS         输出记录分隔符
+        FS          指定分隔符
+
+
+    tips:
+        awk没有指定分隔符的话， 就是默认以&quot;空格&quot;为分隔符
+
+    打印所有行, 以空格为分隔符
+
+        awk &#39;{ print $0 }&#39; /etc/passwd
+
+    打印第一列，以：为分隔符
+
+        awk -F &quot;:&quot; &#39;{print $1}&#39; /etc/passwd
+
+    打印每行的最后一列
+
+        awk -F : &#39;{print $NF}&#39; /etc/passwd
+
+    打印第一列和第三列, 并且加上welcome
+
+        awk -F &quot;:&quot; &#39;{print $1 &quot;\t&quot; $3 &quot;welcome&quot;}&#39; /etc/passwd
+
+    打印第八行
+
+        awk -F : &#39;{if (NR == 8){print $0}}&#39; /etc/passwd
+        awk -F : &#39;NR == 8 {print $0}&#39; /etc/passwd
+
+    打印行总数
+
+        awk -F : &#39;END{print NR}&#39; /etc/passwd
+
+    打印每行的字段数
+
+        awk -F : &#39;{print NF}&#39; /etc/passwd
+
+    打印最后一行的最后一列
+
+        awk -F : &#39;END{print $NF}&#39; /etc/passwd
+
+    打印字段数大于4的行
+
+        awk -F : &#39;NF &gt; 4 {print $0}&#39; /etc/passwd
+
+    打印文件里所有字段总数
+
+        awk -F : &#39;BEGIN{c = 0}{c=c+NF}END{print c}&#39; /etc/passwd
+
+    打印uid在30~40范围内的用户名
+
+        awk -F : &#39;$3 &gt;= 30 &amp;&amp; $3 &lt;= 40{print $1}&#39; /etc/passwd
+
+    打印5到56行
+
+        awk -F : &#39;NR &gt;= 5 &amp;&amp; NR &lt;= 56 {print $0}&#39; /etc/passwd
+
+    打印偶数行
+
+        awk &#39;{if (NR % 2 == 0)print $0}&#39; /etc/passwd
+
+    打印偶基数行
+
+        awk &#39;{if (NR % 2 == 1)print $0}&#39; /etc/passwd
+
+    打印每行的第一单词
+
+        awk &#39;BEGIN{FS=&quot;[^A-Za-z]+&quot;}{print $1}&#39; /etc/passwd
+
+    打印每行的第一个和第三个单词
+
+        awk &#39;BEGIN{FS=&quot;[^a-zA-Z]+&quot;}{print $1,$3}&#39; /etc/passwd
+
+    打印字段数大于5个的行总数
+
+        awk -F &quot;:&quot; &#39;BEGIN {count=0 }(NF &gt; 5){count+=1} END{print count}&#39; /etc/passwd</code></pre>
+</div><ul class="post-copyright"><li><strong>本文标题：</strong><a href="https://yc6.cool/2020/08/03/linux_shell编程/">linux_shell编程</a></li><li><strong>本文作者：</strong><a href="https://yc6.cool">yichen</a></li><li><strong>本文链接：</strong><a href="https://yc6.cool/2020/08/03/linux_shell编程/">https://yc6.cool/2020/08/03/linux_shell编程/</a></li><li><strong>版权声明：</strong><span>本博客所有文章除特别声明外，均采用 <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/deed.zh" rel="external nofollow" target="_blank">CC BY-NC-SA 4.0</a> 许可协议。转载请注明出处！</span></li></ul><div><div class="recommend-post"><span class="is-size-6 has-text-grey has-mr-7"># 相关文章</span><br><span>  1.<a class="is-size-6" href="/2020/08/05/sed_%E7%9A%84%E5%B8%B8%E7%94%A8%E5%91%BD%E4%BB%A4%E7%9A%84%E4%BD%BF%E7%94%A8/" target="_blank">sed的常用命令的使用</a><br></span><span>  2.<a class="is-size-6" href="/2020/08/04/linux%E4%B8%8B%E7%9A%84%E7%9B%AE%E5%BD%95%E4%BB%8B%E7%BB%8D/" target="_blank">linux根下目录文件介绍</a><br></span><span>  3.<a class="is-size-6" href="/2020/08/03/vim%E4%BD%BF%E7%94%A8/" target="_blank">vim的使用</a><br></span><span>  4.<a class="is-size-6" href="/2020/08/03/linux%E4%B8%AD%E4%B8%A2%E5%A4%B1grub.cfg%E5%BC%95%E5%AF%BC%E6%96%87%E4%BB%B6%E4%BF%AE%E5%A4%8D/" target="_blank">linux中丢失grub.cfg引导文件修复</a><br></span><span>  5.<a class="is-size-6" href="/2020/08/03/linux%E7%B3%BB%E7%BB%9F%E7%AE%A1%E7%90%86/" target="_blank">linux系统管理</a><br></span><span>  6.<a class="is-size-6" href="/2020/08/03/linux%E7%A3%81%E7%9B%98%E7%AE%A1%E7%90%86/" target="_blank">linux磁盘管理</a><br></span><span>  7.<a class="is-size-6" href="/2020/08/03/%E7%A3%81%E7%9B%98%E5%91%BD%E4%BB%A4lvm/" target="_blank">磁盘命令lvm</a><br></span><span>  8.<a class="is-size-6" href="/2020/08/03/linux%E8%BD%AF%E4%BB%B6%E7%AE%A1%E7%90%86/" target="_blank">linux软件管理</a><br></span></div><div class="recommend-post"><span class="is-size-6 has-text-grey has-mr-7"># 推荐文章</span><br><span>  1.<a class="is-size-6" href="/2020/08/04/docker%E4%BD%BF%E7%94%A8/" target="_blank">docker的使用</a><br></span><span>  2.<a class="is-size-6" href="/2020/08/03/mysql%E5%9F%BA%E7%A1%80/" target="_blank">mysql基础</a><br></span><span>  3.<a class="is-size-6" href="/2020/08/03/nginx%E5%9F%BA%E7%A1%80/" target="_blank">nginx基础</a><br></span><span>  4.<a class="is-size-6" href="/2020/08/04/python3%E5%9F%BA%E7%A1%80%E7%9F%A5%E8%AF%86%E9%87%8D%E7%82%B9/" target="_blank">python3基础知识重点</a><br></span><span>  5.<a class="is-size-6" href="/2023/05/07/Linux%E6%9C%8D%E5%8A%A1%E5%99%A8%E7%B3%BB%E7%BB%9F%E7%9B%91%E6%8E%A7/" target="_blank">Prometheus监控linux</a><br></span><span>  6.<a class="is-size-6" href="/2023/05/10/Prometheus%E4%BD%BF%E7%94%A8%E9%82%AE%E7%AE%B1%E6%8E%A5%E6%94%B6%E5%91%8A%E8%AD%A6%E9%80%9A%E7%9F%A5/" target="_blank">Prometheus使用邮件接收告警通知</a><br></span></div></div><link rel="stylesheet" href="https://cdnjs.loli.net/ajax/libs/social-share.js/1.0.16/css/share.min.css"><div class="social-share"></div><script src="https://cdnjs.loli.net/ajax/libs/social-share.js/1.0.16/js/social-share.min.js"></script></article></div><div class="card"><div class="card-content"><h3 class="menu-label has-text-centered">喜欢这篇文章？打赏一下作者吧</h3><div class="buttons is-centered"><a class="button is-info donate"><span class="icon is-small"><i class="fab fa-alipay"></i></span><span>支付宝</span><span class="qrcode"><img src="https://yichenxiu.com/tupian/tubiao/alipay1.jpg" alt="支付宝"></span></a><a class="button is-success donate"><span class="icon is-small"><i class="fab fa-weixin"></i></span><span>微信</span><span class="qrcode"><img src="https://i.328888.xyz/2023/03/05/dZXCk.jpeg" alt="微信"></span></a></div></div></div><nav class="post-navigation mt-4 level is-mobile"><div class="level-start"><a class="article-nav-prev level level-item link-muted" href="/2020/08/03/dnf%E5%8C%85%E7%AE%A1%E7%90%86%E5%99%A8/"><i class="level-item fas fa-chevron-left"></i><span class="level-item">dnf包管理</span></a></div><div class="level-end"><a class="article-nav-next level level-item link-muted" href="/2020/08/03/linux%E8%BF%9B%E7%A8%8B%E7%AE%A1%E7%90%86/"><span class="level-item">linux进程管理</span><i class="level-item fas fa-chevron-right"></i></a></div></nav><div class="card"><div class="card-content"><h3 class="title is-5">评论</h3><div id="comment-container"></div><link rel="stylesheet" href="https://cdnjs.loli.net/ajax/libs/gitalk/1.6.0/gitalk.css"><script> $.getScript('/js/gitalk.min.js', function () { 
+            var gitalk = new Gitalk({
+            language:'zh-CN',
+            id: '6c054be130433ccb02eff0442e8013dc',
+            repo: 'issue_database',
+            owner: 'zhi666',
+            clientID: '1b861f81e9a79ee6028d',
+            clientSecret: 'cc629aff090aa9c60d5e13ddf7fcfce14f00a478',
+            admin: ["zhi666"],
+            createIssueManually: true,
+            distractionFreeMode: true,
+            perPage: 10,
+            pagerDirection: 'last',
+            proxy: 'https://cors-anywhere.azm.workers.dev/https://github.com/login/oauth/access_token',
+            
+            enableHotKey: true,
+            isLocked: false
+        })
+        gitalk.render('comment-container')});</script></div></div></div><div class="column column-left is-4-tablet is-4-desktop is-4-widescreen  order-1 is-sticky"><!--!--><div class="card widget"><div class="card-content"><nav class="level"><div class="level-item has-text-centered flex-shrink-1"><div><figure class="image is-128x128 mx-auto mb-2"><img class="is-rounded" src="/img/toudong.jpg" alt="逸尘秀"></figure><p class="title is-size-4 is-block line-height-inherit">逸尘秀</p><p class="is-size-6 is-block">只此一生 ， 必须快乐 ！</p><p class="is-size-6 is-flex justify-content-center"><i class="fas fa-map-marker-alt mr-1"></i><span>深圳</span></p></div></div></nav><nav class="level is-mobile"><div class="level-item has-text-centered is-marginless"><div><p class="heading">文章</p><a href="/archives"><p class="title">136</p></a></div></div><div class="level-item has-text-centered is-marginless"><div><p class="heading">分类</p><a href="/categories"><p class="title">17</p></a></div></div><div class="level-item has-text-centered is-marginless"><div><p class="heading">标签</p><a href="/tags"><p class="title">55</p></a></div></div></nav><div class="level"><a class="level-item button is-primary is-rounded" href="https://weibo.com/u/6155656382" target="_blank" rel="noopener">关注我</a></div><div class="level is-mobile"><a class="level-item button is-transparent is-white is-marginless" target="_blank" rel="noopener" title="Github" href="https://github.com/zhi666"><i class="fab fa-github"></i></a><a class="level-item button is-transparent is-white is-marginless" target="_blank" rel="noopener" title="Weibo" href="https://weibo.com/u/6155656382"><i class="fab fa-weibo"></i></a><a class="level-item button is-transparent is-white is-marginless" target="_blank" rel="noopener" title="Email" href="mailto:1378373724@qq.com"><i class="fa fa-envelope"></i></a><a class="level-item button is-transparent is-white is-marginless" target="_blank" rel="noopener" title="Next" href="https://zhi666.github.io/remove.io"><i class="fab fa-dribbble"></i></a><a class="level-item button is-transparent is-white is-marginless" target="_blank" rel="noopener" title="RSS" href="/atom.xml"><i class="fas fa-rss"></i></a></div><div><hr><p id="hitokoto">:D 一言句子获取中...</p><script type="text/javascript" defer>function getYiyan(){
+                                $.getJSON("https://v1.hitokoto.cn/", function (data) {
+                                if(data){
+                                    $('#hitokoto').html("");
+                                    $('#hitokoto').append("<strong style='color: #3273dc;'>"+data.hitokoto+"</strong>"+
+                                    "<p>"+"来源《"+data.from+"》</p><p>提供者-"+data.creator+"</p>");
+                                }});}
+                                $(function (){getYiyan();$('#hitokoto').click(function(){getYiyan();})});</script></div></div></div><div class="card widget"><div class="card-content"><h3 class="menu-label">最新评论</h3><span class="body_hot_comment">加载中，最新评论有1分钟缓存...</span></div></div><div class="card widget"><div class="card-content"><h3 class="menu-label">最新文章</h3><article class="media"><div class="media-content size-small"><p><time dateTime="2023-11-01T02:25:44.578Z">2023-11-01</time></p><p class="title is-6"><a class="link-muted" href="/2023/11/01/selenlium%E6%89%B9%E9%87%8F%E6%B7%BB%E5%8A%A0dns%E5%9F%9F%E5%90%8D/">批量添加dns域名解析</a></p><p class="is-uppercase"><i class="fas fa-folder-open has-text-grey"> </i><a class="link-muted" href="/categories/python/">python</a></p></div></article><article class="media"><div class="media-content size-small"><p><time dateTime="2023-05-17T01:45:36.000Z">2023-05-17</time></p><p class="title is-6"><a class="link-muted" href="/2023/05/17/Kubernetes%E9%AB%98%E5%8F%AF%E7%94%A8%E9%9B%86%E7%BE%A4%E4%BA%8C%E8%BF%9B%E5%88%B6%E9%83%A8%E7%BD%B2/">Kubernetes高可用集群二进制部署</a></p><p class="is-uppercase"><i class="fas fa-folder-open has-text-grey"> </i><a class="link-muted" href="/categories/linux3/">linux3</a></p></div></article><article class="media"><div class="media-content size-small"><p><time dateTime="2023-05-10T06:25:36.000Z">2023-05-10</time></p><p class="title is-6"><a class="link-muted" href="/2023/05/10/Prometheus%E4%BD%BF%E7%94%A8%E6%89%8B%E6%9C%BA%E7%94%B5%E8%AF%9D_%E7%9F%AD%E4%BF%A1%E6%8E%A5%E6%94%B6%E5%91%8A%E8%AD%A6%E9%80%9A%E7%9F%A5/">Prometheus使用手机电话_短信接收告警通知</a></p><p class="is-uppercase"><i class="fas fa-folder-open has-text-grey"> </i><a class="link-muted" href="/categories/linux2/">linux2</a></p></div></article><article class="media"><div class="media-content size-small"><p><time dateTime="2023-05-10T06:22:36.000Z">2023-05-10</time></p><p class="title is-6"><a class="link-muted" href="/2023/05/10/Prometheus%E4%BD%BF%E7%94%A8%E4%BC%81%E4%B8%9A%E5%BE%AE%E4%BF%A1%E6%8E%A5%E6%94%B6%E5%91%8A%E8%AD%A6%E9%80%9A%E7%9F%A5/">Prometheus使用企业微信接收告警通知</a></p><p class="is-uppercase"><i class="fas fa-folder-open has-text-grey"> </i><a class="link-muted" href="/categories/linux2/">linux2</a></p></div></article><article class="media"><div class="media-content size-small"><p><time dateTime="2023-05-10T06:20:36.000Z">2023-05-10</time></p><p class="title is-6"><a class="link-muted" href="/2023/05/10/Prometheus%E4%BD%BF%E7%94%A8%E4%BC%81%E4%B8%9A%E9%92%89%E9%92%89%E5%91%8A%E8%AD%A6%E9%80%9A%E7%9F%A5/">Prometheus使用企业钉钉接收告警通知</a></p><p class="is-uppercase"><i class="fas fa-folder-open has-text-grey"> </i><a class="link-muted" href="/categories/linux2/">linux2</a></p></div></article></div></div><div class="card widget"><div class="card-content"><div class="menu"><h3 class="menu-label">分类</h3><ul class="menu-list"><li><a class="level is-mobile is-marginless" href="/categories/English/"><span class="level-start"><span class="level-item">English</span></span><span class="level-end"><span class="level-item tag">1</span></span></a></li><li><a class="level is-mobile is-marginless" href="/categories/HTML/"><span class="level-start"><span class="level-item">HTML</span></span><span class="level-end"><span class="level-item tag">4</span></span></a></li><li><a class="level is-mobile is-marginless" href="/categories/JS/"><span class="level-start"><span class="level-item">JS</span></span><span class="level-end"><span class="level-item tag">2</span></span></a></li><li><a class="level is-mobile is-marginless" href="/categories/html/"><span class="level-start"><span class="level-item">html</span></span><span class="level-end"><span class="level-item tag">1</span></span></a></li><li><a class="level is-mobile is-marginless" href="/categories/linux1/"><span class="level-start"><span class="level-item">linux1</span></span><span class="level-end"><span class="level-item tag">15</span></span></a></li><li><a class="level is-mobile is-marginless" href="/categories/linux2/"><span class="level-start"><span class="level-item">linux2</span></span><span class="level-end"><span class="level-item tag">33</span></span></a></li><li><a class="level is-mobile is-marginless" href="/categories/linux3/"><span class="level-start"><span class="level-item">linux3</span></span><span class="level-end"><span class="level-item tag">27</span></span></a></li><li><a class="level is-mobile is-marginless" href="/categories/python/"><span class="level-start"><span class="level-item">python</span></span><span class="level-end"><span class="level-item tag">12</span></span></a></li><li><a class="level is-mobile is-marginless" href="/categories/web/"><span class="level-start"><span class="level-item">web</span></span><span class="level-end"><span class="level-item tag">1</span></span></a></li><li><a class="level is-mobile is-marginless" href="/categories/work/"><span class="level-start"><span class="level-item">work</span></span><span class="level-end"><span class="level-item tag">7</span></span></a></li><a class="level is-mobile is-marginless" href="/categories/"><span class="level-start"><span class="level-item">查看全部&gt;&gt;</span></span></a></ul></div></div></div><div class="card widget"><div class="card-content"><div class="menu"><h3 class="menu-label">归档</h3><ul class="menu-list"><li><a class="level is-mobile is-marginless" href="/archives/2023/11/"><span class="level-start"><span class="level-item">十一月 2023</span></span><span class="level-end"><span class="level-item tag">5</span></span></a></li><li><a class="level is-mobile is-marginless" href="/archives/2023/05/"><span class="level-start"><span class="level-item">五月 2023</span></span><span class="level-end"><span class="level-item tag">13</span></span></a></li><li><a class="level is-mobile is-marginless" href="/archives/2023/04/"><span class="level-start"><span class="level-item">四月 2023</span></span><span class="level-end"><span class="level-item tag">2</span></span></a></li><li><a class="level is-mobile is-marginless" href="/archives/2023/02/"><span class="level-start"><span class="level-item">二月 2023</span></span><span class="level-end"><span class="level-item tag">1</span></span></a></li><li><a class="level is-mobile is-marginless" href="/archives/2022/06/"><span class="level-start"><span class="level-item">六月 2022</span></span><span class="level-end"><span class="level-item tag">3</span></span></a></li><a class="level is-mobile is-marginless" href="/archives/"><span class="level-start"><span class="level-item">查看全部&gt;&gt;</span></span></a></ul></div></div></div><div class="card widget"><div class="card-content"><div class="menu"><h3 class="menu-label">标签</h3><div class="field is-grouped is-grouped-multiline"><div class="control"><a class="tags has-addons" href="/tags/linux/"><span class="tag">linux</span><span class="tag is-grey-lightest">18</span></a></div><div class="control"><a class="tags has-addons" href="/tags/docker/"><span class="tag">docker</span><span class="tag is-grey-lightest">16</span></a></div><div class="control"><a class="tags has-addons" href="/tags/Prometheus/"><span class="tag">Prometheus</span><span class="tag is-grey-lightest">14</span></a></div><div class="control"><a class="tags has-addons" href="/tags/html/"><span class="tag">html</span><span class="tag is-grey-lightest">14</span></a></div><div class="control"><a class="tags has-addons" href="/tags/python/"><span class="tag">python</span><span class="tag is-grey-lightest">12</span></a></div><div class="control"><a class="tags has-addons" href="/tags/web/"><span class="tag">web</span><span class="tag is-grey-lightest">12</span></a></div><div class="control"><a class="tags has-addons" href="/tags/nginx/"><span class="tag">nginx</span><span class="tag is-grey-lightest">9</span></a></div><div class="control"><a class="tags has-addons" href="/tags/mysql/"><span class="tag">mysql</span><span class="tag is-grey-lightest">7</span></a></div><div class="control"><a class="tags has-addons" href="/tags/%E5%AE%B9%E5%99%A8/"><span class="tag">容器</span><span class="tag is-grey-lightest">7</span></a></div><div class="control"><a class="tags has-addons" href="/tags/%E6%95%B0%E6%8D%AE%E5%BA%93/"><span class="tag">数据库</span><span class="tag is-grey-lightest">7</span></a></div><div class="control"><a class="tags has-addons" href="/tags/%E7%A7%91%E5%AD%A6%E4%B8%8A%E7%BD%91/"><span class="tag">科学上网</span><span class="tag is-grey-lightest">6</span></a></div><div class="control"><a class="tags has-addons" href="/tags/work/"><span class="tag">work</span><span class="tag is-grey-lightest">5</span></a></div><div class="control"><a class="tags has-addons" href="/tags/%E8%87%AA%E5%8A%A8%E5%8C%96/"><span class="tag">自动化</span><span class="tag is-grey-lightest">5</span></a></div><div class="control"><a class="tags has-addons" href="/tags/%E5%8D%9A%E5%AE%A2/"><span class="tag">博客</span><span class="tag is-grey-lightest">4</span></a></div><div class="control"><a class="tags has-addons" href="/tags/%E5%B7%A5%E4%BD%9C/"><span class="tag">工作</span><span class="tag is-grey-lightest">4</span></a></div><div class="control"><a class="tags has-addons" href="/tags/%E5%B7%A5%E5%85%B7/"><span class="tag">工具</span><span class="tag is-grey-lightest">4</span></a></div><div class="control"><a class="tags has-addons" href="/tags/ssl/"><span class="tag">ssl</span><span class="tag is-grey-lightest">3</span></a></div><div class="control"><a class="tags has-addons" href="/tags/%E6%96%87%E4%BB%B6%E7%B3%BB%E7%BB%9F/"><span class="tag">文件系统</span><span class="tag is-grey-lightest">3</span></a></div><div class="control"><a class="tags has-addons" href="/tags/%E6%97%A5%E5%BF%97/"><span class="tag">日志</span><span class="tag is-grey-lightest">3</span></a></div><div class="control"><a class="tags has-addons" href="/tags/%E6%97%A5%E5%BF%97%E5%8A%A0%E5%AF%86/"><span class="tag">日志加密</span><span class="tag is-grey-lightest">3</span></a></div></div><div class="field is-grouped is-grouped-multiline"><a class="tags has-addons" href="/tags/"><span class="tag">查看全部&gt;&gt;</span></a></div></div></div></div><div class="card widget"><div class="card-content"><div class="menu"><h3 class="menu-label">订阅更新</h3><form action="https://feedburner.google.com/fb/a/mailverify" method="post" target="popupwindow" onsubmit="window.open(&#039;https://feedburner.google.com/fb/a/mailverify?uri=zhi666FeedsId&#039;,&#039;popupwindow&#039;,&#039;scrollbars=yes,width=550,height=520&#039;);return true"><input type="hidden" value="zhi666FeedsId" name="uri"><input type="hidden" name="loc" value="en_US"><div class="field has-addons"><div class="control has-icons-left is-expanded"><input class="input" name="email" type="email" placeholder="Email"><span class="icon is-small is-left"><i class="fas fa-envelope"></i></span></div><div class="control"><input class="button is-primary" type="submit" value="订阅"></div></div><p class="help">输入邮箱开始订阅，更博后邮件通知！</p></form></div></div></div></div></div></div></section><footer class="footer"><div class="container"><div class="level"><div class="level-start"><a class="footer-logo is-block mb-2" href="/"><img src="/img/logo.png" alt="逸尘秀" height="28"></a><p class="size-small"><span>&copy; 2023 yichen</span>  Powered by <a href="https://hexo.io/" target="_blank">Hexo</a> &amp; <a href="https://github.com/ppoffice/hexo-theme-icarus" target="_blank">Icarus</a>,Modify by <a href="https://github.com/removeif/hexo-theme-amazing" target="_blank">removeif</a> <br><span>© 版权说明：[本网站所有内容均收集于互联网或自己创作,<br />&nbsp;&nbsp;&nbsp;&nbsp;方便于网友与自己学习交流，如有侵权，请<a href="/message" target="_blank">留言</a>，立即处理]<br /></span><span><span id="statistic-times">loading...</span><script>function createTime(time) {
+            var n = new Date(time);
+            now.setTime(now.getTime() + 250),
+                days = (now - n) / 1e3 / 60 / 60 / 24,
+                dnum = Math.floor(days),
+                hours = (now - n) / 1e3 / 60 / 60 - 24 * dnum,
+                hnum = Math.floor(hours),
+            1 == String(hnum).length && (hnum = "0" + hnum),
+                minutes = (now - n) / 1e3 / 60 - 1440 * dnum - 60 * hnum,
+                mnum = Math.floor(minutes),
+            1 == String(mnum).length && (mnum = "0" + mnum),
+                seconds = (now - n) / 1e3 - 86400 * dnum - 3600 * hnum - 60 * mnum,
+                snum = Math.round(seconds),
+            1 == String(snum).length && (snum = "0" + snum),
+                document.getElementById("statistic-times").innerHTML = "❤️本站自 <strong>"+time.split(" ")[0].replace(/\//g,".")+"</strong> 已运行 <strong>" + dnum + "</strong> 天 <strong>" + hnum + "</strong> 小时 <strong>" + mnum + "</strong> 分 <strong>" + snum + "</strong> 秒！❤️";
+        }var now = new Date();setInterval("createTime('2020/08/02 00:00:00')", 250,"");</script><br></span><div class="size-small"><span>❤️感谢 <strong><span id="busuanzi_value_site_uv">99+</span></strong> 小伙伴的 <strong><span id="busuanzi_value_site_pv">99+</span></strong> 次光临！❤️</span></div></p></div><div class="level-end"><div class="field has-addons"><p class="control"><a class="button is-transparent is-large" target="_blank" rel="noopener" title="Creative Commons" href="https://creativecommons.org/"><i class="fab fa-creative-commons"></i></a></p><p class="control"><a class="button is-transparent is-large" target="_blank" rel="noopener" title="Attribution 4.0 International" href="https://creativecommons.org/licenses/by/4.0/"><i class="fab fa-creative-commons-by"></i></a></p><p class="control"><a class="button is-transparent is-large" target="_blank" rel="noopener" title="Download on GitHub" href="https://github.com/zhi666"><i class="fab fa-github"></i></a></p></div><div class="sideMusic"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/aplayer/dist/APlayer.min.css"><script src="/js/APlayer.min.js"></script><script src="https://cdn.jsdelivr.net/npm/meting@2/dist/Meting.min.js"></script><meting-js style="width: auto;height: 2000px;" server="netease" type="playlist" id="2364053447" theme="#2980b9" loop="all" autoplay="false" order="list" storageName="aplayer-setting" lrctype="0" list-max-height="400px" fixed="true"></meting-js></div></div></div></div></footer><script src="https://cdnjs.loli.net/ajax/libs/moment.js/2.22.2/moment-with-locales.min.js"></script><script>moment.locale("zh-CN");</script><script>var IcarusThemeSettings = {
+            site: {
+                url: 'https://yc6.cool',
+                external_link: {"enable":true,"exclude":[]}
+            },
+            article: {
+                highlight: {
+                    clipboard: true,
+                    fold: 'unfolded'
+                }
+            }
+        };</script><script src="https://cdnjs.loli.net/ajax/libs/clipboard.js/2.0.4/clipboard.min.js" defer></script><script src="/js/animation.js"></script><a id="back-to-top" title="回到顶端" href="javascript:;"><i class="fas fa-chevron-up"></i></a><script src="/js/back-to-top.js" defer></script><!--!--><!--!--><script src="https://cdnjs.loli.net/ajax/libs/lightgallery/1.6.12/js/lightgallery-all.min.js" defer></script><script src="https://cdnjs.loli.net/ajax/libs/justifiedGallery/3.7.0/js/jquery.justifiedGallery.min.js" defer></script><!--!--><!--!--><!--!--><script src="/js/toc.js" defer></script><script src="/js/main.js" defer></script><script>$.getScript('/js/comment-issue-data.js',function(){loadIssueData('1b861f81e9a79ee6028d','cc629aff090aa9c60d5e13ddf7fcfce14f00a478','zhi666','issue_database',false);})</script><link rel="stylesheet" href="/css/insight.css"><div class="searchbox ins-search"><div class="searchbox-container ins-search-container"><div class="searchbox-input-wrapper"><input class="searchbox-input ins-search-input" type="text" placeholder="想要查找什么..."><span class="searchbox-close ins-close ins-selectable"><i class="fa fa-times-circle"></i></span></div><div class="searchbox-result-wrapper ins-section-wrapper"><div class="ins-section-container"></div></div></div></div><script>(function (window) {
+            var INSIGHT_CONFIG = {
+                TRANSLATION: {
+                    POSTS: '文章',
+                    PAGES: '页面',
+                    CATEGORIES: '分类',
+                    TAGS: '标签',
+                    UNTITLED: '(无标题)',
+                },
+                CONTENT_URL: '/content.json',
+            };
+            window.INSIGHT_CONFIG = INSIGHT_CONFIG;
+        })(window);</script><script src="/js/insight.js" defer></script></body></html>

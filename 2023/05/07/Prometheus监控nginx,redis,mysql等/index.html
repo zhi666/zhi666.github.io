@@ -1,0 +1,1148 @@
+<!doctype html>
+<html lang="zh"><head><meta charset="utf-8"><meta name="generator" content="Hexo 4.2.0"><meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"><meta><meta name="keywords" content="[object Object]"><meta name="description" content="Prometheus监控nginx,redis,rabbitmq,mongodb,docker等。一、环境介绍
+
+
+主机名
+ip地址
+系统
+说明
+
+
+
+localhost
+192.168.224.11
+centos7.8
+docker方式安装Prometheus。
+
+
+server2.com
+192.168.224.12
+centos7.8
+mongo版本4.2.5,rabbitmq版本3.7.15,redis版本5,nginx版本1.21.6,docker版本23.01"><meta name="author" content="zhi666"><title>Prometheus监控nginx,redis,rabbitmq,mongodb,docker等 - 逸尘秀</title><meta description="Prometheus监控nginx,redis,rabbitmq,mongodb,docker等。一、环境介绍   主机名 ip地址 系统 说明    localhost 192.168.224.11 centos7.8 docker方式安装Prometheus。   server2.com 192.168.224.12 centos7.8 mongo版本4.2.5,rabbitmq版本3.7.1"><meta property="og:type" content="article"><meta property="og:title" content="Prometheus监控nginx,redis,rabbitmq,mongodb,docker等"><meta property="og:url" content="https://yc6.cool/2023/05/07/Prometheus%E7%9B%91%E6%8E%A7nginx,redis,mysql%E7%AD%89/"><meta property="og:site_name" content="逸尘秀"><meta property="og:description" content="Prometheus监控nginx,redis,rabbitmq,mongodb,docker等。一、环境介绍   主机名 ip地址 系统 说明    localhost 192.168.224.11 centos7.8 docker方式安装Prometheus。   server2.com 192.168.224.12 centos7.8 mongo版本4.2.5,rabbitmq版本3.7.1"><meta property="og:locale" content="zh_CN"><meta property="article:published_time" content="2023-05-07T06:23:36.000Z"><meta property="article:modified_time" content="2023-11-01T02:25:44.546Z"><meta property="article:author" content="zhi666"><meta property="article:tag" content="Prometheus"><meta property="twitter:card" content="summary"><meta property="twitter:image" content="https://yc6.cool/img/avatar.png"><script type="application/ld+json">{"@context":"https://schema.org","@type":"BlogPosting","mainEntityOfPage":{"@type":"WebPage","@id":"https://yc6.cool/2023/05/07/Prometheus%E7%9B%91%E6%8E%A7nginx,redis,mysql%E7%AD%89/"},"headline":"Prometheus监控nginx,redis,rabbitmq,mongodb,docker等","image":["https://yc6.cool/img/avatar.png"],"datePublished":"2023-05-07T06:23:36.000Z","dateModified":"2023-11-01T02:25:44.546Z","author":{"@type":"Person","name":"zhi666"},"description":"Prometheus监控nginx,redis,rabbitmq,mongodb,docker等。一、环境介绍   主机名 ip地址 系统 说明    localhost 192.168.224.11 centos7.8 docker方式安装Prometheus。   server2.com 192.168.224.12 centos7.8 mongo版本4.2.5,rabbitmq版本3.7.1"}</script><link rel="alternative" href="/atom.xml" title="逸尘秀" type="application/atom+xml"><link rel="icon" href="/img/favicon.png"><link rel="stylesheet" href="https://cdnjs.loli.net/ajax/libs/font-awesome/5.12.0/css/all.min.css"><link rel="stylesheet" href="https://fonts.loli.net/css?family=Ubuntu:400,600|Source+Code+Pro|Monda:300,300italic,400,400italic,700,700italic|Roboto Slab:300,300italic,400,400italic,700,700italic|Microsoft YaHei:300,300italic,400,400italic,700,700italic|PT Mono:300,300italic,400,400italic,700,700italic&amp;amp;subset=latin,latin-ext|Inconsolata|Itim|Lobster.css"><link rel="stylesheet" href="https://cdnjs.loli.net/ajax/libs/highlight.js/9.12.0/styles/atom-one-dark.min.css"><style>body>.footer,body>.navbar,body>.section{opacity:0}</style><!--!--><!--!--><script src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js" defer></script><link rel="stylesheet" href="https://cdnjs.loli.net/ajax/libs/lightgallery/1.6.12/css/lightgallery.min.css"><link rel="stylesheet" href="https://cdnjs.loli.net/ajax/libs/justifiedGallery/3.7.0/css/justifiedGallery.min.css"><!--!--><!--!--><script src="https://cdnjs.loli.net/ajax/libs/pace/1.0.2/pace.min.js"></script><link rel="stylesheet" href="/css/style.css"><script src="https://cdnjs.loli.net/ajax/libs/jquery/3.3.1/jquery.min.js"></script><script src="/js/globalUtils.js"></script><link rel="stylesheet" href="/live2d/waifu.css"><script type="text/javascript" async src="/live2d/autoload.js"></script></head><body class="is-3-column has-navbar-fixed-top"><nav class="navbar navbar-main is-fixed-top"><div class="container"><div class="navbar-brand justify-content-center"><a class="navbar-item navbar-logo" href="/"><img src="/img/logo.png" alt="逸尘秀" height="28"></a></div><div class="navbar-menu"><div class="navbar-start"><a class="navbar-item" href="/">首页</a><a class="navbar-item" href="/archives">归档</a><a class="navbar-item" href="/categories">分类</a><a class="navbar-item" href="/tags">标签</a><a class="navbar-item" href="/media">影音</a><a class="navbar-item" href="/album">相册</a><a class="navbar-item" href="/friend">友链</a><a class="navbar-item" href="/self-talking">碎碎念</a><a class="navbar-item" href="/message">留言</a><a class="navbar-item" href="/about">关于</a></div><div class="navbar-end"><a class="navbar-item" target="_blank" rel="noopener" title="Download on GitHub" href="https://github.com/zhi666"><i class="fab fa-github"></i></a><a class="navbar-item is-hidden-tablet catalogue" title="目录" href="javascript:;"><i class="fas fa-list-ul"></i></a><a class="navbar-item search" title="搜索" href="javascript:;"><i class="fas fa-search"></i></a><a class="navbar-item" id="night-nav" title="Night Mode" href="javascript:;"><i class="fas fa-moon" id="night-icon"></i></a></div></div></div></nav><script type="text/javascript" src="/js/theme-setting.js"></script><section class="section"><div class="container"><div class="columns"><div class="column order-2 column-main is-8-tablet is-8-desktop is-9-widescreen"><div class="card"><article class="card-content article" role="article"><div class="article-meta size-small is-uppercase level is-mobile"><div class="level-left"><i class="far fa-calendar-plus"> </i>2023-05-07  <a class="commentCountImg" href="/2023/05/07/Prometheus%E7%9B%91%E6%8E%A7nginx,redis,mysql%E7%AD%89/#comment-container"><span class="display-none-class">e5e0423bc7a920553cb3c2dd08e96f75</span><i class="far fa-comment-dots"></i> <span class="commentCount" id="e5e0423bc7a920553cb3c2dd08e96f75">99+</span>  </a><span class="level-item"><i class="far fa-clock"> </i>1 小时  <i class="fas fa-pencil-alt"> </i>7.3 k</span><span class="level-item" id="busuanzi_container_page_pv"><i class="far fa-eye"></i>&nbsp;&nbsp;<span id="busuanzi_value_page_pv">0</span>次访问</span></div></div><h1 class="title is-3 is-size-4-mobile">Prometheus监控nginx,redis,rabbitmq,mongodb,docker等</h1><div class="content"><h1 id="Prometheus监控nginx-redis-rabbitmq-mongodb-docker等。"><a href="#Prometheus监控nginx-redis-rabbitmq-mongodb-docker等。" class="headerlink" title="Prometheus监控nginx,redis,rabbitmq,mongodb,docker等。"></a>Prometheus监控nginx,redis,rabbitmq,mongodb,docker等。</h1><h2 id="一、环境介绍"><a href="#一、环境介绍" class="headerlink" title="一、环境介绍"></a>一、环境介绍</h2><table>
+<thead>
+<tr>
+<th>主机名</th>
+<th>ip地址</th>
+<th>系统</th>
+<th>说明</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>localhost</td>
+<td>192.168.224.11</td>
+<td>centos7.8</td>
+<td>docker方式安装Prometheus。</td>
+</tr>
+<tr>
+<td>server2.com</td>
+<td>192.168.224.12</td>
+<td>centos7.8</td>
+<td>mongo版本4.2.5,rabbitmq版本3.7.15,redis版本5,nginx版本1.21.6,docker版本23.01</td>
+</tr>
+</tbody></table>
+<a id="more"></a>
+<h3 id="1、环境搭建"><a href="#1、环境搭建" class="headerlink" title="1、环境搭建"></a>1、环境搭建</h3><p>安装docker和docker-compose</p>
+<h4 id="a、创建nginx目录"><a href="#a、创建nginx目录" class="headerlink" title="a、创建nginx目录"></a>a、创建nginx目录</h4><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">    mkdir &#x2F;data&#x2F;nginx&#x2F;conf.d -p</span><br><span class="line">cd &#x2F;data&#x2F;nginx&#x2F;conf.d</span><br></pre></td></tr></table></figure>
+
+<p>在/data/nginx/conf.d目录里面新增加nginx的配置文件</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line">cat &gt;&gt;server.conf&lt;&lt; &quot;EOF&quot;</span><br><span class="line">server &#123;</span><br><span class="line"> listen 80;</span><br><span class="line"> server_name localhost;</span><br><span class="line"> location &#x2F; &#123;</span><br><span class="line"> root &#x2F;usr&#x2F;share&#x2F;nginx&#x2F;html;</span><br><span class="line"> index index.html index.htm;</span><br><span class="line"> &#125;</span><br><span class="line"> error_page 500 502 503 504 &#x2F;50x.html;</span><br><span class="line"> location &#x3D; &#x2F;50x.html &#123;</span><br><span class="line"> root &#x2F;usr&#x2F;share&#x2F;nginx&#x2F;html;</span><br><span class="line"> &#125;</span><br><span class="line">&#125;</span><br><span class="line">EOF</span><br></pre></td></tr></table></figure>
+
+<p>检查</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">cat server.conf</span><br></pre></td></tr></table></figure>
+
+<h4 id="b、docker-compose安装rabbitmq-nginx-mongo-redis"><a href="#b、docker-compose安装rabbitmq-nginx-mongo-redis" class="headerlink" title="b、docker-compose安装rabbitmq,nginx,mongo,redis"></a>b、docker-compose安装rabbitmq,nginx,mongo,redis</h4><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">mkdir &#x2F;data&#x2F;docker-compose -p</span><br><span class="line">cd &#x2F;data&#x2F;docker-compose</span><br></pre></td></tr></table></figure>
+
+<p>通过cat 创建docker-compose.yaml⽂件</p>
+<figure class="highlight yaml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br></pre></td><td class="code"><pre><span class="line"><span class="string">cat</span> <span class="string">&gt;</span> <span class="string">docker-compose.yaml</span> <span class="string">&lt;&lt;"EOF"</span></span><br><span class="line"><span class="attr">version:</span> <span class="string">'3'</span></span><br><span class="line"><span class="attr">services:</span></span><br><span class="line">  <span class="attr">redis:</span></span><br><span class="line">    <span class="attr">image:</span> <span class="string">redis:5</span></span><br><span class="line">    <span class="attr">container_name:</span> <span class="string">redis</span></span><br><span class="line">    <span class="attr">command:</span> <span class="string">redis-server</span> <span class="string">--requirepass</span> <span class="number">123456</span> <span class="string">--maxmemory</span> <span class="string">512mb</span></span><br><span class="line">    <span class="attr">restart:</span> <span class="string">always</span></span><br><span class="line">    <span class="attr">volumes:</span></span><br><span class="line">      <span class="bullet">-</span> <span class="string">/data/redis/data:/data</span></span><br><span class="line">    <span class="attr">ports:</span></span><br><span class="line">      <span class="bullet">-</span> <span class="number">6379</span><span class="string">:6379</span></span><br><span class="line">  <span class="attr">nginx:</span></span><br><span class="line">    <span class="attr">image:</span> <span class="string">nginx:1.21.6</span></span><br><span class="line">    <span class="attr">container_name:</span> <span class="string">nginx</span></span><br><span class="line">    <span class="attr">restart:</span> <span class="string">always</span></span><br><span class="line">    <span class="attr">volumes:</span></span><br><span class="line">      <span class="bullet">-</span> <span class="string">/data/nginx/conf.d:/etc/nginx/conf.d</span></span><br><span class="line">      <span class="bullet">-</span> <span class="string">/data/nginx/html:/usr/share/nginx/html</span></span><br><span class="line">      <span class="bullet">-</span> <span class="string">/data/nginx/log:/var/log/nginx</span></span><br><span class="line">    <span class="attr">ports:</span></span><br><span class="line">      <span class="bullet">-</span> <span class="number">80</span><span class="string">:80</span></span><br><span class="line">  <span class="attr">rabbitmq:</span></span><br><span class="line">    <span class="attr">image:</span> <span class="string">rabbitmq:3.7.15-management</span></span><br><span class="line">    <span class="attr">container_name:</span> <span class="string">rabbitmq</span></span><br><span class="line">    <span class="attr">restart:</span> <span class="string">always</span></span><br><span class="line">    <span class="attr">volumes:</span></span><br><span class="line">      <span class="bullet">-</span> <span class="string">/data/rabbitmq/data:/var/lib/rabbitmq</span></span><br><span class="line">      <span class="bullet">-</span> <span class="string">/data/rabbitmq/log:/var/log/rabbitmq</span></span><br><span class="line">    <span class="attr">ports:</span></span><br><span class="line">      <span class="bullet">-</span> <span class="number">5672</span><span class="string">:5672</span></span><br><span class="line">      <span class="bullet">-</span> <span class="number">15672</span><span class="string">:15672</span></span><br><span class="line">  <span class="attr">mongo:</span></span><br><span class="line">    <span class="attr">image:</span> <span class="string">mongo:4.2.5</span></span><br><span class="line">    <span class="attr">container_name:</span> <span class="string">mongo</span></span><br><span class="line">    <span class="attr">restart:</span> <span class="string">always</span></span><br><span class="line">    <span class="attr">volumes:</span></span><br><span class="line">      <span class="bullet">-</span> <span class="string">/data/mongo/db:/data/db</span></span><br><span class="line">    <span class="attr">ports:</span></span><br><span class="line">      <span class="bullet">-</span> <span class="number">27017</span><span class="string">:27017</span></span><br><span class="line">    <span class="attr">command:</span> <span class="string">[--auth]</span></span><br><span class="line">    <span class="attr">environment:</span></span><br><span class="line">      <span class="attr">MONGO_INITDB_ROOT_USERNAME:</span> <span class="string">root</span></span><br><span class="line">      <span class="attr">MONGO_INITDB_ROOT_PASSWORD:</span> <span class="number">123456</span></span><br><span class="line"><span class="string">EOF</span></span><br></pre></td></tr></table></figure>
+
+<p>运行</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">docker-compose up -d</span><br></pre></td></tr></table></figure>
+
+<p>检查</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">docker ps -a</span><br></pre></td></tr></table></figure>
+
+<p>STATUS列全部为up为正常。</p>
+<h2 id="二、监控nginx"><a href="#二、监控nginx" class="headerlink" title="二、监控nginx"></a>二、监控nginx</h2><h3 id="nginx开启stu-status"><a href="#nginx开启stu-status" class="headerlink" title="nginx开启stu_status"></a>nginx开启stu_status</h3><p>监控nginx需要with-http_stub_status_module</p>
+<p>检查是否安装有with-http_stub_status_module模块</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">sdocker exec -it nginx nginx -V 2&gt;&amp;1 | grep -o with-http_stub_status_module</span><br></pre></td></tr></table></figure>
+
+<p>nginx开启stub_status配置</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line">cd &#x2F;data&#x2F;nginx&#x2F;conf.d</span><br><span class="line">vim server.conf</span><br><span class="line"></span><br><span class="line">server &#123;</span><br><span class="line"> ....</span><br><span class="line"> location &#x2F;stub_status &#123;</span><br><span class="line"> stub_status on;</span><br><span class="line"> access_log off;</span><br><span class="line"> #allow nginx_export的ip; </span><br><span class="line"> allow 0.0.0.0&#x2F;0;</span><br><span class="line"> deny all;</span><br><span class="line"> &#125;</span><br><span class="line"> ....</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>检查配置文件</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">docker exec -it nginx nginx -t</span><br></pre></td></tr></table></figure>
+
+<p>重新加载配置⽂件</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">docker exec -it nginx nginx -s reload</span><br></pre></td></tr></table></figure>
+
+<p>查看</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">curl http:&#x2F;&#x2F;192.168.224.12&#x2F;stub_status</span><br></pre></td></tr></table></figure>
+
+<p>参数解释：</p>
+<p>Active connections – 活动连接数</p>
+<p>accepts – 接收请求数</p>
+<p>handled – 成功处理请求数</p>
+<p>requests – 总请求数</p>
+<p>reding – 正在进⾏读操作的请求数</p>
+<p>writing – 正在进⾏写操作的请求数</p>
+<p>waiting – 正在等待的请求数</p>
+<h3 id="1、二进制安装nginx-exporter"><a href="#1、二进制安装nginx-exporter" class="headerlink" title="1、二进制安装nginx_exporter"></a>1、二进制安装nginx_exporter</h3><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">nginx_exporter下载地址: https:&#x2F;&#x2F;github.com&#x2F;nginxinc&#x2F;nginx-prometheus-exporter&#x2F;releases</span><br></pre></td></tr></table></figure>
+
+<p>下载⼆进制包解压并放⼊**/usr/local/Prometheus**⽬录</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">wget https:&#x2F;&#x2F;github.com&#x2F;nginxinc&#x2F;nginx-prometheus-exporter&#x2F;releases&#x2F;download&#x2F;v0.11.0&#x2F;nginx-prometheus-exporter_0.11.0_linux_amd64.tar.gz</span><br><span class="line"></span><br><span class="line">mkdir &#x2F;usr&#x2F;local&#x2F;Prometheus&#x2F;nginx_exporter -p</span><br><span class="line">tar xvf nginx-prometheus-exporter_0.11.0_linux_amd64.tar.gz -C &#x2F;usr&#x2F;local&#x2F;Prometheus&#x2F;nginx_exporter</span><br><span class="line"></span><br><span class="line">ls &#x2F;usr&#x2F;local&#x2F;Prometheus&#x2F;nginx_exporter&#x2F;</span><br></pre></td></tr></table></figure>
+
+<p>创建⽤户</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">useradd -M -s &#x2F;usr&#x2F;sbin&#x2F;nologin prometheus</span><br></pre></td></tr></table></figure>
+
+<p>更改exporter文件夹权限</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">chown prometheus:prometheus -R &#x2F;usr&#x2F;local&#x2F;Prometheus</span><br></pre></td></tr></table></figure>
+
+<p>创建 <strong>systemd</strong> 服务</p>
+<p>nginx_exporter.service</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line">cat &gt; &#x2F;etc&#x2F;systemd&#x2F;system&#x2F;nginx_exporter.service &lt;&lt;&quot;EOF&quot;</span><br><span class="line">[Unit]</span><br><span class="line">Description&#x3D;nginx-prometheus-exporter</span><br><span class="line">After&#x3D;network.target</span><br><span class="line">[Service]</span><br><span class="line">Type&#x3D;simple</span><br><span class="line">User&#x3D;prometheus</span><br><span class="line">Group&#x3D;prometheus</span><br><span class="line">Restart&#x3D;always</span><br><span class="line">ExecStart&#x3D;&#x2F;usr&#x2F;local&#x2F;Prometheus&#x2F;nginx_exporter&#x2F;nginx-prometheus-exporter -nginx.scrape-uri&#x3D;http:&#x2F;&#x2F;192.168.224.12&#x2F;stub_status</span><br><span class="line">[Install]</span><br><span class="line">WantedBy&#x3D;multi-user.target</span><br><span class="line">EOF</span><br></pre></td></tr></table></figure>
+
+<p>启动 <strong>nginx_exporter</strong></p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">systemctl daemon-reload</span><br><span class="line">systemctl start nginx_exporter.service</span><br><span class="line">systemctl enable nginx_exporter.service</span><br><span class="line">systemctl status nginx_exporter.service</span><br></pre></td></tr></table></figure>
+
+<p>启动不了检查⽇志</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">journalctl -u nginx_exporter.service -f</span><br></pre></td></tr></table></figure>
+
+<h3 id="2、docker安装nginx-exporter"><a href="#2、docker安装nginx-exporter" class="headerlink" title="2、docker安装nginx_exporter"></a>2、docker安装nginx_exporter</h3><p>docker-compose方式</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">cd &#x2F;data&#x2F;nginx&#x2F;</span><br></pre></td></tr></table></figure>
+
+<p>通过cat创建⽂件</p>
+<figure class="highlight yaml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line"><span class="string">cat</span> <span class="string">&gt;docker-compose.yaml</span> <span class="string">&lt;&lt;EOF</span></span><br><span class="line"><span class="attr">version:</span> <span class="string">'3.3'</span></span><br><span class="line"><span class="attr">services:</span></span><br><span class="line">  <span class="attr">nginx_exporter:</span></span><br><span class="line">    <span class="attr">image:</span> <span class="string">nginx/nginx-prometheus-exporter:0.11</span></span><br><span class="line">    <span class="attr">container_name:</span> <span class="string">nginx_exporter</span></span><br><span class="line">    <span class="attr">hostname:</span> <span class="string">nginx_exporter</span></span><br><span class="line">    <span class="attr">command:</span></span><br><span class="line">      <span class="bullet">-</span> <span class="string">'-nginx.scrape-uri=http://192.168.224.12/stub_status'</span></span><br><span class="line">    <span class="attr">restart:</span> <span class="string">always</span></span><br><span class="line">    <span class="attr">ports:</span></span><br><span class="line">    <span class="bullet">-</span> <span class="string">"9113:9113"</span></span><br><span class="line"><span class="string">EOF</span></span><br></pre></td></tr></table></figure>
+
+<p>启动</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">docker-compose up -d</span><br></pre></td></tr></table></figure>
+
+<p>检查</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">docker ps -a</span><br><span class="line">或：</span><br><span class="line">docker logs -f nginx_exporter</span><br></pre></td></tr></table></figure>
+
+<h3 id="3、参数解释"><a href="#3、参数解释" class="headerlink" title="3、参数解释"></a><strong>3</strong>、参数解释</h3><table>
+<thead>
+<tr>
+<th><strong>Environment variable</strong></th>
+<th>命令⾏参数</th>
+<th><strong>description</strong></th>
+</tr>
+</thead>
+<tbody><tr>
+<td></td>
+<td>-nginx.scrape-uri</td>
+<td>nginx stub_status 复制</td>
+</tr>
+</tbody></table>
+<h3 id="4、metrics地址"><a href="#4、metrics地址" class="headerlink" title="4、metrics地址"></a><strong>4</strong>、<strong>metrics</strong>地址</h3><p>注：安装好Exporter后会暴露⼀个<code> http://ip:端⼝/metrics</code> 的HTTP服务</p>
+<table>
+<thead>
+<tr>
+<th>名称</th>
+<th>地址</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>nginx_exporter</td>
+<td><code>http://192.168.224.12:9113/metrics</code></td>
+</tr>
+</tbody></table>
+<h3 id="5、Prometheus配置"><a href="#5、Prometheus配置" class="headerlink" title="5、Prometheus配置"></a><strong>5</strong>、<strong>Prometheus</strong>配置</h3><p>配置prometheus去采集（拉取）nginx_exporter的监控样本数据</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line">cd &#x2F;data&#x2F;docker-prometheus</span><br><span class="line">#在scrape_configs(搜刮配置):下⾯增加如下配置：</span><br><span class="line"></span><br><span class="line">cat &gt;&gt; prometheus&#x2F;prometheus.yml &lt;&lt; &quot;EOF&quot;</span><br><span class="line">  - job_name: &#39;nginx_exporter&#39;</span><br><span class="line">    static_configs:</span><br><span class="line">    - targets: [&#39;192.168.224.12:9113&#39;]</span><br><span class="line">      labels:</span><br><span class="line">        instance: server2.com服务器</span><br><span class="line">EOF</span><br></pre></td></tr></table></figure>
+
+<p>重新加载配置</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">curl -X POST http:&#x2F;&#x2F;localhost:9090&#x2F;-&#x2F;reload</span><br></pre></td></tr></table></figure>
+
+<p>检查</p>
+<p><a href="https://imgse.com/i/p91Ykw9"><img src="https://s1.ax1x.com/2023/04/29/p91Ykw9.png" alt="p91Ykw9.png"></a></p>
+<h3 id="6、常⽤的监控指标"><a href="#6、常⽤的监控指标" class="headerlink" title="6、常⽤的监控指标"></a><strong>6</strong>、常⽤的监控指标</h3><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">nginx_connections_accepted 接收请求数</span><br><span class="line">nginx_connections_active 活动连接数</span><br><span class="line">nginx_connections_handled 成功处理请求数</span><br><span class="line">nginx_connections_reding 正在进⾏读操作的请求数</span><br><span class="line">nginx_connections_waiting 正在等待的请求数</span><br><span class="line">nginx_connections_writing 正在进⾏写操作的请求数</span><br><span class="line">nginx_connections_requests 总请求数</span><br></pre></td></tr></table></figure>
+
+<p><a href="https://imgse.com/i/p91Y1wd"><img src="https://s1.ax1x.com/2023/04/29/p91Y1wd.png" alt="p91Y1wd.png"></a></p>
+<h3 id="7、添加触发器"><a href="#7、添加触发器" class="headerlink" title="7、添加触发器"></a><strong>7</strong>、添加触发器</h3><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">cd &#x2F;data&#x2F;docker-prometheus</span><br></pre></td></tr></table></figure>
+
+<p>追加以下信息</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line">cat &gt;&gt;prometheus&#x2F;alert.yml &lt;&lt;&quot;EOF&quot;</span><br><span class="line">- name: nginx</span><br><span class="line">  rules:</span><br><span class="line">  # 对任何实例超过30秒无法联系的情况发出警报</span><br><span class="line">  - alert: NginxDown</span><br><span class="line">    expr: nginx_up &#x3D;&#x3D; 0</span><br><span class="line">    for: 30s</span><br><span class="line">    labels:</span><br><span class="line">      severity: critical</span><br><span class="line">    annotations:</span><br><span class="line">      summary: &quot;nginx异常,实例:&#123;&#123; $labels.instance &#125;&#125;&quot;</span><br><span class="line">      description: &quot;&#123;&#123; $labels.job &#125;&#125; nginx已关闭&quot;</span><br><span class="line">EOF</span><br></pre></td></tr></table></figure>
+
+<p>检查</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">vim prometheus&#x2F;alert.yml</span><br></pre></td></tr></table></figure>
+
+<p>检查配置</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">docker exec -it prometheus promtool check config &#x2F;etc&#x2F;prometheus&#x2F;prometheus.yml</span><br></pre></td></tr></table></figure>
+
+<p>重新加载配置</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">curl -X POST http:&#x2F;&#x2F;localhost:9090&#x2F;-&#x2F;reload</span><br></pre></td></tr></table></figure>
+
+<p>检查</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">http:&#x2F;&#x2F;192.168.224.11:9090&#x2F;alerts?search&#x3D;</span><br><span class="line">或者</span><br><span class="line">http:&#x2F;&#x2F;192.168.224.11:9090&#x2F;rules</span><br></pre></td></tr></table></figure>
+
+<h3 id="8、dashboard"><a href="#8、dashboard" class="headerlink" title="8、dashboard"></a><strong>8</strong>、<strong>dashboard</strong></h3><p>grafana展示prometheus从nginx_exporter收集到的的数据</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">https:&#x2F;&#x2F;grafana.com&#x2F;grafana&#x2F;dashboards&#x2F;12708</span><br></pre></td></tr></table></figure>
+
+<p>直接导入模板即可。后面的效果</p>
+<p><a href="https://imgse.com/i/p91YWXF"><img src="https://s1.ax1x.com/2023/04/29/p91YWXF.png" alt="p91YWXF.png"></a></p>
+<h2 id="三、监控redis"><a href="#三、监控redis" class="headerlink" title="三、监控redis"></a>三、监控redis</h2><p>redis已经在上面通过docker-compose部署好了</p>
+<h3 id="1、二进制安装redis-exporter"><a href="#1、二进制安装redis-exporter" class="headerlink" title="1、二进制安装redis_exporter"></a>1、二进制安装redis_exporter</h3><p>redis_exporter下载地址</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">https:&#x2F;&#x2F;github.com&#x2F;oliver006&#x2F;redis_exporter&#x2F;releases</span><br></pre></td></tr></table></figure>
+
+<p>下载⼆进制包解压并放⼊**/usr/local/Prometheus**⽬录</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">wget https:&#x2F;&#x2F;github.com&#x2F;oliver006&#x2F;redis_exporter&#x2F;releases&#x2F;download&#x2F;v1.48.0&#x2F;redis_exporter-v1.48.0.linux-amd64.tar.gz</span><br><span class="line"></span><br><span class="line">tar xvf redis_exporter-v1.48.0.linux-amd64.tar.gz</span><br><span class="line"></span><br><span class="line">mv redis_exporter-v1.48.0.linux-amd64 &#x2F;usr&#x2F;local&#x2F;Prometheus&#x2F;redis_exporter</span><br></pre></td></tr></table></figure>
+
+<p>创建⽤户(前面已经创建了就不用创建了)</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">useradd -M -s &#x2F;usr&#x2F;sbin&#x2F;nologin prometheus</span><br></pre></td></tr></table></figure>
+
+<p>更改<strong>exporter</strong>⽂件夹权限</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">chown prometheus:prometheus -R &#x2F;usr&#x2F;local&#x2F;Prometheus&#x2F;</span><br></pre></td></tr></table></figure>
+
+<p>创建 <strong>systemd</strong> 服务</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line">cat &gt; &#x2F;etc&#x2F;systemd&#x2F;system&#x2F;redis_exporter.service &lt;&lt;&quot;EOF&quot;</span><br><span class="line">[Unit]</span><br><span class="line">Description&#x3D;Prometheus Redis Exporter</span><br><span class="line">After&#x3D;network.target</span><br><span class="line">[Service]</span><br><span class="line">Type&#x3D;simple</span><br><span class="line">User&#x3D;prometheus</span><br><span class="line">Group&#x3D;prometheus</span><br><span class="line">Restart&#x3D;always</span><br><span class="line">ExecStart&#x3D;&#x2F;usr&#x2F;local&#x2F;Prometheus&#x2F;redis_exporter&#x2F;redis_exporter \</span><br><span class="line">-redis.addr localhost:6379 \</span><br><span class="line">-redis.password 123456</span><br><span class="line">[Install]</span><br><span class="line">WantedBy&#x3D;multi-user.target</span><br><span class="line">EOF</span><br></pre></td></tr></table></figure>
+
+<p>启动 <strong>redis_exporter</strong></p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">systemctl daemon-reload</span><br><span class="line">systemctl start redis_exporter</span><br><span class="line">systemctl enable redis_exporter</span><br><span class="line">systemctl status nredis_exporter</span><br></pre></td></tr></table></figure>
+
+<p>启动不了检查⽇志</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">journalctl -u redis_exporter -f</span><br></pre></td></tr></table></figure>
+
+<h3 id="2、docker安装redis-exporter"><a href="#2、docker安装redis-exporter" class="headerlink" title="2、docker安装redis_exporter"></a>2、docker安装redis_exporter</h3><p>docker直接运行</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">docker run -d --restart&#x3D;always --name redis_exporter -p 9121:9121 oliver006&#x2F;redis_exporter --redis.addr redis:&#x2F;&#x2F;192.168.224.12:6379 --redis.password &#39;123456&#39;</span><br></pre></td></tr></table></figure>
+
+<p><strong>docker-compose</strong>⽅式</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">cd</span> /data/redis/</span><br></pre></td></tr></table></figure>
+
+
+
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line">cat &gt;docker-compose.yaml &lt;&lt;EOF</span><br><span class="line">version: &#39;3.3&#39;</span><br><span class="line">services:</span><br><span class="line">  redis_exporter:</span><br><span class="line">    image: oliver006&#x2F;redis_exporter</span><br><span class="line">    container_name: redis_exporter</span><br><span class="line">    restart: always</span><br><span class="line">    environment:</span><br><span class="line">      REDIS_ADDR: &quot;192.168.224.12:6379&quot;</span><br><span class="line">      REDIS_PASSWORD: 123456</span><br><span class="line">    ports:</span><br><span class="line">      - &quot;9121:9121&quot;</span><br><span class="line">EOF</span><br></pre></td></tr></table></figure>
+
+<p>启动</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">docker-compose up -d</span><br></pre></td></tr></table></figure>
+
+<p>检查</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">docker ps -a</span><br><span class="line">或：</span><br><span class="line">docker logs -f redis_exporter</span><br></pre></td></tr></table></figure>
+
+<h3 id="3、参数解释-1"><a href="#3、参数解释-1" class="headerlink" title="3、参数解释"></a>3、参数解释</h3><table>
+<thead>
+<tr>
+<th>Environment variable</th>
+<th>值</th>
+<th>description</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>REDIS_ADDR</td>
+<td>192.168.224.12:6379</td>
+<td>redis服务器地址，如：ip:6379</td>
+</tr>
+<tr>
+<td>REDIS_PASSWORD</td>
+<td>123456</td>
+<td>redis服务器管理密码</td>
+</tr>
+</tbody></table>
+<h3 id="4、metrics地址-1"><a href="#4、metrics地址-1" class="headerlink" title="4、metrics地址"></a><strong>4</strong>、<strong>metrics</strong>地址</h3><p>注：安装好Exporter后会暴露⼀个 <code>http://ip:端⼝/metrics</code> 的HTTP服务</p>
+<table>
+<thead>
+<tr>
+<th>名称</th>
+<th>地址</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>redis_exporter</td>
+<td><code>http://192.168.224.12:9121/metrics</code></td>
+</tr>
+</tbody></table>
+<h3 id="5、Prometheus配置-1"><a href="#5、Prometheus配置-1" class="headerlink" title="5、Prometheus配置"></a><strong>5</strong>、<strong>Prometheus</strong>配置</h3><p>配置prometheus去采集（拉取）redis_exporter的监控样本数据</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line">cd &#x2F;data&#x2F;docker-prometheus</span><br><span class="line">#在scrape_configs(搜刮配置):下⾯增加如下配置：</span><br><span class="line"></span><br><span class="line">cat &gt;&gt; prometheus&#x2F;prometheus.yml &lt;&lt; &quot;EOF&quot;</span><br><span class="line">  - job_name: &#39;redis_exporter&#39;</span><br><span class="line">    static_configs:</span><br><span class="line">    - targets: [&#39;192.168.224.12:9121&#39;]</span><br><span class="line">      labels:</span><br><span class="line">        instance: server2.com服务器</span><br><span class="line">EOF</span><br></pre></td></tr></table></figure>
+
+<p>重新加载配置</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">curl -X POST http:&#x2F;&#x2F;localhost:9090&#x2F;-&#x2F;reload</span><br></pre></td></tr></table></figure>
+
+<h3 id="6、常⽤的监控指标-1"><a href="#6、常⽤的监控指标-1" class="headerlink" title="6、常⽤的监控指标"></a><strong>6</strong>、常⽤的监控指标</h3><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line">redis_up # 服务器是否在线</span><br><span class="line">redis_uptime_in_seconds # 运⾏时⻓，单位 s</span><br><span class="line">rate(redis_cpu_sys_seconds_total[1m]) +</span><br><span class="line">rate(redis_cpu_user_seconds_total[1m]) # 占⽤ CPU 核数</span><br><span class="line">redis_memory_used_bytes # 占⽤内存量</span><br><span class="line">redis_memory_max_bytes # 限制的最⼤内存，如果没限制则为 0</span><br><span class="line">delta(redis_net_input_bytes_total[1m]) # ⽹络接收的 bytes</span><br><span class="line">delta(redis_net_output_bytes_total[1m]) # ⽹络发送的 bytes</span><br><span class="line">redis_connected_clients # 客户端连接数</span><br><span class="line">redis_connected_clients &#x2F; redis_config_maxclients # 连接数使⽤率</span><br><span class="line">redis_rejected_connections_total # 拒绝的客户端连接数</span><br><span class="line">redis_connected_slaves # slave 连接数</span><br></pre></td></tr></table></figure>
+
+<h3 id="7、触发器配置"><a href="#7、触发器配置" class="headerlink" title="7、触发器配置"></a><strong>7</strong>、触发器配置</h3><p>Prometheus配置</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">vim prometheus&#x2F;prometheus.yml</span><br><span class="line"></span><br><span class="line"># 报警(触发器)配置</span><br><span class="line">rule_files:</span><br><span class="line">  - &quot;alert.yml&quot; </span><br><span class="line">  - &quot;rules&#x2F;*.yml&quot;</span><br></pre></td></tr></table></figure>
+
+<p>创建新目录</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">mkdir prometheus&#x2F;rules</span><br></pre></td></tr></table></figure>
+
+<p><strong>redis</strong>触发器（告警规则）</p>
+<p>因为是单机，所以未配置集群的触发器</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br></pre></td><td class="code"><pre><span class="line">cat &gt;&gt; prometheus&#x2F;rules&#x2F;redis.yml &lt;&lt;&quot;EOF&quot;</span><br><span class="line">groups:</span><br><span class="line">  - name: redis</span><br><span class="line">    rules:</span><br><span class="line">    - alert: RedisDown</span><br><span class="line">      expr: redis_up &#x3D;&#x3D; 0</span><br><span class="line">      for: 0m</span><br><span class="line">      labels:</span><br><span class="line">        severity: critical</span><br><span class="line">      annotations:</span><br><span class="line">        summary: &#39;Redis Down,实例:&#123;&#123; $labels.instance &#125;&#125;&#39;</span><br><span class="line">        description: &quot;Redis实例 is down&quot;</span><br><span class="line">    - alert: RedisMissingBackup</span><br><span class="line">      expr: time() - redis_rdb_last_save_timestamp_seconds &gt; 60 * 60 * 24</span><br><span class="line">      for: 0m</span><br><span class="line">      labels:</span><br><span class="line">        severity: critical</span><br><span class="line">      annotations:</span><br><span class="line">        summary: &quot;Redis备份丢失,实例:&#123;&#123; $labels.instance &#125;&#125;&quot;</span><br><span class="line">        description: &quot;Redis 24⼩时未备份&quot;</span><br><span class="line">    - alert: RedisOutOfConfiguredMaxmemory</span><br><span class="line">      expr: redis_memory_used_bytes &#x2F; redis_memory_max_bytes * 100 &gt; 90</span><br><span class="line">      for: 2m</span><br><span class="line">      labels:</span><br><span class="line">        severity: warning</span><br><span class="line">      annotations:</span><br><span class="line">        summary: &quot;Redis超出配置的最⼤内存,实例:&#123;&#123; $labels.instance &#125;&#125;&quot;</span><br><span class="line">        description: &quot;Redis内存使⽤超过配置最⼤内存的90%&quot;</span><br><span class="line">    - alert: RedisTooManyConnections</span><br><span class="line">      expr: redis_connected_clients &gt; 100</span><br><span class="line">      for: 2m</span><br><span class="line">      labels:</span><br><span class="line">        severity: warning</span><br><span class="line">      annotations:</span><br><span class="line">        summary: &quot;Redis连接数过多,实例:&#123;&#123; $labels.instance &#125;&#125;&quot;</span><br><span class="line">        description: &quot;Redis当前连接数为： &#123;&#123; $value &#125;&#125;&quot;</span><br><span class="line">    - alert: RedisNotEnoughConnections</span><br><span class="line">      expr: redis_connected_clients &lt; 1</span><br><span class="line">      for: 2m</span><br><span class="line">      labels:</span><br><span class="line">        severity: warning</span><br><span class="line">      annotations:</span><br><span class="line">        summary: &quot;Redis没有⾜够的连接,实例:&#123;&#123; $labels.instance &#125;&#125;&quot;</span><br><span class="line">        description: &quot;Redis当前连接数为： &#123;&#123; $value &#125;&#125;&quot;</span><br><span class="line">    - alert: RedisRejectedConnections</span><br><span class="line">      expr: increase(redis_rejected_connections_total[1m]) &gt; 0</span><br><span class="line">      for: 0m</span><br><span class="line">      labels:</span><br><span class="line">        severity: critical</span><br><span class="line">      annotations:</span><br><span class="line">        summary: &quot;Redis有拒绝连接,实例:&#123;&#123; $labels.instance &#125;&#125;&quot;</span><br><span class="line">        description: &quot;与Redis 的某些连接被拒绝&#123;&#123; $value &#125;&#125;&quot;</span><br><span class="line">EOF</span><br></pre></td></tr></table></figure>
+
+<p>检查配置</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">docker exec -it prometheus promtool check config &#x2F;etc&#x2F;prometheus&#x2F;prometheus.yml</span><br></pre></td></tr></table></figure>
+
+<p>重新加载配置</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">curl -X POST http:&#x2F;&#x2F;localhost:9090&#x2F;-&#x2F;reload</span><br></pre></td></tr></table></figure>
+
+<p>检查</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">http:&#x2F;&#x2F;192.168.224.11:9090&#x2F;alerts?search&#x3D;</span><br></pre></td></tr></table></figure>
+
+<h3 id="8、dashboard-1"><a href="#8、dashboard-1" class="headerlink" title="8、dashboard"></a><strong>8</strong>、<strong>dashboard</strong></h3><p>grafana展示prometheus从redis_exporter收集到的的数据</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">Redis:</span><br><span class="line">https:&#x2F;&#x2F;grafana.com&#x2F;grafana&#x2F;dashboards&#x2F;11835</span><br><span class="line">或者</span><br><span class="line">https:&#x2F;&#x2F;grafana.com&#x2F;grafana&#x2F;dashboards&#x2F;17507</span><br></pre></td></tr></table></figure>
+
+<p>图⾏展示问题</p>
+<p>redis dashbord 内存使⽤图⾏展示有问题，如下图</p>
+<p><a href="https://imgse.com/i/p91gVk6"><img src="https://s1.ax1x.com/2023/04/29/p91gVk6.png" alt="p91gVk6.png"></a></p>
+<p><code>http://192.168.224.11:9090/graph</code></p>
+<p>查询到<code> redis_memory_max_bytes</code> 为0，因为redis配置参数 <code>maxmemory </code>未设置，默认 0 。</p>
+<p><strong>解决</strong></p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">redis增加配置 maxmemory 的值</span><br></pre></td></tr></table></figure>
+
+<h2 id="四、监控rabbitmq"><a href="#四、监控rabbitmq" class="headerlink" title="四、监控rabbitmq"></a>四、监控rabbitmq</h2><p>rabbitmq已经在安装Nginx时，通过docker-compose部署好了</p>
+<h3 id="1、二进制安装rabbitmq-exporter"><a href="#1、二进制安装rabbitmq-exporter" class="headerlink" title="1、二进制安装rabbitmq_exporter"></a>1、二进制安装rabbitmq_exporter</h3><p>rabbit_exporter下载地址:</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">https:&#x2F;&#x2F;github.com&#x2F;kbudde&#x2F;rabbitmq_exporter&#x2F;releases</span><br></pre></td></tr></table></figure>
+
+<p>下载⼆进制包解压并放⼊**/usr/local/Prometheus**⽬录</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">wget https:&#x2F;&#x2F;github.com&#x2F;kbudde&#x2F;rabbitmq_exporter&#x2F;releases&#x2F;download&#x2F;v1.0.0-RC19&#x2F;rabbitmq_exporter_1.0.0-RC19_linux_amd64.tar.gz</span><br><span class="line"></span><br><span class="line">mkdir &#x2F;usr&#x2F;local&#x2F;Prometheus&#x2F;rabbitmq_exporter</span><br><span class="line">tar xzf rabbitmq_exporter_1.0.0-RC19_linux_amd64.tar.gz -C &#x2F;usr&#x2F;local&#x2F;Prometheus&#x2F;rabbitmq_exporter&#x2F;</span><br></pre></td></tr></table></figure>
+
+<p>更改权限</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">chown prometheus.prometheus -R &#x2F;usr&#x2F;local&#x2F;Prometheus&#x2F;</span><br></pre></td></tr></table></figure>
+
+<p>创建systemd服务</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line">cat &gt; &#x2F;etc&#x2F;systemd&#x2F;system&#x2F;rabbitmq_exporter.service &lt;&lt;&quot;EOF&quot;</span><br><span class="line">[Unit]</span><br><span class="line">Description&#x3D;Prometheus rabbitmq Exporter</span><br><span class="line">After&#x3D;network.target</span><br><span class="line">[Service]</span><br><span class="line">Environment&#x3D;RABBIT_USER&#x3D;guest</span><br><span class="line">Environment&#x3D;RABBIT_PASSWORD&#x3D;guest</span><br><span class="line">Environment&#x3D;RABBIT_URL&#x3D;http:&#x2F;&#x2F;localhost:15672</span><br><span class="line">OUTPUT_FORMAT&#x3D;JSON</span><br><span class="line">Type&#x3D;simple</span><br><span class="line">User&#x3D;prometheus</span><br><span class="line">Group&#x3D;prometheus</span><br><span class="line">Restart&#x3D;always</span><br><span class="line">ExecStart&#x3D;&#x2F;usr&#x2F;local&#x2F;Prometheus&#x2F;rabbitmq_exporter&#x2F;rabbitmq_exporter</span><br><span class="line">[Install]</span><br><span class="line">WantedBy&#x3D;multi-user.target</span><br><span class="line">EOF</span><br></pre></td></tr></table></figure>
+
+<p>启动</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">systemctl daemon-reload</span><br><span class="line">systemctl start rabbitmq_exporter</span><br><span class="line">systemctl enable rabbitmq_exporter</span><br><span class="line">systemctl status rabbitmq_exporter</span><br></pre></td></tr></table></figure>
+
+<p>启动不了检查日志</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">journalctl -u rabbitmq_exporter -f</span><br></pre></td></tr></table></figure>
+
+<h3 id="2、docker安装rabbitmq-exporter"><a href="#2、docker安装rabbitmq-exporter" class="headerlink" title="2、docker安装rabbitmq_exporter"></a>2、docker安装rabbitmq_exporter</h3><p>docker直接运行</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">docker run -d -p 9419:9419 --name rabbitmq_exporter -e RABBIT_URL&#x3D;http:&#x2F;&#x2F;192.168.224.12:15672  -e RABBIT_USER&#x3D;guest -e RABBIT_PASSWORD&#x3D;guest kbudde&#x2F;rabbitmq-exporter</span><br></pre></td></tr></table></figure>
+
+<p>docker-compose方式</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">cd &#x2F;data&#x2F;rabbitmq&#x2F;</span><br></pre></td></tr></table></figure>
+
+
+
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line">cat &gt;docker-compose.yaml &lt;&lt;EOF</span><br><span class="line">version: &#39;3.3&#39;</span><br><span class="line">services:</span><br><span class="line">  rabbitmq_exporter:</span><br><span class="line">    image: kbudde&#x2F;rabbitmq-exporter</span><br><span class="line">    container_name: rabbitmq_exporter</span><br><span class="line">    restart: always</span><br><span class="line">    environment:</span><br><span class="line">      RABBIT_URL: &quot;http:&#x2F;&#x2F;192.168.224.12:15672&quot;</span><br><span class="line">      RABBIT_USER: &quot;guest&quot;</span><br><span class="line">      RABBIT_PASSWORD: &quot;guest&quot;</span><br><span class="line">      PUBLISH_PORT: &quot;9419&quot;</span><br><span class="line">      OUTPUT_FORMAT: &quot;JSON&quot;</span><br><span class="line">    ports:</span><br><span class="line">      - &quot;9419:9419&quot;</span><br><span class="line">EOF</span><br></pre></td></tr></table></figure>
+
+<p>启动</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">docker-compose up -d</span><br></pre></td></tr></table></figure>
+
+<p>检查</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">ocker ps -a</span><br></pre></td></tr></table></figure>
+
+<h3 id="3、参数解释-2"><a href="#3、参数解释-2" class="headerlink" title="3、参数解释"></a>3、参数解释</h3><table>
+<thead>
+<tr>
+<th>Environment variable</th>
+<th>default</th>
+<th>description</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>RABBIT_URL</td>
+<td><code>http://127.0.0.1:15672</code></td>
+<td>rabbitMQ管理插件的url(必须以http(s)开头)</td>
+</tr>
+<tr>
+<td>RABBIT_USER</td>
+<td>guest</td>
+<td>rabbitMQ管理插件的用户名</td>
+</tr>
+<tr>
+<td>RABBIT_PASSWORD</td>
+<td>guest</td>
+<td>rabbitMQ管理插件的密码</td>
+</tr>
+<tr>
+<td>OUTPUT_FORMAT</td>
+<td>JOSN</td>
+<td>输出格式</td>
+</tr>
+<tr>
+<td>PUBLISH_PORT</td>
+<td>9419</td>
+<td>运行端口(监听端口)</td>
+</tr>
+</tbody></table>
+<h3 id="4、metrics地址-2"><a href="#4、metrics地址-2" class="headerlink" title="4、metrics地址"></a>4、metrics地址</h3><p>注：安装好Exporter后会暴露⼀个 <code>http://ip:端⼝/metrics</code> 的HTTP服务</p>
+<table>
+<thead>
+<tr>
+<th>名称</th>
+<th>地址</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>rabbitmq_exporter</td>
+<td><code>http://192.168.224.12:9419/metrics</code></td>
+</tr>
+</tbody></table>
+<h3 id="5、Prometheus配置-2"><a href="#5、Prometheus配置-2" class="headerlink" title="5、Prometheus配置"></a>5、Prometheus配置</h3><p>配置prometheus去采集（拉取）rabbitmq_exporter的监控样本数据</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line">cd &#x2F;data&#x2F;docker-prometheus</span><br><span class="line">#在scrape_configs(搜刮配置):下⾯增加如下配置：</span><br><span class="line"></span><br><span class="line">cat &gt;&gt; prometheus&#x2F;prometheus.yml &lt;&lt; &quot;EOF&quot;</span><br><span class="line">  - job_name: &#39;rabbitmq_exporter&#39;</span><br><span class="line">    static_configs:</span><br><span class="line">    - targets: [&#39;192.168.224.12:9419&#39;]</span><br><span class="line">      labels:</span><br><span class="line">        instance: server2.com服务器</span><br><span class="line">EOF</span><br></pre></td></tr></table></figure>
+
+<p>重新加载配置</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">curl -X POST http:&#x2F;&#x2F;localhost:9090&#x2F;-&#x2F;reload</span><br></pre></td></tr></table></figure>
+
+<h3 id="6、常⽤的监控指标-2"><a href="#6、常⽤的监控指标-2" class="headerlink" title="6、常⽤的监控指标"></a><strong>6</strong>、常⽤的监控指标</h3><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line">rabbitmq_queue_messages_unacknowledged_global 队列中有未确认的消息总数(未被消费的消息)</span><br><span class="line">rabbitmq_node_disk_free_limit 使用磁盘大小</span><br><span class="line">rabbitmq_node_disk_free    磁盘总大小</span><br><span class="line"></span><br><span class="line">rabbit_node_mem_used       使用内存大小</span><br><span class="line">rabbit_node_mem_limit      内存总大小</span><br><span class="line"></span><br><span class="line">rabbitmq_sockets_used      使用sockets数量</span><br><span class="line">rabbitmq_sockets_available 可用的sockets总数</span><br><span class="line"></span><br><span class="line">rabbitmq_fd_used            使用文件描述符的数量</span><br><span class="line">rabbitmq_fd_available       可用的文件描述符总数</span><br></pre></td></tr></table></figure>
+
+<h3 id="7、触发器配置-1"><a href="#7、触发器配置-1" class="headerlink" title="7、触发器配置"></a>7、触发器配置</h3><p>Rabbitmq触发器</p>
+<p>也是单节点，未配置集群触发器</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br></pre></td><td class="code"><pre><span class="line">cat &gt;&gt; prometheus&#x2F;rules&#x2F;rabbitmq.yml &lt;&lt;&quot;EOF&quot;</span><br><span class="line">groups:</span><br><span class="line">- name: Rabbitmq</span><br><span class="line">  rules:</span><br><span class="line">  - alert: RabbitMQDown</span><br><span class="line">    expr: rabbitmq_up !&#x3D; 1</span><br><span class="line">    labels:</span><br><span class="line">      severity: High</span><br><span class="line">    annotations:</span><br><span class="line">      summary: &quot;Rabbitmq Down,实例:&#123;&#123; $labels.instance &#125;&#125;&quot;</span><br><span class="line">      description: &quot;Rabbitmq_exporter连不上RabbitMQ! ! !&quot;</span><br><span class="line">  - alert: RabbitMQ有未确认消息</span><br><span class="line">    expr: rabbitmq_queue_messages_unacknowledged_global  &gt; 0</span><br><span class="line">    for: 1m</span><br><span class="line">    labels:</span><br><span class="line">      severity: critical</span><br><span class="line">    annotations:</span><br><span class="line">      summary: &quot;RabbitMQ有未确认消息,实例:&#123;&#123; $labels.instance &#125;&#125;&quot;</span><br><span class="line">      description: &#39;RabbitMQ未确认消息&gt;0,当前值为：&#123;&#123; $value &#125;&#125;&#39;      </span><br><span class="line">  - alert: RabbitMQ可用磁盘空间不足告警</span><br><span class="line">    expr: rabbitmq_node_disk_free_alarm !&#x3D; 0</span><br><span class="line">    #expr: rabbitmq_node_disk_free_limit &#x2F; rabbitmq_node_disk_free *100 &gt; 90</span><br><span class="line">    for: 0m</span><br><span class="line">    labels:</span><br><span class="line">      severity: critical</span><br><span class="line">    annotations:</span><br><span class="line">      summary: &quot;RabbitMQ可用磁盘空间不足,实例:&#123;&#123; $labels.instance &#125;&#125;&quot;</span><br><span class="line">      description: &quot;RabbitMQ可用磁盘空间不足，请检查&quot;</span><br><span class="line">  - alert: RabbitMQ可用内存不足告警</span><br><span class="line">    expr: rabbitmq_node_mem_alarm !&#x3D; 0</span><br><span class="line">    #expr: rabbitmq_node_mem_used &#x2F; rabbitmq_node_mem_limit * 100 &gt; 90</span><br><span class="line">    for: 0m</span><br><span class="line">    labels:</span><br><span class="line">      severity: critical</span><br><span class="line">    annotations:</span><br><span class="line">      summary: &quot;RabbitMQ可用内存不足,实例:&#123;&#123; $labels.instance &#125;&#125;&quot;</span><br><span class="line">      description: &quot;RabbitMQ可用内存不足，请检查&quot;</span><br><span class="line">  - alert: RabbitMQ_socket连接数使用过高告警</span><br><span class="line">    expr: rabbitmq_sockets_used &#x2F; rabbitmq_sockets_available * 100 &gt; 60</span><br><span class="line">    for: 0m</span><br><span class="line">    labels:</span><br><span class="line">      severity: critical</span><br><span class="line">    annotations:</span><br><span class="line">      summary: &quot;RabbitMQ_socket连接数使用过高,实例:&#123;&#123; $labels.instance &#125;&#125;&quot;</span><br><span class="line">      description: &#39;RabbitMQ_sockets使用&gt;60%,当前值为：&#123;&#123; $value &#125;&#125;&#39;</span><br><span class="line">  - alert: RabbitMQ文件描述符使用过高告警</span><br><span class="line">    expr: rabbitmq_fd_used &#x2F; rabbitmq_fd_available * 100 &gt; 60</span><br><span class="line">    for: 0m</span><br><span class="line">    labels:</span><br><span class="line">      severity: critical</span><br><span class="line">    annotations:</span><br><span class="line">      summary: &quot;RabbitMQ文件描述符使用过高,实例:&#123;&#123; $labels.instance &#125;&#125;&quot;</span><br><span class="line">      description: &#39;RabbitMQ文件描述符使用&gt;60%,当前值为：&#123;&#123; $value &#125;&#125;&#39;</span><br><span class="line">      </span><br><span class="line">EOF</span><br></pre></td></tr></table></figure>
+
+<p>检查配置</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">docker exec -it prometheus promtool check config &#x2F;etc&#x2F;prometheus&#x2F;prometheus.yml</span><br></pre></td></tr></table></figure>
+
+<p>重新加载配置</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">curl -X POST http:&#x2F;&#x2F;localhost:9090&#x2F;-&#x2F;reload</span><br></pre></td></tr></table></figure>
+
+<p>检查</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">http:&#x2F;&#x2F;192.168.224.11:9090&#x2F;alerts?search&#x3D;</span><br></pre></td></tr></table></figure>
+
+<h3 id="8、dashboard-2"><a href="#8、dashboard-2" class="headerlink" title="8、dashboard"></a><strong>8</strong>、<strong>dashboard</strong></h3><p>grafana展示prometheus从rabbitmq_exporter收集到的的数据</p>
+<p>id: 4279</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">https:&#x2F;&#x2F;grafana.com&#x2F;grafana&#x2F;dashboards&#x2F;4279-rabbitmq-monitoring&#x2F;</span><br></pre></td></tr></table></figure>
+
+<p><a href="https://imgse.com/i/p914bCt"><img src="https://s1.ax1x.com/2023/04/29/p914bCt.png" alt="p914bCt.png"></a></p>
+<h2 id="五、监控mongodb"><a href="#五、监控mongodb" class="headerlink" title="五、监控mongodb"></a>五、监控mongodb</h2><h3 id="1、创建监控⽤户"><a href="#1、创建监控⽤户" class="headerlink" title="1、创建监控⽤户"></a><strong>1</strong>、创建监控⽤户</h3><p>登陆mongodb创建监控⽤户，权限为“readAnyDatabase”，如果是cluster环境，需要有权限“clusterMonitor”</p>
+<p>登录mongodb（docker安装的mongo）</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">docker exec -it mongo mongo admin</span><br></pre></td></tr></table></figure>
+
+<p>登录mongodb（yum和apt安装的mongo）</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">mongo admin</span><br></pre></td></tr></table></figure>
+
+<p>创建监控用户</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">&gt; db.auth(&#39;root&#39;,&#39;123456&#39;)</span><br><span class="line">1</span><br><span class="line">&gt; db.createUser(&#123; user:&#39;exporter&#39;,pwd:&#39;password&#39;,roles:[ &#123; role:&#39;readAnyDatabase&#39;, db: &#39;admin&#39;&#125;,&#123; role: &quot;clusterMonitor&quot;, db: &quot;admin&quot; &#125;]&#125;);</span><br><span class="line">#测试 使⽤上⾯创建的⽤户信息进⾏连接。</span><br><span class="line">&gt; db.auth(&#39;exporter&#39;, &#39;password&#39;)</span><br><span class="line">1</span><br><span class="line">#表示成功</span><br><span class="line">&gt; exit</span><br></pre></td></tr></table></figure>
+
+<h3 id="2、二进制安装mongodb-expoter"><a href="#2、二进制安装mongodb-expoter" class="headerlink" title="2、二进制安装mongodb_expoter"></a>2、二进制安装mongodb_expoter</h3><p>mongodb_exporter地址</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">https:&#x2F;&#x2F;github.com&#x2F;percona&#x2F;mongodb_exporter&#x2F;releases</span><br><span class="line">或者</span><br><span class="line">https:&#x2F;&#x2F;github.com&#x2F;prometheus&#x2F;mysqld_exporter&#x2F;releases</span><br></pre></td></tr></table></figure>
+
+<p>下载⼆进制包解压并放⼊**/usr/local/Prometheus**⽬录</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">wget https:&#x2F;&#x2F;github.com&#x2F;percona&#x2F;mongodb_exporter&#x2F;releases&#x2F;download&#x2F;v0.37.0&#x2F;mongodb_exporter-0.37.0.linux-amd64.tar.gz</span><br><span class="line"></span><br><span class="line">tar xzf mongodb_exporter-0.37.0.linux-amd64.tar.gz</span><br><span class="line"></span><br><span class="line">mv mongodb_exporter-0.37.0.linux-amd64 &#x2F;usr&#x2F;local&#x2F;Prometheus&#x2F;mongodb_exporter</span><br></pre></td></tr></table></figure>
+
+<p>更改<strong>exporter</strong>⽂件夹权限</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">chown prometheus.prometheus -R &#x2F;usr&#x2F;local&#x2F;Prometheus&#x2F;</span><br></pre></td></tr></table></figure>
+
+<p>创建 <strong>systemd</strong> 服务</p>
+<p>mongodb_exporter.service</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line">cat &lt;&lt;EOF &gt;&#x2F;usr&#x2F;lib&#x2F;systemd&#x2F;system&#x2F;mongodb_exporter.service</span><br><span class="line">[Unit]</span><br><span class="line">Description&#x3D;mongodb_exporter</span><br><span class="line">Documentation&#x3D;https:&#x2F;&#x2F;github.com&#x2F;percona&#x2F;mongodb_exporter</span><br><span class="line">After&#x3D;network.target</span><br><span class="line">[Service]</span><br><span class="line">Type&#x3D;simple</span><br><span class="line">User&#x3D;prometheus</span><br><span class="line">Environment&#x3D;&quot;MONGODB_URI&#x3D;mongodb:&#x2F;&#x2F;exporter:password@localhost:27017&#x2F;admin&quot;</span><br><span class="line">ExecStart&#x3D;&#x2F;usr&#x2F;local&#x2F;Prometheus&#x2F;mongodb_exporter&#x2F;mongodb_exporter --log.level&#x3D;error --collect-all --compatible-mode</span><br><span class="line">Restart&#x3D;on-failure</span><br><span class="line">[Install]</span><br><span class="line">WantedBy&#x3D;multi-user.target</span><br><span class="line">EOF</span><br></pre></td></tr></table></figure>
+
+<p>启动 <strong>mongodb_exporter</strong></p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">systemctl daemon-reload</span><br><span class="line">systemctl start mongodb_exporter.service</span><br><span class="line">systemctl enable mongodb_exporter.service</span><br><span class="line">systemctl status mongodb_exporter.service</span><br></pre></td></tr></table></figure>
+
+<p>启动不了检查⽇志</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">journalctl -u mongodb_exporter.service -f</span><br></pre></td></tr></table></figure>
+
+<h3 id="3、docker安装mongodb-exporter"><a href="#3、docker安装mongodb-exporter" class="headerlink" title="3、docker安装mongodb_exporter"></a>3、docker安装mongodb_exporter</h3><p><strong>docker</strong>直接运⾏</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">docker run -d --restart&#x3D;always -p 9216:9216 -p 17001:17001 --restart&#x3D;always --name&#x3D;mongodb-exporter bitnami&#x2F;mongodb-exporter:latest --collect-all --compatible-mode --mongodb.uri&#x3D;mongodb:&#x2F;&#x2F;exporter:password@192.168.224.12:27017&#x2F;admin?ssl&#x3D;false</span><br></pre></td></tr></table></figure>
+
+<p><strong>docker-compose</strong>⽅式</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">cd &#x2F;data&#x2F;mongo&#x2F;</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line">cat &gt;docker-compose.yaml &lt;&lt;EOF</span><br><span class="line">version: &#39;3.3&#39;</span><br><span class="line">services:</span><br><span class="line">  mongodb_exporter:</span><br><span class="line">    image: bitnami&#x2F;mongodb-exporter:latest</span><br><span class="line">    container_name: mongodb_exporter</span><br><span class="line">    restart: always</span><br><span class="line">    environment:</span><br><span class="line">      MONGODB_URI: &quot;mongodb:&#x2F;&#x2F;exporter:password@192.168.224.12:27017&#x2F;admin?ssl&#x3D;false&quot;</span><br><span class="line">    command:</span><br><span class="line">      - &#39;--collect-all&#39;</span><br><span class="line">      - &#39;--compatible-mode&#39;</span><br><span class="line">    ports:</span><br><span class="line">      - &quot;9216:9216&quot;</span><br><span class="line">EOF</span><br></pre></td></tr></table></figure>
+
+<p>启动</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">docker-compose up -d</span><br></pre></td></tr></table></figure>
+
+<p>检查</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">docker ps -a</span><br></pre></td></tr></table></figure>
+
+<h3 id="4、参数解释"><a href="#4、参数解释" class="headerlink" title="4、参数解释"></a><strong>4</strong>、参数解释</h3><table>
+<thead>
+<tr>
+<th><strong>Flag</strong></th>
+<th>含义</th>
+<th>案例</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>-h, –help</td>
+<td>显示上下⽂相关的帮助</td>
+<td></td>
+</tr>
+<tr>
+<td>–[no-]compatible-mode</td>
+<td>启⽤旧的 mongodb exporter 兼容指标</td>
+<td></td>
+</tr>
+<tr>
+<td>–[no-]discovering-mode</td>
+<td>启⽤⾃动发现集合</td>
+<td></td>
+</tr>
+<tr>
+<td>–mongodb.collstats-colls</td>
+<td>逗号分隔的databases.collections列表以获取 $collStats</td>
+<td>–mongodb.collstats-colls=db1,db2.col2</td>
+</tr>
+<tr>
+<td>–mongodb.indexstats-colls</td>
+<td>逗号分隔的databases.collections列表以获取$indexStats</td>
+<td>–mongodb.indexstats-colls=db1.col1,db2.col2</td>
+</tr>
+<tr>
+<td>–[no-]mongodb.direct-connect</td>
+<td>是否应该进⾏直接连接。如果指定了多个主机或使⽤了 SRVURI，则直接连接⽆效</td>
+<td></td>
+</tr>
+<tr>
+<td>–[no-]mongodb.global-connpool</td>
+<td>使⽤全局连接池⽽不是为每个http请求创建新池</td>
+<td></td>
+</tr>
+<tr>
+<td>–mongodb.uri</td>
+<td>MongoDB 连接 URI($MONGODB_URI)</td>
+<td>–smongodb.uri=mongodb://user:<a href="mailto:&#x70;&#97;&#115;&#x73;&#64;&#x31;&#50;&#x37;&#x2e;&#48;&#46;&#x30;&#46;&#49;">&#x70;&#97;&#115;&#x73;&#64;&#x31;&#50;&#x37;&#x2e;&#48;&#46;&#x30;&#46;&#49;</a>:27017/admin?</td>
+</tr>
+<tr>
+<td>–web.listen-address</td>
+<td>⽤于侦听 Web 界⾯和遥测的地址</td>
+<td>–web.listen-address=”:9216”</td>
+</tr>
+<tr>
+<td>–web.telemetry-path</td>
+<td>指标公开路径</td>
+<td>–web.telemetry-path=”/metrics”</td>
+</tr>
+<tr>
+<td>–web.config</td>
+<td>具有⽤于基本身份验证的 Prometheus TLS配置的⽂件的路径</td>
+<td>–web.config=STRING</td>
+</tr>
+<tr>
+<td>–log.level</td>
+<td>仅记录具有给定严重性或更⾼严重性的消息。有效级别：[调试、信息、警告、错误、致命]</td>
+<td>–log.level=”erro</td>
+</tr>
+<tr>
+<td>–collector.diagnosticdata</td>
+<td>启⽤从getDiagnosticData收集指标</td>
+<td></td>
+</tr>
+<tr>
+<td>–collector.replicasetstatus</td>
+<td>启⽤从replSetGetStatus 收集指标</td>
+<td></td>
+</tr>
+<tr>
+<td>–collector.dbstats</td>
+<td>启⽤从 dbStats 收集指标</td>
+<td></td>
+</tr>
+<tr>
+<td>–collector.topmetrics</td>
+<td>启⽤从 top admincommand 收集指标</td>
+<td></td>
+</tr>
+<tr>
+<td>–collector.indexstats</td>
+<td>启⽤从 $indexStats收集指标</td>
+<td></td>
+</tr>
+<tr>
+<td>–collector.collstats</td>
+<td>启⽤从 $collStats 收集指标</td>
+<td></td>
+</tr>
+<tr>
+<td>–collect-all</td>
+<td>启⽤所有收集器。与指定所有 –collector.相同</td>
+<td></td>
+</tr>
+<tr>
+<td>–collector.collstats-limit=0</td>
+<td>如果有超过 个集合，请禁⽤ collstats、dbstats、topmetrics和 indexstats 收集器。0=⽆限制</td>
+<td></td>
+</tr>
+<tr>
+<td>--metrics.overridedescendingindex</td>
+<td>启⽤降序索引名称覆盖以将 -1 替换为_DESC</td>
+<td></td>
+</tr>
+<tr>
+<td>–version</td>
+<td>显示版本并退出</td>
+<td></td>
+</tr>
+</tbody></table>
+<h3 id="5、metrics地址"><a href="#5、metrics地址" class="headerlink" title="5、metrics地址"></a><strong>5</strong>、<strong>metrics</strong>地址</h3><p>注：安装好Exporter后会暴露⼀个 <code>http://ip:端⼝/metrics</code> 的HTTP服务</p>
+<table>
+<thead>
+<tr>
+<th>名称</th>
+<th>地址</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>rabbitmq_exporter</td>
+<td><code>http://192.168.224.12:9216/metrics</code></td>
+</tr>
+</tbody></table>
+<h3 id="6、Prometheus配置"><a href="#6、Prometheus配置" class="headerlink" title="6、Prometheus配置"></a><strong>6</strong>、<strong>Prometheus</strong>配置</h3><p>配置prometheus去采集（拉取）mongodb_exporter的监控样本数据</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line">cd &#x2F;data&#x2F;docker-prometheus</span><br><span class="line"></span><br><span class="line">#在scrape_configs(搜刮配置):下⾯增加如下配置：</span><br><span class="line">cat &gt;&gt; prometheus&#x2F;prometheus.yml &lt;&lt; &quot;EOF&quot;</span><br><span class="line">  - job_name: &#39;mongodb_exporter&#39;</span><br><span class="line">    static_configs:</span><br><span class="line">    - targets: [&#39;192.168.224.12:9216&#39;]</span><br><span class="line">      labels:</span><br><span class="line">        instance: server2.com服务器</span><br><span class="line">EOF</span><br></pre></td></tr></table></figure>
+
+<p>重新加载配置</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">curl -X POST http:&#x2F;&#x2F;localhost:9090&#x2F;-&#x2F;reload</span><br></pre></td></tr></table></figure>
+
+<p>检查</p>
+<h3 id="7、常⽤的监控指标"><a href="#7、常⽤的监控指标" class="headerlink" title="7、常⽤的监控指标"></a><strong>7</strong>、常⽤的监控指标</h3><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br></pre></td><td class="code"><pre><span class="line">mongodb_ss_connections&#123;conn_type&#x3D;&quot;available&quot;&#125; 可⽤的连接总数</span><br><span class="line">mongodb_ss_mem_virtual</span><br><span class="line">mongodb_ss_mem_resident</span><br><span class="line"></span><br><span class="line"># 关于 server status</span><br><span class="line">mongodb_up # 服务器是否在线</span><br><span class="line">mongodb_ss_ok&#123;cl_id&#x3D;&quot;&quot;, cl_role&#x3D;&quot;mongod&quot;, rs_state&#x3D;&quot;0&quot;&#125; # 服务器是否正常运⾏，取值为 1、0 。标签中记录了 Cluster、ReplicaSet 的信息</span><br><span class="line">mongodb_ss_uptime     # 服务器的运⾏时⻓，单位为秒</span><br><span class="line">mongodb_ss_connections&#123;conn_type&#x3D;&quot;current&quot;&#125; # 客户端连接数</span><br><span class="line"></span><br><span class="line"># 关于主机</span><br><span class="line">mongodb_sys_cpu_num_cpus # 主机的 CPU 核数</span><br><span class="line"></span><br><span class="line"># 关于 collection</span><br><span class="line">mongodb_collstats_storageStats_count&#123;database&#x3D;&quot;xx&quot;, collection&#x3D;&quot;xx&quot;&#125; # collection 全部⽂档的数量</span><br><span class="line">mongodb_collstats_storageStats_size # collection 全部⽂档的体积，单位 bytes</span><br><span class="line">mongodb_collstats_storageStats_storageSize # collection 全部⽂档占⽤的磁盘空间，默认会压缩</span><br><span class="line">delta(mongodb_collstats_latencyStats_reads_ops[1m]) # collection 读操作的数量（每分钟）</span><br><span class="line">delta(mongodb_collstats_latencyStats_reads_latency[1m]) # collection 读操作的延迟（每分钟），单位为微秒</span><br><span class="line">mongodb_collstats_latencyStats_write_ops</span><br><span class="line">mongodb_collstats_latencyStats_write_latency</span><br><span class="line"></span><br><span class="line"># 关于 index</span><br><span class="line">mongodb_collstats_storageStats_nindexes # collection 的 index 数量</span><br><span class="line">mongodb_collstats_storageStats_totalIndexSize # collection 的 index 占⽤的磁盘空间</span><br><span class="line">delta(mongodb_indexstats_accesses_ops[1m]) # index 被访问次数</span><br><span class="line"></span><br><span class="line"># 关于操作</span><br><span class="line">delta(mongodb_ss_opcounters[1m]) # 执⾏各种操作的数量</span><br><span class="line">delta(mongodb_ss_opLatencies_latency[1m]) # 执⾏各种操作的延迟，单位为微秒</span><br><span class="line">delta(mongodb_ss_metrics_document[1m]) # 各种⽂档的变化数量</span><br><span class="line"></span><br><span class="line"># 关于锁</span><br><span class="line">delta(mongodb_ss_locks_acquireCount&#123;lock_mode&#x3D;&quot;w&quot;&#125;[1m]) # 新加锁的数量。R 表示共享锁，W 表示独占锁，r表示意向共享锁，w 表示意向独占锁</span><br><span class="line">mongodb_ss_globalLock_currentQueue&#123;count_type&#x3D;&quot;total&quot;&#125; # 被锁阻塞的操作数</span><br></pre></td></tr></table></figure>
+
+<h3 id="8、触发器配置"><a href="#8、触发器配置" class="headerlink" title="8、触发器配置"></a><strong>8</strong>、触发器配置</h3><p><strong>mongodb</strong>触发器（告警规则）</p>
+<p>因mongo单点，所以未配置复制触发器</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br></pre></td><td class="code"><pre><span class="line">cat &gt;&gt; prometheus&#x2F;rules&#x2F;mongodb.yml &lt;&lt;&quot;EOF&quot;</span><br><span class="line">groups:</span><br><span class="line">- name: PerconaMongodbExporter</span><br><span class="line">  rules:</span><br><span class="line">    - alert: MongodbDown</span><br><span class="line">      expr: &#39;mongodb_up &#x3D;&#x3D; 0&#39;</span><br><span class="line">      for: 0m</span><br><span class="line">      labels:</span><br><span class="line">        severity: critical</span><br><span class="line">      annotations:</span><br><span class="line">        summary: &quot;MongoDB Down 容器: $labels.instance&quot;</span><br><span class="line">        description: &quot;MongoDB 容器 is down, 当前值:&#123;&#123; $value &#125;&#125;&quot;</span><br><span class="line"></span><br><span class="line">    - alert: MongodbNumberCursorsOpen</span><br><span class="line">      expr: &#39;mongodb_ss_metrics_cursor_open&#123;csr_type&#x3D;&quot;total&quot;&#125; &gt; 10 * 1000&#39;</span><br><span class="line">      for: 2m</span><br><span class="line">      labels:</span><br><span class="line">        severity: warning</span><br><span class="line">      annotations:</span><br><span class="line">        summary: &quot;MongoDB 数字有标打开告警 容器: $labels.instance&quot;</span><br><span class="line">        description: &quot;MongoDB 为客户端打开的游标过多 &gt; 10k, 当前值:&#123;&#123; $value &#125;&#125;&quot;</span><br><span class="line"></span><br><span class="line">    - alert: MongodbCursorsTimeouts</span><br><span class="line">      expr: &#39;increase(mongodb_ss_metrics_cursor_timedOut[1m]) &gt; 100&#39;</span><br><span class="line">      for: 2m</span><br><span class="line">      labels:</span><br><span class="line">        severity: warning</span><br><span class="line">      annotations:</span><br><span class="line">        summary: &quot;MongoDB 游标超时 容器: $labels.instance&quot;</span><br><span class="line">        description: &quot;太多游标超时, 当前值:&#123;&#123; $value &#125;&#125;&quot;</span><br><span class="line"></span><br><span class="line">    - alert: MongodbTooManyConnections</span><br><span class="line">      expr: &#39;avg by(instance) (rate(mongodb_ss_connections&#123;conn_type&#x3D;&quot;current&quot;&#125;[1m])) &#x2F; avg by(instance) (sum (mongodb_ss_connections) by (instance)) * 100 &gt; 80&#39;</span><br><span class="line">      for: 2m</span><br><span class="line">      labels:</span><br><span class="line">        severity: warning</span><br><span class="line">      annotations:</span><br><span class="line">        summary: &quot;MongoDB 太多连接 容器: $labels.instance&quot;</span><br><span class="line">        description: &quot;MongoDB 连接数 &gt; 80%, 当前值:&#123;&#123; $value &#125;&#125;&quot;</span><br><span class="line">    - alert: MongodbVirtualMemoryUsage</span><br><span class="line">      expr: &#39;(sum(mongodb_ss_mem_virtual) BY (instance) &#x2F; sum(mongodb_ss_mem_resident) BY (instance)) &gt; 3&#39;</span><br><span class="line">      for: 2m</span><br><span class="line">      labels:</span><br><span class="line">        severity: warning</span><br><span class="line">      annotations:</span><br><span class="line">        summary: &quot;MongoDB虚拟内存使用告警 容器: $labels.instance&quot;</span><br><span class="line">        description: &quot;虚拟内存使用过高, 当前值:&#123;&#123; $value &#125;&#125;&quot;</span><br><span class="line">EOF</span><br></pre></td></tr></table></figure>
+
+<p>检查配置</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">docker exec -it prometheus promtool check config &#x2F;etc&#x2F;prometheus&#x2F;prometheus.yml</span><br></pre></td></tr></table></figure>
+
+<p>重新加载配置</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">curl -X POST http:&#x2F;&#x2F;localhost:9090&#x2F;-&#x2F;reload</span><br></pre></td></tr></table></figure>
+
+
+
+<p>检查</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">http:&#x2F;&#x2F;192.168.224.11:9090&#x2F;alerts?search&#x3D;</span><br></pre></td></tr></table></figure>
+
+<h3 id="8、dashboard-3"><a href="#8、dashboard-3" class="headerlink" title="8、dashboard"></a><strong>8</strong>、<strong>dashboard</strong></h3><p>grafana展示prometheus从mongodb_exporter收集到的的数据</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">https:&#x2F;&#x2F;github.com&#x2F;percona&#x2F;grafana-dashboards&#x2F;tree&#x2F;main&#x2F;dashboards&#x2F;MongoDB</span><br><span class="line"></span><br><span class="line">下载这个MongoDB_Instances_Overview.json文件</span><br><span class="line">导入到grafana</span><br></pre></td></tr></table></figure>
+
+<p><a href="https://imgse.com/i/p91viGD"><img src="https://s1.ax1x.com/2023/04/29/p91viGD.png" alt="p91viGD.png"></a></p>
+<p>看到有报缺少插件，polystat,可以下载插件</p>
+<p>到设置里面的Plugins里面搜索polystat，然后安装</p>
+<h2 id="六、监控docker"><a href="#六、监控docker" class="headerlink" title="六、监控docker"></a>六、监控docker</h2><p>为了能够获取到Docker容器的运⾏状态，⽤户可以通过Docker的stats命令获取到当前主机上运⾏容器的</p>
+<p>统计信息，可以查看容器的CPU利⽤率、内存使用量、网络IO总量以及磁盘IO总量等信息。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">docker stats</span><br></pre></td></tr></table></figure>
+
+<p>除了使⽤命令以外，⽤户还可以通过Docker提供的HTTP API查看容器详细的监控统计信息。</p>
+<h3 id="1、使⽤CAdvisor"><a href="#1、使⽤CAdvisor" class="headerlink" title="1、使⽤CAdvisor"></a>1、使⽤<strong>CAdvisor</strong></h3><p>CAdvisor是Google开源的⼀款⽤于展示和分析容器运⾏状态的可视化⼯具。通过在主机上运⾏CAdvisor</p>
+<p>⽤户可以轻松的获取到当前主机上容器的运⾏统计信息，并以图表的形式向⽤户展示。</p>
+<p><strong>docker</strong>命令安装</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">docker run -d \</span><br><span class="line"> --restart&#x3D;always \</span><br><span class="line"> --volume&#x3D;&#x2F;:&#x2F;rootfs:ro \</span><br><span class="line"> --volume&#x3D;&#x2F;var&#x2F;run:&#x2F;var&#x2F;run:rw \</span><br><span class="line"> --volume&#x3D;&#x2F;sys:&#x2F;sys:ro \</span><br><span class="line"> --volume&#x3D;&#x2F;var&#x2F;lib&#x2F;docker&#x2F;:&#x2F;var&#x2F;lib&#x2F;docker:ro \</span><br><span class="line"> --publish&#x3D;8080:8080 \</span><br><span class="line"> --name&#x3D;cadvisor \</span><br><span class="line"> google&#x2F;cadvisor:latest</span><br></pre></td></tr></table></figure>
+
+<p><strong>Docker-compose</strong>安装</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">mkdir &#x2F;data&#x2F;cadvisor</span><br><span class="line">cd &#x2F;data&#x2F;cadvisors</span><br></pre></td></tr></table></figure>
+
+<p><strong>通过</strong>cat<strong>新建</strong>docker-compose.yaml<strong>⽂件</strong></p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line">cat &gt; docker-compose.yaml &lt;&lt;&quot;EOF&quot;</span><br><span class="line">version: &#39;3.3&#39;</span><br><span class="line">services:</span><br><span class="line">  cadvisor:</span><br><span class="line">    image: google&#x2F;cadvisor:latest</span><br><span class="line">    container_name: cadvisor</span><br><span class="line">    restart: always</span><br><span class="line">    volumes:</span><br><span class="line">      - &#x2F;:&#x2F;rootfs:ro</span><br><span class="line">      - &#x2F;var&#x2F;run:&#x2F;var&#x2F;run:rw</span><br><span class="line">      - &#x2F;sys:&#x2F;sys:ro</span><br><span class="line">      - &#x2F;var&#x2F;lib&#x2F;docker&#x2F;:&#x2F;var&#x2F;lib&#x2F;docker:ro</span><br><span class="line">    ports:</span><br><span class="line">      - 8080:8080</span><br><span class="line">EOF</span><br></pre></td></tr></table></figure>
+
+<p>启动</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">docker-compose up -d</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">docker ps</span><br></pre></td></tr></table></figure>
+
+<p>通过访问<code>http://192.168.224.12:8080</code>可以查看，当前主机上容器的运⾏状态，如下所示</p>
+<p>访问<code>http://192.168.224.12:8080/metrics</code>即可获取到标准的Prometheus监控样本输出</p>
+<h3 id="2、Prometheus配置"><a href="#2、Prometheus配置" class="headerlink" title="2、Prometheus配置"></a>2、<strong>Prometheus</strong>配置</h3><p>配置prometheus去采集（拉取）cAdvisor的监控样本数据</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line">cd &#x2F;data&#x2F;docker-prometheus</span><br><span class="line">#在scrape_configs(搜刮配置):下⾯增加如下配置：</span><br><span class="line">cat &gt;&gt; prometheus&#x2F;prometheus.yml &lt;&lt; &quot;EOF&quot;</span><br><span class="line">  - job_name: &#39;cadvisor&#39;</span><br><span class="line">    scrape_interval: 15s</span><br><span class="line">    static_configs:</span><br><span class="line">    - targets: [&#39;192.168.224.12:8080&#39;]</span><br><span class="line">      labels:</span><br><span class="line">        instance: server2.com服务器 </span><br><span class="line">EOF</span><br></pre></td></tr></table></figure>
+
+<p>重新加载配置</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">curl -X POST http:&#x2F;&#x2F;localhost:9090&#x2F;-&#x2F;reload</span><br></pre></td></tr></table></figure>
+
+<p>检查</p>
+<p>启动完成后，可以在Prometheus UI中查看到当前所有的Target状态：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">http:&#x2F;&#x2F;192.168.224.11:9090&#x2F;targets?search&#x3D;</span><br></pre></td></tr></table></figure>
+
+<h3 id="3、常用监控指标"><a href="#3、常用监控指标" class="headerlink" title="3、常用监控指标"></a>3、常用监控指标</h3><p>下⾯表格中列举了⼀些CAdvisor中获取到的典型监控指标：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">container_</span><br></pre></td></tr></table></figure>
+
+<table>
+<thead>
+<tr>
+<th>指标名称</th>
+<th>类型</th>
+<th>含义</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>container_cpu_load_average_10s</td>
+<td>gauge</td>
+<td>过去10秒容器CPU的平均负载</td>
+</tr>
+<tr>
+<td>container_cpu_usage_seconds_total</td>
+<td>counter</td>
+<td>容器在每个CPU内核上的累积占⽤时间(单位：秒)</td>
+</tr>
+<tr>
+<td>container_cpu_system_seconds_total</td>
+<td>counter</td>
+<td>System CPU累积占⽤时间（单位：秒）</td>
+</tr>
+<tr>
+<td>container_cpu_user_seconds_total</td>
+<td>counter</td>
+<td>User CPU累积占⽤时间（单位：秒）</td>
+</tr>
+<tr>
+<td>container_fs_usage_bytes</td>
+<td>gauge</td>
+<td>容器中⽂件系统的使⽤量(单位：字节)</td>
+</tr>
+<tr>
+<td>container_fs_limit_bytes</td>
+<td>gauge</td>
+<td>容器可以使⽤的⽂件系统总量(单位：字节)</td>
+</tr>
+<tr>
+<td>container_fs_reads_bytes_total</td>
+<td>counter</td>
+<td>容器累积读取数据的总量(单位：字节)</td>
+</tr>
+<tr>
+<td>container_fs_writes_bytes_total</td>
+<td>counter</td>
+<td>容器累积写⼊数据的总量(单位：字节)</td>
+</tr>
+<tr>
+<td>container_memory_max_usage_bytes</td>
+<td>gauge</td>
+<td>容器的最⼤内存使⽤量（单位：字节）</td>
+</tr>
+<tr>
+<td>container_memory_usage_bytes</td>
+<td>gauge</td>
+<td>容器当前的内存使⽤量（单位：字节</td>
+</tr>
+<tr>
+<td>container_spec_memory_limit_bytes</td>
+<td>gauge</td>
+<td>容器的内存使⽤量限制</td>
+</tr>
+<tr>
+<td>machine_memory_bytes</td>
+<td>gauge</td>
+<td>当前主机的内存总量</td>
+</tr>
+<tr>
+<td>container_network_receive_bytes_total</td>
+<td>counter</td>
+<td>容器⽹络累积接收数据总量（单位：字节）</td>
+</tr>
+<tr>
+<td>container_network_transmit_bytes_total</td>
+<td>counter</td>
+<td>容器⽹络累积传输数据总量（单位：字</td>
+</tr>
+</tbody></table>
+<h3 id="4、触发器配置"><a href="#4、触发器配置" class="headerlink" title="4、触发器配置"></a>4、触发器配置</h3><p>Prometheus配置</p>
+<p>添加<strong>docker</strong>触发器（告警规则）</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br></pre></td><td class="code"><pre><span class="line">cat &gt;&gt; prometheus&#x2F;rules&#x2F;docker.yml &lt;&lt;&quot;EOF&quot;</span><br><span class="line">groups:</span><br><span class="line">- name: DockerContainers</span><br><span class="line">  rules:</span><br><span class="line">  - alert: ContainerKilled</span><br><span class="line">    expr: time() - container_last_seen &gt; 60</span><br><span class="line">    for: 0m</span><br><span class="line">    labels:</span><br><span class="line">      severity: warning</span><br><span class="line">    annotations:</span><br><span class="line">      isummary: &quot;Docker容器被杀死 容器: $labels.instance&quot;</span><br><span class="line">      description: &quot;&#123;&#123; $value &#125;&#125;个容器消失了&quot;</span><br><span class="line">  # This rule can be very noisy in dynamic infra with legitimate container start&#x2F;stop&#x2F;deployment.</span><br><span class="line">  - alert: ContainerAbsent</span><br><span class="line">    expr: absent(container_last_seen)</span><br><span class="line">    for: 5m</span><br><span class="line">    labels:</span><br><span class="line">      severity: warning</span><br><span class="line">    annotations:</span><br><span class="line">      summary: &quot;无容器 容器: $labels.instance&quot;</span><br><span class="line">      description: &quot;5分钟检查容器不存在，值为：&#123;&#123; $value &#125;&#125;&quot;</span><br><span class="line">  - alert: ContainerCpuUsage</span><br><span class="line">    expr: (sum(rate(container_cpu_usage_seconds_total&#123;name!&#x3D;&quot;&quot;&#125;[3m])) BY (instance, name) * 100) &gt; 300</span><br><span class="line">    for: 2m</span><br><span class="line">    labels:</span><br><span class="line">      severity: warning</span><br><span class="line">    annotations:</span><br><span class="line">      summary: &quot;容器cpu使用率告警 容器: $labels.instance&quot;</span><br><span class="line">      description: &quot;容器cpu使用率超过300%，当前值为：&#123;&#123; $value &#125;&#125;&quot;</span><br><span class="line">  - alert: ContainerMemoryUsage</span><br><span class="line">    expr: (sum(container_memory_working_set_bytes&#123;name!&#x3D;&quot;&quot;&#125;) BY (instance, name) &#x2F; sum(container_spec_memory_limit_bytes &gt; 0) BY (instance, name) * 100) &gt; 80</span><br><span class="line">    for: 2m</span><br><span class="line">    labels:</span><br><span class="line">      severity: warning</span><br><span class="line">    annotations:</span><br><span class="line">      summary: &quot;容器内存使用率告警 容器: $labels.instance&quot;</span><br><span class="line">      description: &quot;容器内存使用率超过80%，当前值为：&#123;&#123; $value &#125;&#125;&quot;</span><br><span class="line">  - alert: ContainerVolumeIoUsage</span><br><span class="line">    expr: (sum(container_fs_io_current&#123;name!&#x3D;&quot;&quot;&#125;) BY (instance, name) * 100) &gt; 80</span><br><span class="line">    for: 2m</span><br><span class="line">    labels:</span><br><span class="line">      severity: warning</span><br><span class="line">    annotations:</span><br><span class="line">      summary: &quot;容器存储io使用率告警 容器: $labels.instance&quot;</span><br><span class="line">      description: &quot;容器存储io使用率超过 80%，当前值为：&#123;&#123; $value &#125;&#125;&quot;</span><br><span class="line">  - alert: ContainerHighThrottleRate</span><br><span class="line">    expr: rate(container_cpu_cfs_throttled_seconds_total[3m]) &gt; 1</span><br><span class="line">    for: 2m</span><br><span class="line">    labels:</span><br><span class="line">      severity: warning</span><br><span class="line">    annotations:</span><br><span class="line">      summary: &quot;容器限制告警 容器: $labels.instance&quot;</span><br><span class="line">      description: &quot;容器被限制，当前值为：&#123;&#123; $value &#125;&#125;&quot;</span><br><span class="line">EOF</span><br></pre></td></tr></table></figure>
+
+<p>重新加载配置</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">curl -X POST http:&#x2F;&#x2F;localhost:9090&#x2F;-&#x2F;reload</span><br></pre></td></tr></table></figure>
+
+<h3 id="5、dashboard"><a href="#5、dashboard" class="headerlink" title="5、dashboard"></a>5、<strong>dashboard</strong></h3><p>grafana展示prometheus收集到的cadvisor的数据</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">https:&#x2F;&#x2F;grafana.com&#x2F;grafana&#x2F;dashboards&#x2F;11600-docker-container&#x2F;</span><br><span class="line"></span><br><span class="line">id  11600</span><br></pre></td></tr></table></figure>
+
+<p><a href="https://imgse.com/i/p9Yjrfx"><img src="https://s1.ax1x.com/2023/05/04/p9Yjrfx.png" alt="p9Yjrfx.png"></a></p>
+<h2 id="七、监控mysql"><a href="#七、监控mysql" class="headerlink" title="七、监控mysql"></a>七、监控mysql</h2><p>使⽤docker-compose安装mysql，当然也可以⾃⾏安装</p>
+<p><strong>docker-compose</strong>安装<strong>mysql</strong></p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">mkdir &#x2F;data&#x2F;mysql -p</span><br><span class="line">cd &#x2F;data&#x2F;mysql</span><br></pre></td></tr></table></figure>
+
+<p>通过cat创建docker-compose.yaml文件</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br></pre></td><td class="code"><pre><span class="line">cat &gt; docker-compose.yaml &lt;&lt;&quot;EOF&quot;</span><br><span class="line">version: &#39;3.1&#39;</span><br><span class="line">services:</span><br><span class="line">  db:</span><br><span class="line">    image: mysql</span><br><span class="line">    restart: always</span><br><span class="line">    container_name: mysql</span><br><span class="line">    environment:</span><br><span class="line">      TZ: Asia&#x2F;Shanghai</span><br><span class="line">      LANG: en_US.UTF-8</span><br><span class="line">      MYSQL_ROOT_PASSWORD: 123456</span><br><span class="line">    command:</span><br><span class="line">      --default-authentication-plugin&#x3D;mysql_native_password</span><br><span class="line">      --character-set-server&#x3D;utf8mb4</span><br><span class="line">      --collation-server&#x3D;utf8mb4_general_ci</span><br><span class="line">      --lower_case_table_names&#x3D;1</span><br><span class="line">      --performance_schema&#x3D;1</span><br><span class="line">      --sql-mode&#x3D;&quot;&quot;</span><br><span class="line">      --skip-log-bin</span><br><span class="line">    volumes:</span><br><span class="line">      #- &#x2F;data&#x2F;mysql&#x2F;conf:&#x2F;etc&#x2F;mysql&#x2F;conf.d #数据文件挂载</span><br><span class="line">      - &#x2F;data&#x2F;mysql&#x2F;data:&#x2F;var&#x2F;lib&#x2F;mysql #数据文件挂载</span><br><span class="line">    ports:</span><br><span class="line">      - 3306:3306</span><br><span class="line">EOF</span><br></pre></td></tr></table></figure>
+
+<p>运⾏</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">docker-compose up -d</span><br></pre></td></tr></table></figure>
+
+<p>检查</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">docker ps -a</span><br></pre></td></tr></table></figure>
+
+
+
+<p>STATUS列全部为up 为正常</p>
+<h3 id="1、监控mysql"><a href="#1、监控mysql" class="headerlink" title="1、监控mysql"></a>1、监控mysql</h3><p>mysqld_exporter</p>
+<p><strong>1</strong>、创建⽤户</p>
+<p>登录mysql</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">docker exec -it mysql mysql -uroot -p</span><br><span class="line"></span><br><span class="line">输⼊密码：12345</span><br></pre></td></tr></table></figure>
+
+<p>创建</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">mysql&gt; CREATE USER &#39;exporter&#39;@&#39;%&#39; IDENTIFIED BY &#39;password&#39; WITH MAX_USER_CONNECTIONS 3;</span><br><span class="line">mysql&gt; GRANT PROCESS, REPLICATION CLIENT, SELECT ON *.* TO &#39;exporter&#39;@&#39;%&#39;;</span><br></pre></td></tr></table></figure>
+
+<p>验证</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">docker exec -it mysql mysql -uexporter -p</span><br></pre></td></tr></table></figure>
+
+<h3 id="2、⼆进制安装（⼆选⼀）"><a href="#2、⼆进制安装（⼆选⼀）" class="headerlink" title="2、⼆进制安装（⼆选⼀）"></a><strong>2</strong>、⼆进制安装（⼆选⼀）</h3><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">下载地址：https:&#x2F;&#x2F;github.com&#x2F;prometheus&#x2F;mysqld_exporter&#x2F;releases</span><br></pre></td></tr></table></figure>
+
+<p>下载解压后移动**/usr/local/Prometheus**⽬录</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">wget https:&#x2F;&#x2F;github.com&#x2F;prometheus&#x2F;mysqld_exporter&#x2F;releases&#x2F;download&#x2F;v0.14.0&#x2F;mysqld_exporter-0.14.0.freebsd-amd64.tar.gz</span><br><span class="line"></span><br><span class="line">tar zxf  mysqld_exporter-0.14.0.freebsd-amd64.tar.gz</span><br><span class="line"></span><br><span class="line">mv mysqld_exporter-0.14.0.freebsd-amd64 &#x2F;usr&#x2F;local&#x2F;Prometheus&#x2F;mysqld_exporter</span><br></pre></td></tr></table></figure>
+
+<p>更改<strong>exporter</strong>⽂件夹权限</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">chown prometheus.prometheus -R &#x2F;usr&#x2F;local&#x2F;Prometheus&#x2F;</span><br></pre></td></tr></table></figure>
+
+<p>创建连接数据库的⽂件</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">cat &gt;&#x2F;usr&#x2F;local&#x2F;Prometheus&#x2F;mysqld_exporter&#x2F;.mysqld_exporter.cnf &lt;&lt; &quot;EOF&quot;</span><br><span class="line">[client]</span><br><span class="line">user&#x3D;exporter</span><br><span class="line">password&#x3D;password</span><br><span class="line">host&#x3D;192.168.224.12</span><br><span class="line">port&#x3D;3306</span><br><span class="line">EOF</span><br></pre></td></tr></table></figure>
+
+<p>创建<strong>systemd</strong>服务</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br></pre></td><td class="code"><pre><span class="line">cat &gt; &#x2F;etc&#x2F;systemd&#x2F;system&#x2F;mysqld_exporter.service &lt;&lt; &quot;EOF&quot;</span><br><span class="line">[Unit]</span><br><span class="line">Description&#x3D;Prometheus MySQL Exporter</span><br><span class="line">After&#x3D;network.target</span><br><span class="line"></span><br><span class="line">[Service]</span><br><span class="line">Type&#x3D;simple</span><br><span class="line">User&#x3D;prometheus</span><br><span class="line">Group&#x3D;prometheus</span><br><span class="line">Restart&#x3D;always</span><br><span class="line">ExecStart&#x3D;&#x2F;usr&#x2F;local&#x2F;Prometheus&#x2F;mysqld_exporter&#x2F;mysqld_exporter \</span><br><span class="line">--config.my-cnf&#x3D;&#x2F;usr&#x2F;local&#x2F;Prometheus&#x2F;mysqld_exporter&#x2F;.mysqld_exporter.cnf \</span><br><span class="line">--collect.global_status \</span><br><span class="line">--collect.auto_increment.columns \</span><br><span class="line">--collect.info_schema.processlist \</span><br><span class="line">--collect.binlog_size \</span><br><span class="line">--collect.info_schema.tablestats \</span><br><span class="line">--collect.global_variables \</span><br><span class="line">--collect.info_schema.innodb_metrics \</span><br><span class="line">--collect.info_schema.query_response_time \</span><br><span class="line">--collect.info_schema.userstats \</span><br><span class="line">--collect.info_schema.tables \</span><br><span class="line">--collect.perf_schema.tablelocks \</span><br><span class="line">--collect.perf_schema.file_events \</span><br><span class="line">--collect.perf_schema.eventswaits \</span><br><span class="line">--collect.perf_schema.indexiowaits \</span><br><span class="line">--collect.perf_schema.tableiowaits \</span><br><span class="line">--collect.slave_status \</span><br><span class="line">--web.listen-address&#x3D;0.0.0.0:9104</span><br><span class="line"></span><br><span class="line">[Install]</span><br><span class="line">WantedBy&#x3D;multi-user.target</span><br><span class="line">EOF</span><br></pre></td></tr></table></figure>
+
+<p>启动 <strong>mysqld_exporter</strong></p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">systemctl daemon-reload</span><br><span class="line">systemctl start mysqld_exporter</span><br><span class="line">systemctl enable mysqld_exporter</span><br><span class="line">systemctl status mysqld_exporter</span><br><span class="line"></span><br><span class="line">启动不了检查⽇志</span><br><span class="line">journalctl -u mysqld_exporter -f</span><br></pre></td></tr></table></figure>
+
+<h3 id="3、docker安装"><a href="#3、docker安装" class="headerlink" title="3、docker安装"></a>3、docker安装</h3><p><strong>docker-compose</strong>运⾏</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br></pre></td><td class="code"><pre><span class="line">mkdir &#x2F;data&#x2F;mysqld_exporter -p</span><br><span class="line">cd &#x2F;data&#x2F;mysqld_exporter</span><br><span class="line"></span><br><span class="line">cat &gt;docker-compose.yaml&lt;&lt;&quot;EOF&quot;</span><br><span class="line">version: &#39;3.3&#39;</span><br><span class="line">services:</span><br><span class="line">  mysqld-exporter:</span><br><span class="line">    image: prom&#x2F;mysqld-exporter</span><br><span class="line">    container_name: mysqld-exporter</span><br><span class="line">    restart: always</span><br><span class="line">    command:</span><br><span class="line">      - &#39;--collect.info_schema.processlist&#39;</span><br><span class="line">      - &#39;--collect.info_schema.innodb_metrics&#39;</span><br><span class="line">      - &#39;--collect.info_schema.tablestats&#39;</span><br><span class="line">      - &#39;--collect.info_schema.tables&#39;</span><br><span class="line">      - &#39;--collect.info_schema.userstats&#39;</span><br><span class="line">      - &#39;--collect.engine_innodb_status&#39;</span><br><span class="line">    environment:</span><br><span class="line">      - DATA_SOURCE_NAME&#x3D;exporter:password@(192.168.224.12:3306)&#x2F;</span><br><span class="line">    ports:</span><br><span class="line">      - 9104:9104</span><br><span class="line">EOF</span><br></pre></td></tr></table></figure>
+
+<p>启动</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">docker-compose up -d</span><br><span class="line"></span><br><span class="line">检查</span><br><span class="line">docker ps -a</span><br></pre></td></tr></table></figure>
+
+<h3 id="4、参数解释-1"><a href="#4、参数解释-1" class="headerlink" title="4、参数解释"></a>4、参数解释</h3><table>
+<thead>
+<tr>
+<th>Name</th>
+<th>MySQL Version</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>collect.auto_increment.columns</td>
+<td>5.1</td>
+<td>从 information_schema 收集 auto_increment 列和最⼤值.</td>
+</tr>
+<tr>
+<td>collect.binlog_size</td>
+<td>5.1</td>
+<td>收集所有注册的binlog⽂件的当前⼤⼩</td>
+</tr>
+<tr>
+<td>collect.engine_innodb_status</td>
+<td>5.1</td>
+<td>收集SHOW ENGINE INNODB STATUS</td>
+</tr>
+<tr>
+<td>collect.engine_tokudb_status</td>
+<td>5.6</td>
+<td>收集SHOW ENGINE TOKUDB STATUS .</td>
+</tr>
+<tr>
+<td>collect.global_status</td>
+<td>5.1</td>
+<td>收集SHOW GLOBAL STATUS（默认启⽤)</td>
+</tr>
+<tr>
+<td>collect.global_variables</td>
+<td>5.1</td>
+<td>收集SHOW GLOBAL VARIABLES（默认启⽤）</td>
+</tr>
+<tr>
+<td>collect.info_schema.clientstats</td>
+<td>5.5</td>
+<td>如果以 userstat=1 运⾏，设置为 true 以收集客户端统计信息</td>
+</tr>
+<tr>
+<td>collect.info_schema.innodb_metrics</td>
+<td>5.6</td>
+<td>从 information_schema.innodb_metrics收集指标</td>
+</tr>
+<tr>
+<td>collect.info_schema.innodb_tablespaces</td>
+<td>5.7</td>
+<td>从information_schema.innodb_sys_tablespaces收集指标</td>
+</tr>
+<tr>
+<td>collect.info_schema.innodb_cmp</td>
+<td>5.5</td>
+<td>从information_schema.innodb_cmp收集 InnoDB 压缩表指标。</td>
+</tr>
+<tr>
+<td>collect.info_schema.innodb_cmpmem</td>
+<td>5.5</td>
+<td>从information_schema.innodb_cmpmem缓冲池压缩指标。</td>
+</tr>
+<tr>
+<td>collect.info_schema.processlist</td>
+<td>5.1</td>
+<td>从 information_schema.processlist 收集线程状态计数</td>
+</tr>
+<tr>
+<td>collect.info_schema.processlist.min_time</td>
+<td>5.1</td>
+<td>线程必须处于要计算的每个状态的最短时间。 （默认值：0）</td>
+</tr>
+<tr>
+<td>collect.info_schema.query_response_time</td>
+<td>5.5</td>
+<td>如果 query_response_time_stats 为 ON，则收集查询响应时间分布。</td>
+</tr>
+<tr>
+<td>collect.info_schema.replica_host</td>
+<td>5.6</td>
+<td>从 information_schema.replica_host_status 收集指标。</td>
+</tr>
+<tr>
+<td>collect.info_schema.tables</td>
+<td>5.1</td>
+<td>从information_schema.tables收集指标。</td>
+</tr>
+<tr>
+<td>collect.info_schema.tables.databases</td>
+<td>5.1</td>
+<td>要为其收集表统计信息的数据库列表，或为所有</td>
+</tr>
+<tr>
+<td>collect.info_schema.tablestats</td>
+<td>5.1</td>
+<td>如果以 userstat=1 运⾏，设置为 true 以收集表统计信息。</td>
+</tr>
+<tr>
+<td>collect.info_schema.schemastats</td>
+<td>5.1</td>
+<td>如果以 userstat=1 运⾏，设置为 true 以收集架构统计信息</td>
+</tr>
+<tr>
+<td>collect.info_schema.userstats</td>
+<td>5.1</td>
+<td>如果以 userstat=1 运⾏，设置为 true 以收集⽤户统计信息。</td>
+</tr>
+<tr>
+<td>collect.mysql.user</td>
+<td>5.5</td>
+<td>从 mysql.user 表中收集数据</td>
+</tr>
+<tr>
+<td>collect.perf_schema.eventsstatements</td>
+<td>5.6</td>
+<td>从 performance_schema.events_statements_summary_by_digest 收集指标。</td>
+</tr>
+<tr>
+<td>collect.perf_schema.eventsstatements.digest_text_limit</td>
+<td>5.6</td>
+<td>规范化语句⽂本的最⼤⻓度。 （默认值：120）</td>
+</tr>
+<tr>
+<td>collect.perf_schema.eventsstatements.limit</td>
+<td>5.6</td>
+<td>按响应时间限制事件语句摘要的数量。 （默认值：250）</td>
+</tr>
+<tr>
+<td>collect.perf_schema.eventsstatements.timelimit</td>
+<td>5.6</td>
+<td>以秒为单位限制“last_seen”事件语句的存在时间。 （默认值：86400）</td>
+</tr>
+<tr>
+<td>collect.perf_schema.eventsstatementssum</td>
+<td>5.7</td>
+<td>从 performance_schema.events_statements_summary_by_digest 汇总收集指标。</td>
+</tr>
+<tr>
+<td>collect.perf_schema.eventswaits</td>
+<td>5.5</td>
+<td>从performance_schema.events_waits_summary_global_by_event_name收集指标</td>
+</tr>
+<tr>
+<td>collect.perf_schema.file_events</td>
+<td>5.6</td>
+<td>从 performance_schema.file_summary_by_event_name 收集指标</td>
+</tr>
+<tr>
+<td>collect.perf_schema.file_instances</td>
+<td>5.5</td>
+<td>从 performance_schema.file_summary_by_instance 收集指标。</td>
+</tr>
+<tr>
+<td>collect.perf_schema.file_instances.remove_prefix</td>
+<td>5.5</td>
+<td>删除 performance_schema.file_summary_by_instance 中的路径前缀。</td>
+</tr>
+<tr>
+<td>collect.perf_schema.indexiowaits</td>
+<td>5.6</td>
+<td>从 performance_schema.table_io_waits_summary_by_index_usage收集指标。</td>
+</tr>
+<tr>
+<td>collect.perf_schema.memory_events</td>
+<td>5.7</td>
+<td>从 performance_schema.memory_summary_global_by_event_name收集指标。</td>
+</tr>
+<tr>
+<td>collect.perf_schema.memory_events.remove_prefix</td>
+<td>5.7</td>
+<td>删除performance_schema.memory_summary_global_by_event_name 中的仪器前缀</td>
+</tr>
+<tr>
+<td>collect.perf_schema.tableiowaits</td>
+<td>5.6</td>
+<td>从 performance_schema.table_io_waits_summary_by_table 收集指标</td>
+</tr>
+<tr>
+<td>collect.perf_schema.tablelocks</td>
+<td>5.6</td>
+<td>从 performance_schema.table_lock_waits_summary_by_table 收集指标</td>
+</tr>
+<tr>
+<td>collect.perf_schema.replication_group_members</td>
+<td>5.7</td>
+<td>从 performance_schema.replication_group_members 收集指标</td>
+</tr>
+<tr>
+<td>collect.perf_schema.replication_group_member_stats</td>
+<td>5.7</td>
+<td>从 performance_schema.replication_group_member_stats 收集指标</td>
+</tr>
+<tr>
+<td>collect.perf_schema.replication_applier_status_by_worker</td>
+<td>5.7</td>
+<td>从 performance_schema.replication_applier_status_by_worker 收集指标</td>
+</tr>
+<tr>
+<td>collect.slave_status</td>
+<td>5.1</td>
+<td>从 SHOW SLAVE STATUS 收集（默认启⽤）</td>
+</tr>
+<tr>
+<td>collect.slave_hosts</td>
+<td>5.1</td>
+<td>从 SHOW SLAVE HOSTS 收集</td>
+</tr>
+<tr>
+<td>collect.heartbeat</td>
+<td>5.1</td>
+<td>从⼼跳收集</td>
+</tr>
+<tr>
+<td>collect.heartbeat.database</td>
+<td>5.1</td>
+<td>从哪⾥收集⼼跳数据的数据库。 （默认：⼼跳）</td>
+</tr>
+<tr>
+<td>collect.heartbeat.table</td>
+<td>5.1</td>
+<td>从哪⾥收集⼼跳数据的表。 （默认：⼼跳）</td>
+</tr>
+<tr>
+<td>collect.heartbeat.utc</td>
+<td>5.1</td>
+<td>使⽤ UTC 作为当前服务器的时间戳（使⽤ –utc 调⽤ pt-heartbeat ）。 （默认值：假）</td>
+</tr>
+</tbody></table>
+<h3 id="5、Prometheus配置-3"><a href="#5、Prometheus配置-3" class="headerlink" title="5、Prometheus配置"></a>5、Prometheus配置</h3><p>配置prometheus去采集（拉取）mysql_exporter的监控样本数据</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line">cd &#x2F;data&#x2F;docker-prometheus</span><br><span class="line">#在scrape_configs(搜刮配置):下⾯增加如下配置：</span><br><span class="line"></span><br><span class="line">cat &gt;&gt; prometheus&#x2F;prometheus.yml &lt;&lt; &quot;EOF&quot;</span><br><span class="line">  - job_name: &#39;mysqld_exporter&#39;</span><br><span class="line">    static_configs:</span><br><span class="line">    - targets: [&#39;192.168.224.12:9104&#39;]</span><br><span class="line">      labels:</span><br><span class="line">        instance: server2.com服务器</span><br><span class="line">EOF</span><br></pre></td></tr></table></figure>
+
+<p>重新加载配置</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">curl -X POST http:&#x2F;&#x2F;localhost:9090&#x2F;-&#x2F;reload</span><br></pre></td></tr></table></figure>
+
+<h3 id="6、常用监控指标"><a href="#6、常用监控指标" class="headerlink" title="6、常用监控指标"></a>6、常用监控指标</h3><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br></pre></td><td class="code"><pre><span class="line">mysql_up                                              # 服务器是否在线</span><br><span class="line">mysql_global_status_uptime                            # 运行时长，单位 s</span><br><span class="line">delta(mysql_global_status_bytes_received[1m])         # 网络接收的 bytes</span><br><span class="line">delta(mysql_global_status_bytes_sent[1m])             # 网络发送的 bytes</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">mysql_global_status_threads_connected                 # 当前的客户端连接数</span><br><span class="line">mysql_global_variables_max_connections                # 允许的最大连接数</span><br><span class="line">mysql_global_status_threads_running                   # 正在执行命令的客户端连接数，即非 sleep 状态</span><br><span class="line">delta(mysql_global_status_aborted_connects[1m])       # 客户端建立连接失败的连接数，比如登录失败</span><br><span class="line">delta(mysql_global_status_aborted_clients[1m])        # 客户端连接之后，未正常关闭的连接数</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">delta(mysql_global_status_commands_total&#123;command&#x3D;&quot;xx&quot;&#125;[1m]) &gt; 0     # 每分钟各种命令的次数</span><br><span class="line">delta(mysql_global_status_handlers_total&#123;handler&#x3D;&quot;xx&quot;&#125;[1m]) &gt; 0     # 每分钟各种操作的次数</span><br><span class="line">delta(mysql_global_status_handlers_total&#123;handler&#x3D;&quot;commit&quot;&#125;[1m]) &gt; 0 # 每分钟 commit 的次数</span><br><span class="line">delta(mysql_global_status_table_locks_immediate[1m])  # 请求获取锁，且立即获得的请求数</span><br><span class="line">delta(mysql_global_status_table_locks_waited[1m])     # 请求获取锁，但需要等待的请求数。该值越少越好</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">delta(mysql_global_status_queries[1m])                # 每分钟的查询数</span><br><span class="line">delta(mysql_global_status_slow_queries[1m])           # 慢查询数。如果未启用慢查询日志，则为 0</span><br><span class="line">mysql_global_status_innodb_page_size                  # innodb 数据页的大小，单位 bytes</span><br><span class="line">mysql_global_variables_innodb_buffer_pool_size        # innodb_buffer_pool 的限制体积</span><br><span class="line">mysql_global_status_buffer_pool_pages&#123;state&#x3D;&quot;data&quot;&#125;   # 包含数据的数据页数，包括洁页、脏页</span><br><span class="line">mysql_global_status_buffer_pool_dirty_pages           # 脏页数</span><br></pre></td></tr></table></figure>
+
+<h3 id="7、触发器配置-2"><a href="#7、触发器配置-2" class="headerlink" title="7、触发器配置"></a>7、触发器配置</h3><p>添加<strong>mysql</strong>触发器（告警规则）</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">cd &#x2F;data&#x2F;docker-prometheus</span><br></pre></td></tr></table></figure>
+
+<p>使⽤cat创建⽂件</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br></pre></td><td class="code"><pre><span class="line">cat &gt;&gt; prometheus&#x2F;rules&#x2F;mysqld.yml &lt;&lt;&quot;EOF&quot;</span><br><span class="line">groups:</span><br><span class="line">- name: MySQL</span><br><span class="line">  rules:</span><br><span class="line">  - alert: MysqlDown</span><br><span class="line">    expr: mysql_up &#x3D;&#x3D; 0</span><br><span class="line">    for: 30s</span><br><span class="line">    labels:</span><br><span class="line">      severity: critical</span><br><span class="line">    annotations:</span><br><span class="line">      summary: &quot;MySQL Down,实例:&#123;&#123; $labels.instance &#125;&#125;&quot;</span><br><span class="line">      description: &quot;MySQL_exporter连不上MySQL了，当前状态为：&#123;&#123; $value &#125;&#125;&quot;    </span><br><span class="line">  - alert: MysqlTooManyConnections</span><br><span class="line">    expr: max_over_time(mysql_global_status_threads_connected[1m]) &#x2F; mysql_global_variables_max_connections * 100 &gt; 80</span><br><span class="line">    for: 2m</span><br><span class="line">    labels:</span><br><span class="line">      severity: warning</span><br><span class="line">    annotations:</span><br><span class="line">      summary: &quot;Mysql连接数过多告警,实例:&#123;&#123; $labels.instance &#125;&#125;&quot;</span><br><span class="line">      description: &quot;MySQL连接数&gt;80%,当前值：&#123;&#123; $value &#125;&#125;&quot;</span><br><span class="line">  - alert: MysqlHighThreadsRunning</span><br><span class="line">    expr: max_over_time(mysql_global_status_threads_running[1m]) &gt; 20</span><br><span class="line">    for: 2m</span><br><span class="line">    labels:</span><br><span class="line">      severity: warning</span><br><span class="line">    annotations:</span><br><span class="line">      summary: &quot;Mysql运行的线程过多,实例:&#123;&#123; $labels.instance &#125;&#125;&quot;</span><br><span class="line">      description: &quot;Mysql运行的线程 &gt; 20，当前运行的线程：&#123;&#123; $value &#125;&#125;&quot; </span><br><span class="line">  - alert: MysqlSlowQueries</span><br><span class="line">    expr: increase(mysql_global_status_slow_queries[2m]) &gt; 0</span><br><span class="line">    for: 2m</span><br><span class="line">    labels:</span><br><span class="line">      severity: warning</span><br><span class="line">    annotations:</span><br><span class="line">      summary: &quot;Mysql慢日志告警,实例:&#123;&#123; $labels.instance &#125;&#125;&quot;</span><br><span class="line">      description: &quot;MySQL在过去2分钟有新的&#123;&#123; $value &#125;&#125;条慢查询&quot;</span><br><span class="line">  #MySQL innodb 日志写入停滞</span><br><span class="line">  - alert: MysqlInnodbLogWaits</span><br><span class="line">    expr: rate(mysql_global_status_innodb_log_waits[15m]) &gt; 10</span><br><span class="line">    for: 0m</span><br><span class="line">    labels:</span><br><span class="line">      severity: warning</span><br><span class="line">    annotations:</span><br><span class="line">      summary: &quot;MySQL innodb日志等待,实例:&#123;&#123; $labels.instance &#125;&#125;&quot;</span><br><span class="line">      description: &quot;MySQL innodb日志写入停滞，当前值： &#123;&#123; $value &#125;&#125;&quot;</span><br><span class="line">  - alert: MysqlRestarted</span><br><span class="line">    expr: mysql_global_status_uptime &lt; 60</span><br><span class="line">    for: 0m</span><br><span class="line">    labels:</span><br><span class="line">      severity: info</span><br><span class="line">    annotations:</span><br><span class="line">      summary: &quot;MySQL 重启,实例:&#123;&#123; $labels.instance &#125;&#125;&quot;</span><br><span class="line">      description: &quot;不到一分钟前，MySQL重启过&quot;</span><br><span class="line">EOF</span><br></pre></td></tr></table></figure>
+
+<p>配置检查</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">docker exec -it prometheus promtool check config &#x2F;etc&#x2F;prometheus&#x2F;prometheus.yml</span><br></pre></td></tr></table></figure>
+
+<p>重新加载配置</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">curl -X POST http:&#x2F;&#x2F;localhost:9090&#x2F;-&#x2F;reload</span><br></pre></td></tr></table></figure>
+
+<p>检查</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">http:&#x2F;&#x2F;192.168.224.11:9090&#x2F;alerts?search&#x3D;</span><br></pre></td></tr></table></figure>
+
+<h3 id="8、dashboard-4"><a href="#8、dashboard-4" class="headerlink" title="8、dashboard"></a>8、dashboard</h3><p>grafana展示prometheus从mysql_exporter收集到的的数据</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">https:&#x2F;&#x2F;grafana.com&#x2F;grafana&#x2F;dashboards&#x2F;7362</span><br><span class="line"></span><br><span class="line">https:&#x2F;&#x2F;github.com&#x2F;percona&#x2F;grafana-dashboards&#x2F;tree&#x2F;main&#x2F;dashboards&#x2F;MySQL</span><br></pre></td></tr></table></figure>
+
+<p><a href="https://imgse.com/i/p9txouT"><img src="https://s1.ax1x.com/2023/05/04/p9txouT.png" alt="p9txouT.png"></a></p>
+<p>Top Process States和 Process States图形修改为如下：</p>
+<p>mysql_info_schema_threads 替换成：</p>
+<p>mysql_info_schema_processlist_threads</p>
+<p><a href="https://imgse.com/i/p9txqUJ"><img src="https://s1.ax1x.com/2023/05/04/p9txqUJ.png" alt="p9txqUJ.png"></a></p>
+<p>数据库表监控</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">https:&#x2F;&#x2F;grafana.com&#x2F;grafana&#x2F;dashboards&#x2F;9625</span><br></pre></td></tr></table></figure>
+
+<p>注意：2个图表没有数据，是因为只⽀持percona server 和 mariadb</p>
+<p><a href="https://imgse.com/i/p9txvgx"><img src="https://s1.ax1x.com/2023/05/04/p9txvgx.png" alt="p9txvgx.png"></a></p>
+</div><ul class="post-copyright"><li><strong>本文标题：</strong><a href="https://yc6.cool/2023/05/07/Prometheus监控nginx,redis,mysql等/">Prometheus监控nginx,redis,rabbitmq,mongodb,docker等</a></li><li><strong>本文作者：</strong><a href="https://yc6.cool">yichen</a></li><li><strong>本文链接：</strong><a href="https://yc6.cool/2023/05/07/Prometheus监控nginx,redis,mysql等/">https://yc6.cool/2023/05/07/Prometheus监控nginx,redis,mysql等/</a></li><li><strong>版权声明：</strong><span>本博客所有文章除特别声明外，均采用 <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/deed.zh" rel="external nofollow" target="_blank">CC BY-NC-SA 4.0</a> 许可协议。转载请注明出处！</span></li></ul><div><div class="recommend-post"><span class="is-size-6 has-text-grey has-mr-7"># 相关文章</span><br><span>  1.<a class="is-size-6" href="/2023/05/10/Prometheus%E4%BD%BF%E7%94%A8%E6%89%8B%E6%9C%BA%E7%94%B5%E8%AF%9D_%E7%9F%AD%E4%BF%A1%E6%8E%A5%E6%94%B6%E5%91%8A%E8%AD%A6%E9%80%9A%E7%9F%A5/" target="_blank">Prometheus使用手机电话_短信接收告警通知</a><br></span><span>  2.<a class="is-size-6" href="/2023/05/10/Prometheus%E4%BD%BF%E7%94%A8%E4%BC%81%E4%B8%9A%E5%BE%AE%E4%BF%A1%E6%8E%A5%E6%94%B6%E5%91%8A%E8%AD%A6%E9%80%9A%E7%9F%A5/" target="_blank">Prometheus使用企业微信接收告警通知</a><br></span><span>  3.<a class="is-size-6" href="/2023/05/10/Prometheus%E4%BD%BF%E7%94%A8%E4%BC%81%E4%B8%9A%E9%92%89%E9%92%89%E5%91%8A%E8%AD%A6%E9%80%9A%E7%9F%A5/" target="_blank">Prometheus使用企业钉钉接收告警通知</a><br></span><span>  4.<a class="is-size-6" href="/2023/05/10/Prometheus%E4%BD%BF%E7%94%A8%E9%82%AE%E7%AE%B1%E6%8E%A5%E6%94%B6%E5%91%8A%E8%AD%A6%E9%80%9A%E7%9F%A5/" target="_blank">Prometheus使用邮件接收告警通知</a><br></span><span>  5.<a class="is-size-6" href="/2023/05/09/%E5%9F%BA%E4%BA%8E_Consul_%E7%9A%84%E6%9C%8D%E5%8A%A1%E5%8F%91%E7%8E%B0/" target="_blank">Prometheus基于Consul服务发现</a><br></span><span>  6.<a class="is-size-6" href="/2023/05/09/%E6%9C%8D%E5%8A%A1%E5%8F%91%E7%8E%B0&amp;%E5%9F%BA%E4%BA%8E%E6%96%87%E4%BB%B6%E7%9A%84%E6%9C%8D%E5%8A%A1%E5%8F%91%E7%8E%B0/" target="_blank">Prometheus服务发现</a><br></span><span>  7.<a class="is-size-6" href="/2023/05/08/Prometheus%E7%9B%91%E6%8E%A7domain%E5%9F%9F%E5%90%8D/" target="_blank">Prometheus监控domain域名</a><br></span><span>  8.<a class="is-size-6" href="/2023/05/08/pushgateway/" target="_blank">Prometheus的Pushgateway工具</a><br></span></div><div class="recommend-post"><span class="is-size-6 has-text-grey has-mr-7"># 推荐文章</span><br><span>  1.<a class="is-size-6" href="/2020/08/04/docker%E4%BD%BF%E7%94%A8/" target="_blank">docker的使用</a><br></span><span>  2.<a class="is-size-6" href="/2020/08/03/mysql%E5%9F%BA%E7%A1%80/" target="_blank">mysql基础</a><br></span><span>  3.<a class="is-size-6" href="/2020/08/03/nginx%E5%9F%BA%E7%A1%80/" target="_blank">nginx基础</a><br></span><span>  4.<a class="is-size-6" href="/2020/08/04/python3%E5%9F%BA%E7%A1%80%E7%9F%A5%E8%AF%86%E9%87%8D%E7%82%B9/" target="_blank">python3基础知识重点</a><br></span><span>  5.<a class="is-size-6" href="/2023/05/07/Linux%E6%9C%8D%E5%8A%A1%E5%99%A8%E7%B3%BB%E7%BB%9F%E7%9B%91%E6%8E%A7/" target="_blank">Prometheus监控linux</a><br></span><span>  6.<a class="is-size-6" href="/2023/05/10/Prometheus%E4%BD%BF%E7%94%A8%E9%82%AE%E7%AE%B1%E6%8E%A5%E6%94%B6%E5%91%8A%E8%AD%A6%E9%80%9A%E7%9F%A5/" target="_blank">Prometheus使用邮件接收告警通知</a><br></span></div></div><link rel="stylesheet" href="https://cdnjs.loli.net/ajax/libs/social-share.js/1.0.16/css/share.min.css"><div class="social-share"></div><script src="https://cdnjs.loli.net/ajax/libs/social-share.js/1.0.16/js/social-share.min.js"></script></article></div><div class="card"><div class="card-content"><h3 class="menu-label has-text-centered">喜欢这篇文章？打赏一下作者吧</h3><div class="buttons is-centered"><a class="button is-info donate"><span class="icon is-small"><i class="fab fa-alipay"></i></span><span>支付宝</span><span class="qrcode"><img src="https://yichenxiu.com/tupian/tubiao/alipay1.jpg" alt="支付宝"></span></a><a class="button is-success donate"><span class="icon is-small"><i class="fab fa-weixin"></i></span><span>微信</span><span class="qrcode"><img src="https://i.328888.xyz/2023/03/05/dZXCk.jpeg" alt="微信"></span></a></div></div></div><nav class="post-navigation mt-4 level is-mobile"><div class="level-start"><a class="article-nav-prev level level-item link-muted" href="/2023/05/07/Linux%E6%9C%8D%E5%8A%A1%E5%99%A8%E7%B3%BB%E7%BB%9F%E7%9B%91%E6%8E%A7/"><i class="level-item fas fa-chevron-left"></i><span class="level-item">Prometheus监控linux</span></a></div><div class="level-end"><a class="article-nav-next level level-item link-muted" href="/2023/04/28/Prometheus%E6%90%AD%E5%BB%BA%E9%83%A8%E7%BD%B2/"><span class="level-item">Prometheus搭建部署</span><i class="level-item fas fa-chevron-right"></i></a></div></nav><div class="card"><div class="card-content"><h3 class="title is-5">评论</h3><div id="comment-container"></div><link rel="stylesheet" href="https://cdnjs.loli.net/ajax/libs/gitalk/1.6.0/gitalk.css"><script> $.getScript('/js/gitalk.min.js', function () { 
+            var gitalk = new Gitalk({
+            language:'zh-CN',
+            id: 'e5e0423bc7a920553cb3c2dd08e96f75',
+            repo: 'issue_database',
+            owner: 'zhi666',
+            clientID: '1b861f81e9a79ee6028d',
+            clientSecret: 'cc629aff090aa9c60d5e13ddf7fcfce14f00a478',
+            admin: ["zhi666"],
+            createIssueManually: true,
+            distractionFreeMode: true,
+            perPage: 10,
+            pagerDirection: 'last',
+            proxy: 'https://cors-anywhere.azm.workers.dev/https://github.com/login/oauth/access_token',
+            
+            enableHotKey: true,
+            isLocked: false
+        })
+        gitalk.render('comment-container')});</script></div></div></div><div class="column column-left is-4-tablet is-4-desktop is-4-widescreen  order-1 is-sticky"><div class="card widget toc-scroll" id="toc"><div class="card-content"><div class="menu"><h3 class="menu-label">目录</h3><ul class="menu-list toc"><li><a class="is-flex toc-item" id="toc-item-Prometheus监控nginx-redis-rabbitmq-mongodb-docker等。" href="#Prometheus监控nginx-redis-rabbitmq-mongodb-docker等。"><span>Prometheus监控nginx,redis,rabbitmq,mongodb,docker等。</span></a><ul class="menu-list toc"><li><a class="is-flex toc-item" id="toc-item-一、环境介绍" href="#一、环境介绍"><span>一、环境介绍</span></a><ul class="menu-list toc"><li><a class="is-flex toc-item" id="toc-item-b、docker-compose安装rabbitmq-nginx-mongo-redis" href="#b、docker-compose安装rabbitmq-nginx-mongo-redis"><span>b、docker-compose安装rabbitmq,nginx,mongo,redis</span></a></li></ul></li><li><a class="is-flex toc-item" id="toc-item-二、监控nginx" href="#二、监控nginx"><span>二、监控nginx</span></a><ul class="menu-list toc"><li><a class="is-flex toc-item" id="toc-item-nginx开启stu-status" href="#nginx开启stu-status"><span>nginx开启stu_status</span></a></li><li><a class="is-flex toc-item" id="toc-item-1、二进制安装nginx-exporter" href="#1、二进制安装nginx-exporter"><span>1、二进制安装nginx_exporter</span></a></li><li><a class="is-flex toc-item" id="toc-item-2、docker安装nginx-exporter" href="#2、docker安装nginx-exporter"><span>2、docker安装nginx_exporter</span></a></li><li><a class="is-flex toc-item" id="toc-item-3、参数解释" href="#3、参数解释"><span>3、参数解释</span></a></li><li><a class="is-flex toc-item" id="toc-item-4、metrics地址" href="#4、metrics地址"><span>4、metrics地址</span></a></li><li><a class="is-flex toc-item" id="toc-item-5、Prometheus配置" href="#5、Prometheus配置"><span>5、Prometheus配置</span></a></li><li><a class="is-flex toc-item" id="toc-item-6、常⽤的监控指标" href="#6、常⽤的监控指标"><span>6、常⽤的监控指标</span></a></li><li><a class="is-flex toc-item" id="toc-item-7、添加触发器" href="#7、添加触发器"><span>7、添加触发器</span></a></li><li><a class="is-flex toc-item" id="toc-item-8、dashboard" href="#8、dashboard"><span>8、dashboard</span></a></li></ul></li><li><a class="is-flex toc-item" id="toc-item-三、监控redis" href="#三、监控redis"><span>三、监控redis</span></a><ul class="menu-list toc"><li><a class="is-flex toc-item" id="toc-item-1、二进制安装redis-exporter" href="#1、二进制安装redis-exporter"><span>1、二进制安装redis_exporter</span></a></li><li><a class="is-flex toc-item" id="toc-item-2、docker安装redis-exporter" href="#2、docker安装redis-exporter"><span>2、docker安装redis_exporter</span></a></li><li><a class="is-flex toc-item" id="toc-item-3、参数解释-1" href="#3、参数解释-1"><span>3、参数解释</span></a></li><li><a class="is-flex toc-item" id="toc-item-4、metrics地址-1" href="#4、metrics地址-1"><span>4、metrics地址</span></a></li><li><a class="is-flex toc-item" id="toc-item-5、Prometheus配置-1" href="#5、Prometheus配置-1"><span>5、Prometheus配置</span></a></li><li><a class="is-flex toc-item" id="toc-item-6、常⽤的监控指标-1" href="#6、常⽤的监控指标-1"><span>6、常⽤的监控指标</span></a></li><li><a class="is-flex toc-item" id="toc-item-7、触发器配置" href="#7、触发器配置"><span>7、触发器配置</span></a></li><li><a class="is-flex toc-item" id="toc-item-8、dashboard-1" href="#8、dashboard-1"><span>8、dashboard</span></a></li></ul></li><li><a class="is-flex toc-item" id="toc-item-四、监控rabbitmq" href="#四、监控rabbitmq"><span>四、监控rabbitmq</span></a><ul class="menu-list toc"><li><a class="is-flex toc-item" id="toc-item-1、二进制安装rabbitmq-exporter" href="#1、二进制安装rabbitmq-exporter"><span>1、二进制安装rabbitmq_exporter</span></a></li><li><a class="is-flex toc-item" id="toc-item-2、docker安装rabbitmq-exporter" href="#2、docker安装rabbitmq-exporter"><span>2、docker安装rabbitmq_exporter</span></a></li><li><a class="is-flex toc-item" id="toc-item-3、参数解释-2" href="#3、参数解释-2"><span>3、参数解释</span></a></li><li><a class="is-flex toc-item" id="toc-item-4、metrics地址-2" href="#4、metrics地址-2"><span>4、metrics地址</span></a></li><li><a class="is-flex toc-item" id="toc-item-5、Prometheus配置-2" href="#5、Prometheus配置-2"><span>5、Prometheus配置</span></a></li><li><a class="is-flex toc-item" id="toc-item-6、常⽤的监控指标-2" href="#6、常⽤的监控指标-2"><span>6、常⽤的监控指标</span></a></li><li><a class="is-flex toc-item" id="toc-item-7、触发器配置-1" href="#7、触发器配置-1"><span>7、触发器配置</span></a></li><li><a class="is-flex toc-item" id="toc-item-8、dashboard-2" href="#8、dashboard-2"><span>8、dashboard</span></a></li></ul></li><li><a class="is-flex toc-item" id="toc-item-五、监控mongodb" href="#五、监控mongodb"><span>五、监控mongodb</span></a><ul class="menu-list toc"><li><a class="is-flex toc-item" id="toc-item-1、创建监控⽤户" href="#1、创建监控⽤户"><span>1、创建监控⽤户</span></a></li><li><a class="is-flex toc-item" id="toc-item-2、二进制安装mongodb-expoter" href="#2、二进制安装mongodb-expoter"><span>2、二进制安装mongodb_expoter</span></a></li><li><a class="is-flex toc-item" id="toc-item-3、docker安装mongodb-exporter" href="#3、docker安装mongodb-exporter"><span>3、docker安装mongodb_exporter</span></a></li><li><a class="is-flex toc-item" id="toc-item-4、参数解释" href="#4、参数解释"><span>4、参数解释</span></a></li><li><a class="is-flex toc-item" id="toc-item-5、metrics地址" href="#5、metrics地址"><span>5、metrics地址</span></a></li><li><a class="is-flex toc-item" id="toc-item-6、Prometheus配置" href="#6、Prometheus配置"><span>6、Prometheus配置</span></a></li><li><a class="is-flex toc-item" id="toc-item-7、常⽤的监控指标" href="#7、常⽤的监控指标"><span>7、常⽤的监控指标</span></a></li><li><a class="is-flex toc-item" id="toc-item-8、触发器配置" href="#8、触发器配置"><span>8、触发器配置</span></a></li><li><a class="is-flex toc-item" id="toc-item-8、dashboard-3" href="#8、dashboard-3"><span>8、dashboard</span></a></li></ul></li><li><a class="is-flex toc-item" id="toc-item-六、监控docker" href="#六、监控docker"><span>六、监控docker</span></a><ul class="menu-list toc"><li><a class="is-flex toc-item" id="toc-item-1、使⽤CAdvisor" href="#1、使⽤CAdvisor"><span>1、使⽤CAdvisor</span></a></li><li><a class="is-flex toc-item" id="toc-item-2、Prometheus配置" href="#2、Prometheus配置"><span>2、Prometheus配置</span></a></li><li><a class="is-flex toc-item" id="toc-item-3、常用监控指标" href="#3、常用监控指标"><span>3、常用监控指标</span></a></li><li><a class="is-flex toc-item" id="toc-item-4、触发器配置" href="#4、触发器配置"><span>4、触发器配置</span></a></li><li><a class="is-flex toc-item" id="toc-item-5、dashboard" href="#5、dashboard"><span>5、dashboard</span></a></li></ul></li><li><a class="is-flex toc-item" id="toc-item-七、监控mysql" href="#七、监控mysql"><span>七、监控mysql</span></a><ul class="menu-list toc"><li><a class="is-flex toc-item" id="toc-item-1、监控mysql" href="#1、监控mysql"><span>1、监控mysql</span></a></li><li><a class="is-flex toc-item" id="toc-item-2、⼆进制安装（⼆选⼀）" href="#2、⼆进制安装（⼆选⼀）"><span>2、⼆进制安装（⼆选⼀）</span></a></li><li><a class="is-flex toc-item" id="toc-item-3、docker安装" href="#3、docker安装"><span>3、docker安装</span></a></li><li><a class="is-flex toc-item" id="toc-item-4、参数解释-1" href="#4、参数解释-1"><span>4、参数解释</span></a></li><li><a class="is-flex toc-item" id="toc-item-5、Prometheus配置-3" href="#5、Prometheus配置-3"><span>5、Prometheus配置</span></a></li><li><a class="is-flex toc-item" id="toc-item-6、常用监控指标" href="#6、常用监控指标"><span>6、常用监控指标</span></a></li><li><a class="is-flex toc-item" id="toc-item-7、触发器配置-2" href="#7、触发器配置-2"><span>7、触发器配置</span></a></li><li><a class="is-flex toc-item" id="toc-item-8、dashboard-4" href="#8、dashboard-4"><span>8、dashboard</span></a></li></ul></li></ul></li></ul></div></div><script type="text/javascript" async>
+        $(document).ready(function () { //参考自 https://github.com/ppoffice/hexo-theme-icarus/pull/616/files
+            var observerTopMargin;
+            var scrollObserver;
+            var headerElems = $(".headerlink");
+            var activeTocItem;
+        
+            function initIntersectionObserver(docHeight) {
+                observerTopMargin = docHeight;
+                scrollObserver = new IntersectionObserver(scrollCallBack,
+                    {
+                        root: null,  // viewpoint
+                        rootMargin: docHeight + "px 0px -80% 0px"  // cover top 30% of viewport to the top of document
+                    })
+            }
+        
+            function scrollCallBack(entries, observer) {
+                if ($(window).scrollTop() > observerTopMargin * 0.7) { 
+                    // User somehow scroll to 70% of observerTopMargin (which is inited as 200% document height)
+                    // Observer top margin need to extend to cover all the space to the top of the document
+                    initIntersectionObserver(observerTopMargin * 2)
+                    observer.disconnect();
+                    return;
+                }
+                let toActive;
+                if (entries[0].intersectionRatio == 1) {  // enter viewed area
+                    let entry = entries.reduce((u, v) => (u.target.toc_id > v.target.toc_id ? u : v));  // get the lowest item
+                    toActive = $("#toc-item-" + $(entry.target).attr("href").substr(1));
+                } else {
+                    let entry = entries.reduce((u, v) => (u.target.toc_id < v.target.toc_id ? u : v));  // get the highest item
+                    let idx = Math.max(entry.target.toc_id - 1, 0);
+                    toActive = $("#toc-item-" + $(headerElems[idx]).attr("href").substr(1));
+                }
+                if (activeTocItem) activeTocItem.removeClass("is-current");
+                activeTocItem = toActive
+                activeTocItem.addClass("is-current");
+            }
+        
+            initIntersectionObserver($(document).height() * 2);
+            headerElems.each(function (index, obj) {
+                obj.toc_id = index;
+                scrollObserver.observe(obj);
+            })
+        });</script></div><div class="card widget"><div class="card-content"><nav class="level"><div class="level-item has-text-centered flex-shrink-1"><div><figure class="image is-128x128 mx-auto mb-2"><img class="is-rounded" src="/img/toudong.jpg" alt="逸尘秀"></figure><p class="title is-size-4 is-block line-height-inherit">逸尘秀</p><p class="is-size-6 is-block">只此一生 ， 必须快乐 ！</p><p class="is-size-6 is-flex justify-content-center"><i class="fas fa-map-marker-alt mr-1"></i><span>深圳</span></p></div></div></nav><nav class="level is-mobile"><div class="level-item has-text-centered is-marginless"><div><p class="heading">文章</p><a href="/archives"><p class="title">136</p></a></div></div><div class="level-item has-text-centered is-marginless"><div><p class="heading">分类</p><a href="/categories"><p class="title">17</p></a></div></div><div class="level-item has-text-centered is-marginless"><div><p class="heading">标签</p><a href="/tags"><p class="title">55</p></a></div></div></nav><div class="level"><a class="level-item button is-primary is-rounded" href="https://weibo.com/u/6155656382" target="_blank" rel="noopener">关注我</a></div><div class="level is-mobile"><a class="level-item button is-transparent is-white is-marginless" target="_blank" rel="noopener" title="Github" href="https://github.com/zhi666"><i class="fab fa-github"></i></a><a class="level-item button is-transparent is-white is-marginless" target="_blank" rel="noopener" title="Weibo" href="https://weibo.com/u/6155656382"><i class="fab fa-weibo"></i></a><a class="level-item button is-transparent is-white is-marginless" target="_blank" rel="noopener" title="Email" href="mailto:1378373724@qq.com"><i class="fa fa-envelope"></i></a><a class="level-item button is-transparent is-white is-marginless" target="_blank" rel="noopener" title="Next" href="https://zhi666.github.io/remove.io"><i class="fab fa-dribbble"></i></a><a class="level-item button is-transparent is-white is-marginless" target="_blank" rel="noopener" title="RSS" href="/atom.xml"><i class="fas fa-rss"></i></a></div><div><hr><p id="hitokoto">:D 一言句子获取中...</p><script type="text/javascript" defer>function getYiyan(){
+                                $.getJSON("https://v1.hitokoto.cn/", function (data) {
+                                if(data){
+                                    $('#hitokoto').html("");
+                                    $('#hitokoto').append("<strong style='color: #3273dc;'>"+data.hitokoto+"</strong>"+
+                                    "<p>"+"来源《"+data.from+"》</p><p>提供者-"+data.creator+"</p>");
+                                }});}
+                                $(function (){getYiyan();$('#hitokoto').click(function(){getYiyan();})});</script></div></div></div><div class="card widget"><div class="card-content"><h3 class="menu-label">最新评论</h3><span class="body_hot_comment">加载中，最新评论有1分钟缓存...</span></div></div><div class="card widget"><div class="card-content"><h3 class="menu-label">最新文章</h3><article class="media"><div class="media-content size-small"><p><time dateTime="2023-11-01T02:25:44.578Z">2023-11-01</time></p><p class="title is-6"><a class="link-muted" href="/2023/11/01/selenlium%E6%89%B9%E9%87%8F%E6%B7%BB%E5%8A%A0dns%E5%9F%9F%E5%90%8D/">批量添加dns域名解析</a></p><p class="is-uppercase"><i class="fas fa-folder-open has-text-grey"> </i><a class="link-muted" href="/categories/python/">python</a></p></div></article><article class="media"><div class="media-content size-small"><p><time dateTime="2023-05-17T01:45:36.000Z">2023-05-17</time></p><p class="title is-6"><a class="link-muted" href="/2023/05/17/Kubernetes%E9%AB%98%E5%8F%AF%E7%94%A8%E9%9B%86%E7%BE%A4%E4%BA%8C%E8%BF%9B%E5%88%B6%E9%83%A8%E7%BD%B2/">Kubernetes高可用集群二进制部署</a></p><p class="is-uppercase"><i class="fas fa-folder-open has-text-grey"> </i><a class="link-muted" href="/categories/linux3/">linux3</a></p></div></article><article class="media"><div class="media-content size-small"><p><time dateTime="2023-05-10T06:25:36.000Z">2023-05-10</time></p><p class="title is-6"><a class="link-muted" href="/2023/05/10/Prometheus%E4%BD%BF%E7%94%A8%E6%89%8B%E6%9C%BA%E7%94%B5%E8%AF%9D_%E7%9F%AD%E4%BF%A1%E6%8E%A5%E6%94%B6%E5%91%8A%E8%AD%A6%E9%80%9A%E7%9F%A5/">Prometheus使用手机电话_短信接收告警通知</a></p><p class="is-uppercase"><i class="fas fa-folder-open has-text-grey"> </i><a class="link-muted" href="/categories/linux2/">linux2</a></p></div></article><article class="media"><div class="media-content size-small"><p><time dateTime="2023-05-10T06:22:36.000Z">2023-05-10</time></p><p class="title is-6"><a class="link-muted" href="/2023/05/10/Prometheus%E4%BD%BF%E7%94%A8%E4%BC%81%E4%B8%9A%E5%BE%AE%E4%BF%A1%E6%8E%A5%E6%94%B6%E5%91%8A%E8%AD%A6%E9%80%9A%E7%9F%A5/">Prometheus使用企业微信接收告警通知</a></p><p class="is-uppercase"><i class="fas fa-folder-open has-text-grey"> </i><a class="link-muted" href="/categories/linux2/">linux2</a></p></div></article><article class="media"><div class="media-content size-small"><p><time dateTime="2023-05-10T06:20:36.000Z">2023-05-10</time></p><p class="title is-6"><a class="link-muted" href="/2023/05/10/Prometheus%E4%BD%BF%E7%94%A8%E4%BC%81%E4%B8%9A%E9%92%89%E9%92%89%E5%91%8A%E8%AD%A6%E9%80%9A%E7%9F%A5/">Prometheus使用企业钉钉接收告警通知</a></p><p class="is-uppercase"><i class="fas fa-folder-open has-text-grey"> </i><a class="link-muted" href="/categories/linux2/">linux2</a></p></div></article></div></div><div class="card widget"><div class="card-content"><div class="menu"><h3 class="menu-label">分类</h3><ul class="menu-list"><li><a class="level is-mobile is-marginless" href="/categories/English/"><span class="level-start"><span class="level-item">English</span></span><span class="level-end"><span class="level-item tag">1</span></span></a></li><li><a class="level is-mobile is-marginless" href="/categories/HTML/"><span class="level-start"><span class="level-item">HTML</span></span><span class="level-end"><span class="level-item tag">4</span></span></a></li><li><a class="level is-mobile is-marginless" href="/categories/JS/"><span class="level-start"><span class="level-item">JS</span></span><span class="level-end"><span class="level-item tag">2</span></span></a></li><li><a class="level is-mobile is-marginless" href="/categories/html/"><span class="level-start"><span class="level-item">html</span></span><span class="level-end"><span class="level-item tag">1</span></span></a></li><li><a class="level is-mobile is-marginless" href="/categories/linux1/"><span class="level-start"><span class="level-item">linux1</span></span><span class="level-end"><span class="level-item tag">15</span></span></a></li><li><a class="level is-mobile is-marginless" href="/categories/linux2/"><span class="level-start"><span class="level-item">linux2</span></span><span class="level-end"><span class="level-item tag">33</span></span></a></li><li><a class="level is-mobile is-marginless" href="/categories/linux3/"><span class="level-start"><span class="level-item">linux3</span></span><span class="level-end"><span class="level-item tag">27</span></span></a></li><li><a class="level is-mobile is-marginless" href="/categories/python/"><span class="level-start"><span class="level-item">python</span></span><span class="level-end"><span class="level-item tag">12</span></span></a></li><li><a class="level is-mobile is-marginless" href="/categories/web/"><span class="level-start"><span class="level-item">web</span></span><span class="level-end"><span class="level-item tag">1</span></span></a></li><li><a class="level is-mobile is-marginless" href="/categories/work/"><span class="level-start"><span class="level-item">work</span></span><span class="level-end"><span class="level-item tag">7</span></span></a></li><a class="level is-mobile is-marginless" href="/categories/"><span class="level-start"><span class="level-item">查看全部&gt;&gt;</span></span></a></ul></div></div></div><div class="card widget"><div class="card-content"><div class="menu"><h3 class="menu-label">归档</h3><ul class="menu-list"><li><a class="level is-mobile is-marginless" href="/archives/2023/11/"><span class="level-start"><span class="level-item">十一月 2023</span></span><span class="level-end"><span class="level-item tag">5</span></span></a></li><li><a class="level is-mobile is-marginless" href="/archives/2023/05/"><span class="level-start"><span class="level-item">五月 2023</span></span><span class="level-end"><span class="level-item tag">13</span></span></a></li><li><a class="level is-mobile is-marginless" href="/archives/2023/04/"><span class="level-start"><span class="level-item">四月 2023</span></span><span class="level-end"><span class="level-item tag">2</span></span></a></li><li><a class="level is-mobile is-marginless" href="/archives/2023/02/"><span class="level-start"><span class="level-item">二月 2023</span></span><span class="level-end"><span class="level-item tag">1</span></span></a></li><li><a class="level is-mobile is-marginless" href="/archives/2022/06/"><span class="level-start"><span class="level-item">六月 2022</span></span><span class="level-end"><span class="level-item tag">3</span></span></a></li><a class="level is-mobile is-marginless" href="/archives/"><span class="level-start"><span class="level-item">查看全部&gt;&gt;</span></span></a></ul></div></div></div><div class="card widget"><div class="card-content"><div class="menu"><h3 class="menu-label">标签</h3><div class="field is-grouped is-grouped-multiline"><div class="control"><a class="tags has-addons" href="/tags/linux/"><span class="tag">linux</span><span class="tag is-grey-lightest">18</span></a></div><div class="control"><a class="tags has-addons" href="/tags/docker/"><span class="tag">docker</span><span class="tag is-grey-lightest">16</span></a></div><div class="control"><a class="tags has-addons" href="/tags/Prometheus/"><span class="tag">Prometheus</span><span class="tag is-grey-lightest">14</span></a></div><div class="control"><a class="tags has-addons" href="/tags/html/"><span class="tag">html</span><span class="tag is-grey-lightest">14</span></a></div><div class="control"><a class="tags has-addons" href="/tags/python/"><span class="tag">python</span><span class="tag is-grey-lightest">12</span></a></div><div class="control"><a class="tags has-addons" href="/tags/web/"><span class="tag">web</span><span class="tag is-grey-lightest">12</span></a></div><div class="control"><a class="tags has-addons" href="/tags/nginx/"><span class="tag">nginx</span><span class="tag is-grey-lightest">9</span></a></div><div class="control"><a class="tags has-addons" href="/tags/mysql/"><span class="tag">mysql</span><span class="tag is-grey-lightest">7</span></a></div><div class="control"><a class="tags has-addons" href="/tags/%E5%AE%B9%E5%99%A8/"><span class="tag">容器</span><span class="tag is-grey-lightest">7</span></a></div><div class="control"><a class="tags has-addons" href="/tags/%E6%95%B0%E6%8D%AE%E5%BA%93/"><span class="tag">数据库</span><span class="tag is-grey-lightest">7</span></a></div><div class="control"><a class="tags has-addons" href="/tags/%E7%A7%91%E5%AD%A6%E4%B8%8A%E7%BD%91/"><span class="tag">科学上网</span><span class="tag is-grey-lightest">6</span></a></div><div class="control"><a class="tags has-addons" href="/tags/work/"><span class="tag">work</span><span class="tag is-grey-lightest">5</span></a></div><div class="control"><a class="tags has-addons" href="/tags/%E8%87%AA%E5%8A%A8%E5%8C%96/"><span class="tag">自动化</span><span class="tag is-grey-lightest">5</span></a></div><div class="control"><a class="tags has-addons" href="/tags/%E5%8D%9A%E5%AE%A2/"><span class="tag">博客</span><span class="tag is-grey-lightest">4</span></a></div><div class="control"><a class="tags has-addons" href="/tags/%E5%B7%A5%E4%BD%9C/"><span class="tag">工作</span><span class="tag is-grey-lightest">4</span></a></div><div class="control"><a class="tags has-addons" href="/tags/%E5%B7%A5%E5%85%B7/"><span class="tag">工具</span><span class="tag is-grey-lightest">4</span></a></div><div class="control"><a class="tags has-addons" href="/tags/ssl/"><span class="tag">ssl</span><span class="tag is-grey-lightest">3</span></a></div><div class="control"><a class="tags has-addons" href="/tags/%E6%96%87%E4%BB%B6%E7%B3%BB%E7%BB%9F/"><span class="tag">文件系统</span><span class="tag is-grey-lightest">3</span></a></div><div class="control"><a class="tags has-addons" href="/tags/%E6%97%A5%E5%BF%97/"><span class="tag">日志</span><span class="tag is-grey-lightest">3</span></a></div><div class="control"><a class="tags has-addons" href="/tags/%E6%97%A5%E5%BF%97%E5%8A%A0%E5%AF%86/"><span class="tag">日志加密</span><span class="tag is-grey-lightest">3</span></a></div></div><div class="field is-grouped is-grouped-multiline"><a class="tags has-addons" href="/tags/"><span class="tag">查看全部&gt;&gt;</span></a></div></div></div></div><div class="card widget"><div class="card-content"><div class="menu"><h3 class="menu-label">订阅更新</h3><form action="https://feedburner.google.com/fb/a/mailverify" method="post" target="popupwindow" onsubmit="window.open(&#039;https://feedburner.google.com/fb/a/mailverify?uri=zhi666FeedsId&#039;,&#039;popupwindow&#039;,&#039;scrollbars=yes,width=550,height=520&#039;);return true"><input type="hidden" value="zhi666FeedsId" name="uri"><input type="hidden" name="loc" value="en_US"><div class="field has-addons"><div class="control has-icons-left is-expanded"><input class="input" name="email" type="email" placeholder="Email"><span class="icon is-small is-left"><i class="fas fa-envelope"></i></span></div><div class="control"><input class="button is-primary" type="submit" value="订阅"></div></div><p class="help">输入邮箱开始订阅，更博后邮件通知！</p></form></div></div></div></div></div></div></section><footer class="footer"><div class="container"><div class="level"><div class="level-start"><a class="footer-logo is-block mb-2" href="/"><img src="/img/logo.png" alt="逸尘秀" height="28"></a><p class="size-small"><span>&copy; 2023 yichen</span>  Powered by <a href="https://hexo.io/" target="_blank">Hexo</a> &amp; <a href="https://github.com/ppoffice/hexo-theme-icarus" target="_blank">Icarus</a>,Modify by <a href="https://github.com/removeif/hexo-theme-amazing" target="_blank">removeif</a> <br><span>© 版权说明：[本网站所有内容均收集于互联网或自己创作,<br />&nbsp;&nbsp;&nbsp;&nbsp;方便于网友与自己学习交流，如有侵权，请<a href="/message" target="_blank">留言</a>，立即处理]<br /></span><span><span id="statistic-times">loading...</span><script>function createTime(time) {
+            var n = new Date(time);
+            now.setTime(now.getTime() + 250),
+                days = (now - n) / 1e3 / 60 / 60 / 24,
+                dnum = Math.floor(days),
+                hours = (now - n) / 1e3 / 60 / 60 - 24 * dnum,
+                hnum = Math.floor(hours),
+            1 == String(hnum).length && (hnum = "0" + hnum),
+                minutes = (now - n) / 1e3 / 60 - 1440 * dnum - 60 * hnum,
+                mnum = Math.floor(minutes),
+            1 == String(mnum).length && (mnum = "0" + mnum),
+                seconds = (now - n) / 1e3 - 86400 * dnum - 3600 * hnum - 60 * mnum,
+                snum = Math.round(seconds),
+            1 == String(snum).length && (snum = "0" + snum),
+                document.getElementById("statistic-times").innerHTML = "❤️本站自 <strong>"+time.split(" ")[0].replace(/\//g,".")+"</strong> 已运行 <strong>" + dnum + "</strong> 天 <strong>" + hnum + "</strong> 小时 <strong>" + mnum + "</strong> 分 <strong>" + snum + "</strong> 秒！❤️";
+        }var now = new Date();setInterval("createTime('2020/08/02 00:00:00')", 250,"");</script><br></span><div class="size-small"><span>❤️感谢 <strong><span id="busuanzi_value_site_uv">99+</span></strong> 小伙伴的 <strong><span id="busuanzi_value_site_pv">99+</span></strong> 次光临！❤️</span></div></p></div><div class="level-end"><div class="field has-addons"><p class="control"><a class="button is-transparent is-large" target="_blank" rel="noopener" title="Creative Commons" href="https://creativecommons.org/"><i class="fab fa-creative-commons"></i></a></p><p class="control"><a class="button is-transparent is-large" target="_blank" rel="noopener" title="Attribution 4.0 International" href="https://creativecommons.org/licenses/by/4.0/"><i class="fab fa-creative-commons-by"></i></a></p><p class="control"><a class="button is-transparent is-large" target="_blank" rel="noopener" title="Download on GitHub" href="https://github.com/zhi666"><i class="fab fa-github"></i></a></p></div><div class="sideMusic"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/aplayer/dist/APlayer.min.css"><script src="/js/APlayer.min.js"></script><script src="https://cdn.jsdelivr.net/npm/meting@2/dist/Meting.min.js"></script><meting-js style="width: auto;height: 2000px;" server="netease" type="playlist" id="2364053447" theme="#2980b9" loop="all" autoplay="false" order="list" storageName="aplayer-setting" lrctype="0" list-max-height="400px" fixed="true"></meting-js></div></div></div></div></footer><script src="https://cdnjs.loli.net/ajax/libs/moment.js/2.22.2/moment-with-locales.min.js"></script><script>moment.locale("zh-CN");</script><script>var IcarusThemeSettings = {
+            site: {
+                url: 'https://yc6.cool',
+                external_link: {"enable":true,"exclude":[]}
+            },
+            article: {
+                highlight: {
+                    clipboard: true,
+                    fold: 'unfolded'
+                }
+            }
+        };</script><script src="https://cdnjs.loli.net/ajax/libs/clipboard.js/2.0.4/clipboard.min.js" defer></script><script src="/js/animation.js"></script><a id="back-to-top" title="回到顶端" href="javascript:;"><i class="fas fa-chevron-up"></i></a><script src="/js/back-to-top.js" defer></script><!--!--><!--!--><script src="https://cdnjs.loli.net/ajax/libs/lightgallery/1.6.12/js/lightgallery-all.min.js" defer></script><script src="https://cdnjs.loli.net/ajax/libs/justifiedGallery/3.7.0/js/jquery.justifiedGallery.min.js" defer></script><!--!--><!--!--><!--!--><script src="/js/toc.js" defer></script><script src="/js/main.js" defer></script><script>$.getScript('/js/comment-issue-data.js',function(){loadIssueData('1b861f81e9a79ee6028d','cc629aff090aa9c60d5e13ddf7fcfce14f00a478','zhi666','issue_database',false);})</script><link rel="stylesheet" href="/css/insight.css"><div class="searchbox ins-search"><div class="searchbox-container ins-search-container"><div class="searchbox-input-wrapper"><input class="searchbox-input ins-search-input" type="text" placeholder="想要查找什么..."><span class="searchbox-close ins-close ins-selectable"><i class="fa fa-times-circle"></i></span></div><div class="searchbox-result-wrapper ins-section-wrapper"><div class="ins-section-container"></div></div></div></div><script>(function (window) {
+            var INSIGHT_CONFIG = {
+                TRANSLATION: {
+                    POSTS: '文章',
+                    PAGES: '页面',
+                    CATEGORIES: '分类',
+                    TAGS: '标签',
+                    UNTITLED: '(无标题)',
+                },
+                CONTENT_URL: '/content.json',
+            };
+            window.INSIGHT_CONFIG = INSIGHT_CONFIG;
+        })(window);</script><script src="/js/insight.js" defer></script></body></html>

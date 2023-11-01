@@ -1,0 +1,705 @@
+<!doctype html>
+<html lang="zh"><head><meta charset="utf-8"><meta name="generator" content="Hexo 4.2.0"><meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"><meta><meta name="keywords" content="[object Object]"><meta name="description" content="一. linux的控制台
+linux控制台是什么以后学习和工作的主要工具, 接受用户输入的命令"><meta name="author" content="zhi666"><title>linux基础 - 逸尘秀</title><meta description="一. linux的控制台 linux控制台是什么以后学习和工作的主要工具, 接受用户输入的命令"><meta property="og:type" content="article"><meta property="og:title" content="linux基础"><meta property="og:url" content="https://yc6.cool/2020/08/03/linux%E5%9F%BA%E7%A1%80/"><meta property="og:site_name" content="逸尘秀"><meta property="og:description" content="一. linux的控制台 linux控制台是什么以后学习和工作的主要工具, 接受用户输入的命令"><meta property="og:locale" content="zh_CN"><meta property="article:published_time" content="2020-08-03T03:49:42.000Z"><meta property="article:modified_time" content="2023-11-01T02:25:44.567Z"><meta property="article:author" content="zhi666"><meta property="article:tag" content="linux"><meta property="twitter:card" content="summary"><meta property="twitter:image" content="https://yc6.cool/img/avatar.png"><script type="application/ld+json">{"@context":"https://schema.org","@type":"BlogPosting","mainEntityOfPage":{"@type":"WebPage","@id":"https://yc6.cool/2020/08/03/linux%E5%9F%BA%E7%A1%80/"},"headline":"linux基础","image":["https://yc6.cool/img/avatar.png"],"datePublished":"2020-08-03T03:49:42.000Z","dateModified":"2023-11-01T02:25:44.567Z","author":{"@type":"Person","name":"zhi666"},"description":"一. linux的控制台 linux控制台是什么以后学习和工作的主要工具, 接受用户输入的命令"}</script><link rel="alternative" href="/atom.xml" title="逸尘秀" type="application/atom+xml"><link rel="icon" href="/img/favicon.png"><link rel="stylesheet" href="https://cdnjs.loli.net/ajax/libs/font-awesome/5.12.0/css/all.min.css"><link rel="stylesheet" href="https://fonts.loli.net/css?family=Ubuntu:400,600|Source+Code+Pro|Monda:300,300italic,400,400italic,700,700italic|Roboto Slab:300,300italic,400,400italic,700,700italic|Microsoft YaHei:300,300italic,400,400italic,700,700italic|PT Mono:300,300italic,400,400italic,700,700italic&amp;amp;subset=latin,latin-ext|Inconsolata|Itim|Lobster.css"><link rel="stylesheet" href="https://cdnjs.loli.net/ajax/libs/highlight.js/9.12.0/styles/atom-one-dark.min.css"><style>body>.footer,body>.navbar,body>.section{opacity:0}</style><!--!--><!--!--><script src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js" defer></script><link rel="stylesheet" href="https://cdnjs.loli.net/ajax/libs/lightgallery/1.6.12/css/lightgallery.min.css"><link rel="stylesheet" href="https://cdnjs.loli.net/ajax/libs/justifiedGallery/3.7.0/css/justifiedGallery.min.css"><!--!--><!--!--><script src="https://cdnjs.loli.net/ajax/libs/pace/1.0.2/pace.min.js"></script><link rel="stylesheet" href="/css/style.css"><script src="https://cdnjs.loli.net/ajax/libs/jquery/3.3.1/jquery.min.js"></script><script src="/js/globalUtils.js"></script><link rel="stylesheet" href="/live2d/waifu.css"><script type="text/javascript" async src="/live2d/autoload.js"></script></head><body class="is-3-column has-navbar-fixed-top"><nav class="navbar navbar-main is-fixed-top"><div class="container"><div class="navbar-brand justify-content-center"><a class="navbar-item navbar-logo" href="/"><img src="/img/logo.png" alt="逸尘秀" height="28"></a></div><div class="navbar-menu"><div class="navbar-start"><a class="navbar-item" href="/">首页</a><a class="navbar-item" href="/archives">归档</a><a class="navbar-item" href="/categories">分类</a><a class="navbar-item" href="/tags">标签</a><a class="navbar-item" href="/media">影音</a><a class="navbar-item" href="/album">相册</a><a class="navbar-item" href="/friend">友链</a><a class="navbar-item" href="/self-talking">碎碎念</a><a class="navbar-item" href="/message">留言</a><a class="navbar-item" href="/about">关于</a></div><div class="navbar-end"><a class="navbar-item" target="_blank" rel="noopener" title="Download on GitHub" href="https://github.com/zhi666"><i class="fab fa-github"></i></a><a class="navbar-item search" title="搜索" href="javascript:;"><i class="fas fa-search"></i></a><a class="navbar-item" id="night-nav" title="Night Mode" href="javascript:;"><i class="fas fa-moon" id="night-icon"></i></a></div></div></div></nav><script type="text/javascript" src="/js/theme-setting.js"></script><section class="section"><div class="container"><div class="columns"><div class="column order-2 column-main is-8-tablet is-8-desktop is-9-widescreen"><div class="card"><article class="card-content article" role="article"><div class="article-meta size-small is-uppercase level is-mobile"><div class="level-left"><i class="far fa-calendar-plus"> </i>2020-08-03  <a class="commentCountImg" href="/2020/08/03/linux%E5%9F%BA%E7%A1%80/#comment-container"><span class="display-none-class">74a29c6f679885ad6c92ad1a1bdae9de</span><i class="far fa-comment-dots"></i> <span class="commentCount" id="74a29c6f679885ad6c92ad1a1bdae9de">99+</span>  </a><span class="level-item"><i class="far fa-clock"> </i>34 分钟  <i class="fas fa-pencil-alt"> </i>5.1 k</span><span class="level-item" id="busuanzi_container_page_pv"><i class="far fa-eye"></i>&nbsp;&nbsp;<span id="busuanzi_value_page_pv">0</span>次访问</span></div></div><h1 class="title is-3 is-size-4-mobile">linux基础</h1><div class="content"><h1 id="一-linux的控制台"><a href="#一-linux的控制台" class="headerlink" title="一. linux的控制台"></a>一. linux的控制台</h1><ol>
+<li>linux控制台是什么<pre><code>以后学习和工作的主要工具, 接受用户输入的命令</code></pre>
+</li>
+</ol>
+<a id="more"></a>
+<ol start="2">
+<li><p>怎么打开</p>
+<pre><code>a. 鼠标
+    桌面空白位置, 右键, 打开终端
+b. 快捷键
+    默认没有直接打开终端的快捷键， 需要自己去设置
+        左键最右上角 --&gt; 选择最下左进入setting --&gt; 左最下的Devices
+        --&gt; Keyboard --&gt; 右边最下面的 + 号
+        Name: Open Terminal             &lt;-- 快捷键的名字
+        Command： /bin/gnome-terminal   &lt;-- 要执行的命令
+        Shortcut: ctrl + alt + t        &lt;-- 点击之后按这3个组合建</code></pre>
+<p><strong>3. 把语言环境设置成中文</strong></p>
+<pre><code>locale
+    LANG=en_US.UTF-8        &lt;-- 语言环境是英文
+sudo locale -a
+    zh_CN.utf8              &lt;-- 查看是否有这个结果，这个是简体中文
+    如果没有就安装中文简体包
+    sudo yum install kde-l10n-Chinese
+
+sudo vim /etc/locale.conf
+    #LANG=&quot;en_US.UTF-8&quot;     --&gt; 注释掉
+    LANG=&quot;zh_CN.UTF8&quot;       --&gt; 改成中文
+
+reboot          --&gt; 重启
+
+重启结束后
+    选择以后不再提示 ， 保留原来的名字</code></pre>
+</li>
+<li><p>基础使用</p>
+<pre><code>a. 调整窗口字体大小
+    Ctrl + Shift + =        放大字体
+    Ctrl + -                缩小字体
+b. 多加一个窗口
+    Ctrl + Shift + n        新建一个终端
+    Ctrl + Shift + t        在终端里新建一个标签
+c. 其他的基本操作
+    Alt + [1 - 9]               标签之间切换
+d. 关闭终端
+    exit</code></pre>
+</li>
+<li><p>终端配置(字体，大小，颜色，透明度)</p>
+<pre><code>右键 --&gt; 配置文件  --&gt; 配置文件首选项
+终端字体推荐使用: dejavu sans mono bold  14
+颜色推荐取消第一个选项， 选择黑底白字
+透明度不推荐超过上方左边方框的右边框</code></pre>
+</li>
+<li><p>关机和重启</p>
+<pre><code>重启命令： reboot
+           init 6
+关机命令： init 0</code></pre>
+</li>
+<li><p>修改命令提示符</p>
+<pre><code>vim ~/.bashrc
+在最后添加一行:</code></pre>
+</li>
+</ol>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">样式1</span><br><span class="line">export PS1&#x3D;&quot;\[\e[37;40m\][\[\e[32;40m\]\u\[\e[37;40m\]@\h \[\e[35;40m\]\w\[\e[0m\]]\\$ &quot;</span><br><span class="line">样式2</span><br><span class="line">export  PS1&#x3D;&quot;\e[35m\][\u@\h \W]\\$\\[\e[0m\]&quot;</span><br><span class="line">	    然后输入命令 source ~&#x2F;.bashrc</span><br><span class="line">	                    或</span><br><span class="line">	                . ~&#x2F;.bashrc</span><br></pre></td></tr></table></figure>
+
+<hr>
+<h1 id="二-linux-基本命令"><a href="#二-linux-基本命令" class="headerlink" title="二. linux 基本命令"></a>二. linux 基本命令</h1><p><strong>linux命令严格区分大小写</strong>    </p>
+<p>命令    shell 命令解析器</p>
+<p>当前SHELL环境变量:</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">echo $SHELL</span><br><span class="line">&#x2F;bin&#x2F;bash</span><br></pre></td></tr></table></figure>
+
+<p><strong>1. 命令是什么</strong><br>linux命令是对Linux系统进行管理的命令。<br>对于Linux系统来说，无论是中央处理器、内存、磁盘驱动器、键盘、鼠标，<br>还是用户等，都是文件，Linux系统管理的命令是它正常运行的核心，与Windows的DOS命令类似。</p>
+<p>linux 是一切基于文件的</p>
+<p>命令的格式<br>所有英文书写必须使用半角(宽字符: 光标移上去显示两个位置)<br>命令和参数严格区分大小写</p>
+<p><strong>命令使用语法: 命令名 参数1 参数2 … 参数n</strong></p>
+<pre><code>   命令名与参数之间分隔符为空格(自动处理重复分隔符)
+ 参数之间分隔符为空格(自动处理重复分隔符)
+         man mv
+                []      可有可无
+                ...     前面内容可以有多个(不限个数)
+            man ip
+            |       多选一
+            {}      此符号表示为分组</code></pre>
+<p>命令的参数<br>         处理参数里带空格字符问题: 使用双引号, 单引号, \ 来解决<br><strong>命令参数的分类:</strong></p>
+<p>选项    以-或–开头的参数, 控制命令的功能<br>**长选项  – **<br>可读性高, –后跟单词</p>
+<p>**短选项  -  **<br>便捷性高, -后跟单个字符, 如果跟多个字符代表多个短选项</p>
+<p><strong>选项值</strong><br>    无值选项  -l / list<br>     有值选项  -t utf8 / –to=utf8<br>     可选值选项 –color=auto / –color<br>     普通参数(多为路径)  命令处理的源</p>
+<p><strong>2. 命令的分类</strong></p>
+<pre><code>    linux命令在系统中有两种类型：内部命令和外部命令。
+        内部命令                    Shell在内部代码中实现的命令
+            man type                查看bash Shell自带的命令
+
+        外部命令                    Shell以外的命令
+            用type命令查看内部命令还是外部命令
+                type cd         提示cd is a shell builtin则说明是内部命令
+                type mount      提示mount is /bin/bash 告诉外部命令的位置</code></pre>
+<p><strong>3. 帮助命令</strong></p>
+<pre><code>    a. man    注重于应用，也是最常用的帮助方法
+        man 的帮助文档存放的位置
+            /usr/share/man
+        man 的帮助文档分类
+            man 1 ls            查看ls命令的第一节手册
+            1                   普通用户命令
+            2                   系统核心调用的函数工具
+            3                   常用的一些函数与函数库
+            4                   设备文件的说明
+            5                   配置文件与一些其它格式的文件
+            6                   游戏相关
+            7                   网络协议相关
+            8                   管理员可操作的命令
+            9                   系统内核相关的文件
+        在 man 帮助里：
+            /c                  搜索c关键字
+            n                   下一个关键字
+            N                   上一个关键字
+            q                   退出
+
+    b. info    注重于介绍，不常用
+        帮助文档存放位置
+            /usr/share/info
+        info    进入页面
+        进入帮助界面
+            ?                   info命令帮助
+            空格键              向下翻一页
+            tab                 在结点之间移动，有结点的地方通常会以*显示，将光标移动结点位置按回车可进入结点
+            b                   移动光标到该文章的第一个结点处
+            e                   移动光标到该文章的最后一个结点处
+            n                   前往下一个info页
+            p                   前往上一个info页
+            u                   向上移动一层
+            s(/)                在info里搜索
+            h                   显示帮助菜单
+            q                   退出</code></pre>
+<hr>
+<p><strong>4. 目录命令</strong></p>
+<pre><code>    pwd                         查看当前所在目录的路径
+    cd                          切换当前所在目录
+        是change directory的简写
+        绝对路径
+            cd /root/Desktop    指从根目录开始的路径
+        相对路径
+            cd root/            指以当前目录开始的路径
+        .                       代表当前所在目录
+        ..                      代表当前的父目录
+        -                       代表上一次所在的目录
+        ~                       代表当前登录用户的家目录
+        /                       代表根目录
+
+    mkdir                       创建一个目录
+        在当前目录下创建test目录
+            mkdir test
+            mkdir ./test
+            cd ~
+
+        在根目录下tmp目录里创建test目录
+            mkdir /tmp/test
+        在当前目录下创建file1到file100的目录
+            mkdir file1  mkdir file2 ...  mkdir file100
+                或者
+               mkdir file{1..100}
+字母也是可以的   mkdir file{a..z}
+        在当前目录下创建file{1..100}目录,需要用双引号引起来
+            mkdir &quot;file{1..100}&quot;
+
+       在当前目录下创建a/b/c目录树 (PPP1)
+            mkdir -p a/b/c
+      在当前目录创建feile1到file100的目录树
+      mkdir file{1..100}/nginx/ssl  -p
+      mkdir file/cq{a..z}/nginx/ssl   -p
+
+
+
+
+
+
+
+
+
+    rmdir                       只能删除空目录
+        rmdir test              删除当前目录的test目录，test必须是空目录
+        rmdir /tmp/test         删除/tmp下的test目录
+        rmdir file{1..100}      删除file1到file100的目录
+        rmdir &quot;file{1..100}&quot;    删除file{1..100}目录</code></pre>
+<p><strong>5. 文件命令</strong></p>
+<pre><code> ls                          列出当前文件夹下的所有文件和文件夹
+     ls -a                   列出当前目录下所有文件，包含隐藏文件
+     ls -l                   以详细列表形式列出当前目录下的所有文件
+     ls -R                   列出当前目录所有文件，包含子目录内所有文件
+
+  文件类型：
+       c        字符设备文件
+                  端口的接口设备
+       b           块设备
+                    用来挂载硬盘分区， 一般不自己去创建
+       l         链接文件
+             ln -s 源文件 链接文件 软连接(指向文件系统的节点)
+             ln 源文件 链接文件   硬链接(指向硬盘位置)
+       s         socket文件
+               这类文件经常用于网络数据连接，可以启动一个程序来监听客户端
+               客户端就可以通过socket文件来进行数据通信
+       p         管道文件
+          解决进程之间的通信
+
+       d           目录文件
+       -           普通文件
+
+-rwxr-xr-x. 1 root root 2475 9月   8 18:10 iptables.sh
+                -           文件类型
+                rwxr-xr-x   文件权限
+                1           文件的链接数
+                root        文件的所属用户
+                root        文件的所属用户组
+                2457        文件的大小
+                9月 8 18:10    文件的最后修改时间
+                iptables.sh   文件名
+
+      常用搭配：
+          显示所有文件包括隐藏文件列表
+            ls -al
+          显示按日期时间排序后的文件列表
+            ls -lt
+          显示计算大小为KB/m/G为单位的文件列表
+            ls -lh
+          显示当前文件夹详细信息
+            ls -ld
+
+  touch                       新建文件
+          创建file空文件，如果file存在则更新file的存取和修改时间,
+            但是不会覆盖里面的内容
+            touch file
+          如果file不存在，则不创建文件
+            touch -c file
+          更新file时间和file1相同
+            touch -r file1 file
+          更新file的存取时间
+            touch -a file
+          更新file的修改时间
+            touch -m file
+          同时创建file2,file3,file4三个空文件
+            touch file2 file3 file4
+            touch file{2,3,4}
+          创建file{2,3,4}一个空文件
+            touch &quot;file{2,3,4}&quot;
+
+    cp                          复制文件/文件夹
+          把file文件复制到dirs目录下
+            cp file dirs
+          把dir1目录复制到dir2目录下
+            cp dir1 dir2 -r
+          把file文件复制到dirs目录下，保留文件的原来属性
+            cp -a file dir2
+          强制复制文件夹，不提示
+            cp -rf file  dir2
+          把dir1目录复制到dir2目录下，并且显示复制过程
+            cp -rvf dir1 dir2
+          把file1..6复制到dir2目录下，直接覆盖不提示
+            \cp -a file* dir2  
+
+        选项:
+            -a      保留文件的原来属性
+            -r      复制目录
+            -i      提示是否覆盖, 默认直接覆盖
+            -u      更新, 比对时间,源文件比目标文件的时间新才会覆盖
+            -v      显示复制进度
+            -t      指定目标路径(应用复制多个文件或目录的场景)
+            -f      不提示，直接执行
+
+    mv                 移动和重命名文件(PPP3)
+      把file1..6移动到dir2目录下，直接覆盖不提示
+           \mv file* dir2/
+      把file文件移动到dirs目录下
+            mv file dirs/
+      把file文件重命名为file2
+            mv file file2
+     把dir1目录下所有文件移动到dir2目录下，并且根据文件时间来决定要不要移动
+            mv -u dir1/* dir2/</code></pre>
+<p><strong>rename                      批量文件重命名</strong></p>
+<p>ls<br>file1.conf  file2.conf  file3.conf  file4.conf  file5.conf  file6.conf</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">rename .conf .html *.conf</span><br><span class="line"></span><br><span class="line">ls</span><br><span class="line">file1.html  file2.html  file3.html  file4.html  file5.html  file6.html</span><br></pre></td></tr></table></figure>
+
+<p>把所有后缀以.conf的文件名里出现.conf就改成.html(PPP4)<br>只有当前目录下面的文件名中有.conf才会去改变名字， 若出现多个，<br>  命令执行一次只会改变一个.conf</p>
+<pre><code>    rm                          删除文件[夹]
+         删除所有file开头的文件夹
+            rm file* -rf
+         删除所有.txt结尾的文件
+            rm *.txt
+         提示是否确定删除
+            rm -i file
+         不提示，强行删除
+            rm -f file
+         删除目录
+            rm -r file
+        删除文件夹的软链接而不删除源文件
+
+        常用参数 rfv</code></pre>
+<p><strong>6. 文件阅读命令</strong></p>
+<pre><code>    cat                         文件查看命令
+        查看/etc/passwd内容
+            cat /etc/passwd
+        查看/etc/passwd内容并且编号
+            cat -n /etc/passwd
+        查看/etc/passwd内容并且给非空行编号
+            cat -b /etc/passwd
+        碰到多个连续的空行， 合并成一个空行
+            cat -s /etc/passwd
+
+    head
+        查看/etc/passwd前10行内容
+            head /etc/passwd
+        查看/etc/passwd前30行内容
+            head -n 30 /etc/passwd
+        查看/etc/passwd前30个字符的内容
+            head -c 30 /etc/passwd
+
+    tail
+        查看/etc/passwd后10行内容
+            tail /etc/passwd
+        查看/etc/passwd后30行内容
+            tail -n 30 /etc/passwd
+        查看/etc/passwd后30个字符的内容
+            tail -c 30 /etc/passwd
+        实时查看/etc/passwd文件内容
+            tail -f /var/log/nginx/access.log</code></pre>
+<p>​<br>​        less<br>​            查看/etc/passwd文件内容，和more不同的是可以上下滚动<br>​                less /etc/passwd<br>​            显示每行的行号<br>​                less -N /etc/passwd<br>​            显示类似more的百分比<br>​                less -m /etc/passwd<br>​<br>​            按q退出<br>​<br>​        more<br>​            逐屏查看/etc/passwd文件内容<br>​                more /etc/passwd</p>
+<h2 id="7-重定向-实用"><a href="#7-重定向-实用" class="headerlink" title="7. 重定向 (实用)"></a>7. 重定向 (实用)</h2><pre><code>    标准输入    代码 0      默认设备为键盘
+    标准输出    代码 1      默认设备为屏幕
+    错误输出    代码 2      默认设备为屏幕
+
+      标准正确输出重定向到output.txt
+        ls -hl /etc/passwd &gt; output.txt
+      标准正确输出追加重定向到output.txt
+        ls -hl /etc/passwd &gt;&gt; output.txt
+      标准错误输出重定向到error.txt
+        ls -hl ddd 2&gt; error.txt
+      标准错误输出重定向到黑洞
+        ls -hl dddd 2&gt; /dev/null
+      标准正确输出和标准错误输出全都重定向到黑洞
+        ls ddddd /etc/passwd &amp;&gt; /dev/null
+
+    &gt; 和 &gt;&gt; 的区别
+        &gt;       输出重定向, 清空文件再写
+        &gt;&gt;      输出重定向，从最后的一个有效字符的下一行开始拼接文件, 追加
+
+    &lt;       输入重定向, 后面跟文件，将文件内容作为前面命令的标准输入
+        wc -l &lt; /etc/passwd         把/etc/passwd作为wc -l的输入源
+
+    &lt;&lt;      输入重定向, 后面跟结束标识符, 将结束标识符前面内容作为命令的标准输入
+        wc -l &lt;&lt; EOF
+        &lt; hello world
+        &lt; hello linux
+        &lt; bye
+        &lt; EOF
+            把标识符EOF之间的内容作为前面命令的输入， 第一个标识符和&lt;&lt;
+            之间要有空格(可以不加, 但是为了美观, 加上去),
+            第二个标识符那一行的前面不能有任何的有效字符，
+            后面也不能加任何的有效字符(换行符除外)
+
+   &lt;&lt;&lt;     输入重定向, 后面跟字符串，将字符串作为命令的标准输入</code></pre>
+<p>   cat &lt;&lt;&lt; “hello world”     把hello world字符串作为cat的输入源<br>   cat &lt;&lt;&lt; “hello word” &gt; hallo.txt  把hello  world 输入到hello.txt文件里面</p>
+<p>   wc -l &lt;&lt;&lt; “hello world”   把hello world字符串作为wc -l的输入源<br>                假如后面的输入源字符串需要有多行的话，就需要在字符串的外面加””<br>                wc -l &lt;&lt;&lt; “hello world<br>                &gt; hello linux<br>                &gt; hello shell<br>                &gt; “<br>                    后面的”只要一出现就会结束输入，和标识符的规则不一样</p>
+<p><strong>8. 管道(PPP7)</strong></p>
+<pre><code>    cat /etc/passwd | less          | 之前的命令执行的结果做|后命令的参数
+
+    格式: 命令1 | 命令2 | 命令3 ... | 命令n
+        将管道符号前面命令标准输出重定向管道符号后面命令标准输入
+       多重管道能一直起作用的前提是输入和输出不能断
+        cat /etc/passwd | wc -l</code></pre>
+<h1 id="三-Linux文件系统目录介绍"><a href="#三-Linux文件系统目录介绍" class="headerlink" title="三. Linux文件系统目录介绍"></a>三. Linux文件系统目录介绍</h1><pre><code>/                           根目录，系统所有的目录都是从根目录开始
+/bin                        存放的是系统可执行的二进制文件，即常用命令
+/sbin                       存放的是管理员可执行的二进制文件
+/home                       普通用户的家目录
+/root                       超级管理员root用户的家目录
+/boot                       系统启动时引导目录
+/etc                        存放系统配置文件
+/dev                        存放设备文件
+/var                        存放在执行过程中经常变化的数据，例如日志、邮件等
+/lib                        存放系统使用的函数库，程序运行过程中会调用这些库
+/usr                        存放用户安装的一些软件的各种目录
+/tmp                        临时目录，存放各程序执行时产生临时文件
+/lost+found                 存放分区出现问题时的一些遗失片断，只有在单独分区里才会存在
+/proc                       虚拟目录，它实时记录当前系统的各种状态
+/opt                        存放扩展软件包的地方
+/sys                        Linux设备模型文件夹，用于统一表示和操作计算机上的所有设备
+/run                        centos自动挂载的文件夹
+/media                      默认用来挂载光盘等介质目录
+/mnt                        默认也是用来挂载
+/misc                       默认用于autofs挂载目录</code></pre>
+<p>四. VIM编辑器的使用<br>    vi  vim (增强版vi,现在各版本的linux都带有vim)<br>    安装/升级vim<br>        sudo yum install vim</p>
+<pre><code>三种模式
+    普通模式(default)        快捷操作(定位, 删除 替换 查找)
+        可视模式
+
+    编辑模式
+        插入模式
+        替换模式
+
+    命令行模式      文档操作/扩展操作
+
+vim newfile  新建一vim空白文件进行编辑
+普通模式切换编辑模式: i/a/A/I/s/S/R/o/O/C
+编辑模式切换普通模式: ESC
+普通模式切换命令行模式: 冒号(:)
+命令行模式切换普通模式: ESC
+
+普通模式
+定位
+    h/j/k/l             左下上右
+    ctrl + d/u/f/b      换页
+    b/w/e/B/W/E         单词定位
+    0 零                  将光标定位到开头位置
+    ^                   将光标定位到开头有效字符位置
+    $                   将光标定位到行尾
+    G                   将光标定位到最后一行
+    gg                  将光标定位到第一行
+
+命令行模式
+    :10                 定位到第10行
+    :set nu             显示行号
+    :set nonu           不显示行号
+
+  vim 1_passwd +21    在打开文件的时候就跳到文件的21行
+
+配置文件(配置vim初始功能)
+    全局配置    /etc/vimrc
+    用户配置    ~/.vimrc
+
+    将以下内容写入配置文件, 重启vim即可实现
+
+        set nu
+
+选取(可视模式)
+    v           按字符进行选取
+    V           按行进行选取
+    ctrl + v    按列进行选取
+
+    ggVG        全选
+
+查找
+    /                   查找
+        /hello 按回车进行高亮查找关键词
+        n/N     进行上下定位查找关键词
+        进入命令行输入 noh 取消高亮
+删除
+    s       删除一个字符进入插入模式
+    S       删除一行进入插入模式
+    dd      删除一行
+    x       删除一个字符
+
+
+撤消/重做
+    u           撤消
+    ctrl + r    重做撤消操作
+
+复制/剪切/粘贴
+    yy      复制一行
+    yw      复制一个单词(要求光标在单词开头)
+    p       粘贴到光标后面
+    P       粘贴到光标前面
+
+数字前缀
+    10yy        复制10行
+    10dd        删除10行
+
+命令行操作
+    :w      保存
+    :q      退出
+    :wq     保存退出
+    :w!     强制保存
+    :q!     强制退出
+    :qall   退出所有编辑文档
+    :w /tmp/new.file    另存为到/tmp/new.file
+    :e /etc/passwd  打开文件
+        缓存区管理
+            列表缓存区 :ls
+            切换缓存区 :bn / :bp
+
+        标签管理
+            新建标签　:tabnew /tmp/hello.txt
+            切换标签　gt/gT
+
+    :r  1.txt   将1.txt内容导入本编辑文档
+    :r! ls      将ls的标准输出导入本编辑文档
+
+    :vsp /tmp/hello.txt 竖向分屏编辑
+    :sp /tmp/hello.txt  横向分屏编辑
+        ctrl + w + w
+
+替换
+    :1,$s/root/ROOT/g
+    :10,20s/root/ROOT/g
+    :%s/k365f/k365h/g 
+先选取再按:s/root/ROOT/g</code></pre>
+<hr>
+<pre><code>openoffice
+    办公软件
+eog
+    图片查看器
+gedit
+    文本编辑器
+evince
+    PDF浏览器
+cal
+    日历
+date                日期时间
+    date -s     修改日期和时间
+    date -d     计算日期
+    date +&quot;%Y&quot;      查看当前年
+    date +&quot;%F&quot;      查看当前年月日
+    date + &quot;%m&quot;      查看当前月
+    date + &quot;%d&quot;      查看当前日
+
+bc                  命令行计算器
+yum insstall -y bc
+    bc
+    bc &lt;&lt;&lt; &quot;(5+4)/3&quot;
+    bc &lt;&lt;&lt; &quot;scale=3;10/3&quot;
+    bc &lt;&lt;&lt; &quot;ibase=2;101&quot;
+    bc &lt;&lt;&lt; &quot;ibase=2;obase=16;1010&quot;
+
+echo                输出命令(脚本)
+    echo &quot;hello world&quot;
+    echo -e &quot;hello \nworld\n&quot;
+    echo -n &quot;hello world&quot;       取消换行输出
+    echo &quot;$HOME&quot;                输出变量值
+
+read                输入命令(脚本)
+    read
+        如果没有指定变量，则写入REPLY变量
+            echo $REPLY
+
+    read v
+        获取用户输入的内容
+            echo $v
+
+openssl             加密
+
+/dev/null           空洞文件, 用于写
+/dev/zero           用于读，永久都是二进制的零
+/dev/urandom        用于读，永久都是随机二进制</code></pre>
+<hr>
+<h1 id="五-tmux-开源的终端管理工具"><a href="#五-tmux-开源的终端管理工具" class="headerlink" title="五. tmux    开源的终端管理工具"></a>五. tmux    开源的终端管理工具</h1><pre><code>安装:
+    centos7:
+        sudo yum install tmux -y
+
+    配置文件 ~/.tmux.conf
+
+    sudo mount 192.168.0.89:/soul /mnt
+    cd /mnt/software
+    cp tmux.conf ~/.tmux.conf
+
+会话  -  解决客户端连接断开， 重连能还原最后操作界面
+    创建会话
+        在独立bash Shell中输入: tmux
+            或
+        tmux new-session -s 会话名称
+
+    查看会话列表
+        tmux list-session
+
+    分离会话(会话挂起)
+        在tmux终端内:
+            ctrl + b   d
+                或
+            ctrl + b   D
+
+    唤醒会话
+        tmux attach -t 会话名称
+
+    选择会话
+        ctrl + b s
+            通过上下键进行按回车进行选择
+
+    关闭会话
+        将tmux所有终端退出，即关闭会话
+
+        tmux kill-session -t 会话名称
+
+    重命名会话名称
+        ctrl + b $
+
+窗口   一个会话当中至少要有一个窗口(标签显示)
+    创建窗口
+        ctrl + b c
+
+    关闭窗口
+        退出bash即关闭窗口
+            或
+        ctrl + b &amp;
+
+    列表窗口
+        ctrl + b w
+
+    选择窗口
+        选择第一个窗口: ctrl + b 0
+        选择第二个窗口: ctrl + b 1
+        ...
+        定制化的配置
+            alt + 1 ~ 9
+
+窗格    一个窗口至少要有一个窗格(分屏显示)
+    创建窗格
+        竖分屏 ctrl + b |
+        横分屏 ctrl + b -
+
+    关闭窗格
+        ctrl + b x
+
+    选择窗格(切换)
+        ctrl + b h/j/k/l
+
+
+滚动窗口(剪切板操作)
+    复制:
+        进入vi操作复制模式
+            ctrl + b y
+
+            在复制模式下按v选取再按y可进行复制(退出复制模式)
+
+    粘贴:
+        ctrl + b p
+
+    依赖配置及xclip工具
+        sudo yum install xclip -y
+
+    ip a s
+    ctrl + b y
+    V
+    y
+    ctrl + b p</code></pre>
+<p><strong>简单挂载</strong><br>    查看192.168.0.183有哪些共享文件夹<br>        showmount -e 192.168.0.183<br>    把192.168.0.89下面的/soul 挂在到本机的/mnt目录<br>        sudo mount 192.168.0.183:/soul /mnt<br>    切换工作目录到/mnt<br>        cd /mnt<br>    ls<br>    cd linux/2_linuxBasics<br>    ls<br>    vi 2_detail.txt</p>
+<pre><code>取消挂载
+    切换工作目录到根
+        cd /
+    取消挂载
+        sudo umount /mnt
+
+    强制取消挂载
+        sudo umount /mnt -l
+ntfs U盘挂载
+sudo wget -O /etc/yum.repos.d/epel.repo http://mirrors.aliyun.com/repo/epel-7.repo
+sudo yum install ntfs-3g -y</code></pre>
+</div><ul class="post-copyright"><li><strong>本文标题：</strong><a href="https://yc6.cool/2020/08/03/linux基础/">linux基础</a></li><li><strong>本文作者：</strong><a href="https://yc6.cool">yichen</a></li><li><strong>本文链接：</strong><a href="https://yc6.cool/2020/08/03/linux基础/">https://yc6.cool/2020/08/03/linux基础/</a></li><li><strong>版权声明：</strong><span>本博客所有文章除特别声明外，均采用 <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/deed.zh" rel="external nofollow" target="_blank">CC BY-NC-SA 4.0</a> 许可协议。转载请注明出处！</span></li></ul><div><div class="recommend-post"><span class="is-size-6 has-text-grey has-mr-7"># 相关文章</span><br><span>  1.<a class="is-size-6" href="/2020/08/05/sed_%E7%9A%84%E5%B8%B8%E7%94%A8%E5%91%BD%E4%BB%A4%E7%9A%84%E4%BD%BF%E7%94%A8/" target="_blank">sed的常用命令的使用</a><br></span><span>  2.<a class="is-size-6" href="/2020/08/04/linux%E4%B8%8B%E7%9A%84%E7%9B%AE%E5%BD%95%E4%BB%8B%E7%BB%8D/" target="_blank">linux根下目录文件介绍</a><br></span><span>  3.<a class="is-size-6" href="/2020/08/03/vim%E4%BD%BF%E7%94%A8/" target="_blank">vim的使用</a><br></span><span>  4.<a class="is-size-6" href="/2020/08/03/linux%E4%B8%AD%E4%B8%A2%E5%A4%B1grub.cfg%E5%BC%95%E5%AF%BC%E6%96%87%E4%BB%B6%E4%BF%AE%E5%A4%8D/" target="_blank">linux中丢失grub.cfg引导文件修复</a><br></span><span>  5.<a class="is-size-6" href="/2020/08/03/linux%E7%B3%BB%E7%BB%9F%E7%AE%A1%E7%90%86/" target="_blank">linux系统管理</a><br></span><span>  6.<a class="is-size-6" href="/2020/08/03/linux%E7%A3%81%E7%9B%98%E7%AE%A1%E7%90%86/" target="_blank">linux磁盘管理</a><br></span><span>  7.<a class="is-size-6" href="/2020/08/03/%E7%A3%81%E7%9B%98%E5%91%BD%E4%BB%A4lvm/" target="_blank">磁盘命令lvm</a><br></span><span>  8.<a class="is-size-6" href="/2020/08/03/linux%E8%BD%AF%E4%BB%B6%E7%AE%A1%E7%90%86/" target="_blank">linux软件管理</a><br></span></div><div class="recommend-post"><span class="is-size-6 has-text-grey has-mr-7"># 推荐文章</span><br><span>  1.<a class="is-size-6" href="/2020/08/04/docker%E4%BD%BF%E7%94%A8/" target="_blank">docker的使用</a><br></span><span>  2.<a class="is-size-6" href="/2020/08/03/mysql%E5%9F%BA%E7%A1%80/" target="_blank">mysql基础</a><br></span><span>  3.<a class="is-size-6" href="/2020/08/03/nginx%E5%9F%BA%E7%A1%80/" target="_blank">nginx基础</a><br></span><span>  4.<a class="is-size-6" href="/2020/08/04/python3%E5%9F%BA%E7%A1%80%E7%9F%A5%E8%AF%86%E9%87%8D%E7%82%B9/" target="_blank">python3基础知识重点</a><br></span><span>  5.<a class="is-size-6" href="/2023/05/07/Linux%E6%9C%8D%E5%8A%A1%E5%99%A8%E7%B3%BB%E7%BB%9F%E7%9B%91%E6%8E%A7/" target="_blank">Prometheus监控linux</a><br></span><span>  6.<a class="is-size-6" href="/2023/05/10/Prometheus%E4%BD%BF%E7%94%A8%E9%82%AE%E7%AE%B1%E6%8E%A5%E6%94%B6%E5%91%8A%E8%AD%A6%E9%80%9A%E7%9F%A5/" target="_blank">Prometheus使用邮件接收告警通知</a><br></span></div></div><link rel="stylesheet" href="https://cdnjs.loli.net/ajax/libs/social-share.js/1.0.16/css/share.min.css"><div class="social-share"></div><script src="https://cdnjs.loli.net/ajax/libs/social-share.js/1.0.16/js/social-share.min.js"></script></article></div><div class="card"><div class="card-content"><h3 class="menu-label has-text-centered">喜欢这篇文章？打赏一下作者吧</h3><div class="buttons is-centered"><a class="button is-info donate"><span class="icon is-small"><i class="fab fa-alipay"></i></span><span>支付宝</span><span class="qrcode"><img src="https://yichenxiu.com/tupian/tubiao/alipay1.jpg" alt="支付宝"></span></a><a class="button is-success donate"><span class="icon is-small"><i class="fab fa-weixin"></i></span><span>微信</span><span class="qrcode"><img src="https://i.328888.xyz/2023/03/05/dZXCk.jpeg" alt="微信"></span></a></div></div></div><nav class="post-navigation mt-4 level is-mobile"><div class="level-start"><a class="article-nav-prev level level-item link-muted" href="/2020/08/03/linux%E7%94%A8%E6%88%B7%E7%AE%A1%E7%90%86/"><i class="level-item fas fa-chevron-left"></i><span class="level-item">linux用户管理</span></a></div><div class="level-end"><a class="article-nav-next level level-item link-muted" href="/2020/08/02/github-Hexo%E6%90%AD%E5%BB%BA%E4%B8%AA%E4%BA%BA%E5%8D%9A%E5%AE%A2/"><span class="level-item">github Hexo搭建个人博客</span><i class="level-item fas fa-chevron-right"></i></a></div></nav><div class="card"><div class="card-content"><h3 class="title is-5">评论</h3><div id="comment-container"></div><link rel="stylesheet" href="https://cdnjs.loli.net/ajax/libs/gitalk/1.6.0/gitalk.css"><script> $.getScript('/js/gitalk.min.js', function () { 
+            var gitalk = new Gitalk({
+            language:'zh-CN',
+            id: '74a29c6f679885ad6c92ad1a1bdae9de',
+            repo: 'issue_database',
+            owner: 'zhi666',
+            clientID: '1b861f81e9a79ee6028d',
+            clientSecret: 'cc629aff090aa9c60d5e13ddf7fcfce14f00a478',
+            admin: ["zhi666"],
+            createIssueManually: true,
+            distractionFreeMode: true,
+            perPage: 10,
+            pagerDirection: 'last',
+            proxy: 'https://cors-anywhere.azm.workers.dev/https://github.com/login/oauth/access_token',
+            
+            enableHotKey: true,
+            isLocked: false
+        })
+        gitalk.render('comment-container')});</script></div></div></div><div class="column column-left is-4-tablet is-4-desktop is-4-widescreen  order-1 is-sticky"><!--!--><div class="card widget"><div class="card-content"><nav class="level"><div class="level-item has-text-centered flex-shrink-1"><div><figure class="image is-128x128 mx-auto mb-2"><img class="is-rounded" src="/img/toudong.jpg" alt="逸尘秀"></figure><p class="title is-size-4 is-block line-height-inherit">逸尘秀</p><p class="is-size-6 is-block">只此一生 ， 必须快乐 ！</p><p class="is-size-6 is-flex justify-content-center"><i class="fas fa-map-marker-alt mr-1"></i><span>深圳</span></p></div></div></nav><nav class="level is-mobile"><div class="level-item has-text-centered is-marginless"><div><p class="heading">文章</p><a href="/archives"><p class="title">136</p></a></div></div><div class="level-item has-text-centered is-marginless"><div><p class="heading">分类</p><a href="/categories"><p class="title">17</p></a></div></div><div class="level-item has-text-centered is-marginless"><div><p class="heading">标签</p><a href="/tags"><p class="title">55</p></a></div></div></nav><div class="level"><a class="level-item button is-primary is-rounded" href="https://weibo.com/u/6155656382" target="_blank" rel="noopener">关注我</a></div><div class="level is-mobile"><a class="level-item button is-transparent is-white is-marginless" target="_blank" rel="noopener" title="Github" href="https://github.com/zhi666"><i class="fab fa-github"></i></a><a class="level-item button is-transparent is-white is-marginless" target="_blank" rel="noopener" title="Weibo" href="https://weibo.com/u/6155656382"><i class="fab fa-weibo"></i></a><a class="level-item button is-transparent is-white is-marginless" target="_blank" rel="noopener" title="Email" href="mailto:1378373724@qq.com"><i class="fa fa-envelope"></i></a><a class="level-item button is-transparent is-white is-marginless" target="_blank" rel="noopener" title="Next" href="https://zhi666.github.io/remove.io"><i class="fab fa-dribbble"></i></a><a class="level-item button is-transparent is-white is-marginless" target="_blank" rel="noopener" title="RSS" href="/atom.xml"><i class="fas fa-rss"></i></a></div><div><hr><p id="hitokoto">:D 一言句子获取中...</p><script type="text/javascript" defer>function getYiyan(){
+                                $.getJSON("https://v1.hitokoto.cn/", function (data) {
+                                if(data){
+                                    $('#hitokoto').html("");
+                                    $('#hitokoto').append("<strong style='color: #3273dc;'>"+data.hitokoto+"</strong>"+
+                                    "<p>"+"来源《"+data.from+"》</p><p>提供者-"+data.creator+"</p>");
+                                }});}
+                                $(function (){getYiyan();$('#hitokoto').click(function(){getYiyan();})});</script></div></div></div><div class="card widget"><div class="card-content"><h3 class="menu-label">最新评论</h3><span class="body_hot_comment">加载中，最新评论有1分钟缓存...</span></div></div><div class="card widget"><div class="card-content"><h3 class="menu-label">最新文章</h3><article class="media"><div class="media-content size-small"><p><time dateTime="2023-11-01T02:25:44.578Z">2023-11-01</time></p><p class="title is-6"><a class="link-muted" href="/2023/11/01/selenlium%E6%89%B9%E9%87%8F%E6%B7%BB%E5%8A%A0dns%E5%9F%9F%E5%90%8D/">批量添加dns域名解析</a></p><p class="is-uppercase"><i class="fas fa-folder-open has-text-grey"> </i><a class="link-muted" href="/categories/python/">python</a></p></div></article><article class="media"><div class="media-content size-small"><p><time dateTime="2023-05-17T01:45:36.000Z">2023-05-17</time></p><p class="title is-6"><a class="link-muted" href="/2023/05/17/Kubernetes%E9%AB%98%E5%8F%AF%E7%94%A8%E9%9B%86%E7%BE%A4%E4%BA%8C%E8%BF%9B%E5%88%B6%E9%83%A8%E7%BD%B2/">Kubernetes高可用集群二进制部署</a></p><p class="is-uppercase"><i class="fas fa-folder-open has-text-grey"> </i><a class="link-muted" href="/categories/linux3/">linux3</a></p></div></article><article class="media"><div class="media-content size-small"><p><time dateTime="2023-05-10T06:25:36.000Z">2023-05-10</time></p><p class="title is-6"><a class="link-muted" href="/2023/05/10/Prometheus%E4%BD%BF%E7%94%A8%E6%89%8B%E6%9C%BA%E7%94%B5%E8%AF%9D_%E7%9F%AD%E4%BF%A1%E6%8E%A5%E6%94%B6%E5%91%8A%E8%AD%A6%E9%80%9A%E7%9F%A5/">Prometheus使用手机电话_短信接收告警通知</a></p><p class="is-uppercase"><i class="fas fa-folder-open has-text-grey"> </i><a class="link-muted" href="/categories/linux2/">linux2</a></p></div></article><article class="media"><div class="media-content size-small"><p><time dateTime="2023-05-10T06:22:36.000Z">2023-05-10</time></p><p class="title is-6"><a class="link-muted" href="/2023/05/10/Prometheus%E4%BD%BF%E7%94%A8%E4%BC%81%E4%B8%9A%E5%BE%AE%E4%BF%A1%E6%8E%A5%E6%94%B6%E5%91%8A%E8%AD%A6%E9%80%9A%E7%9F%A5/">Prometheus使用企业微信接收告警通知</a></p><p class="is-uppercase"><i class="fas fa-folder-open has-text-grey"> </i><a class="link-muted" href="/categories/linux2/">linux2</a></p></div></article><article class="media"><div class="media-content size-small"><p><time dateTime="2023-05-10T06:20:36.000Z">2023-05-10</time></p><p class="title is-6"><a class="link-muted" href="/2023/05/10/Prometheus%E4%BD%BF%E7%94%A8%E4%BC%81%E4%B8%9A%E9%92%89%E9%92%89%E5%91%8A%E8%AD%A6%E9%80%9A%E7%9F%A5/">Prometheus使用企业钉钉接收告警通知</a></p><p class="is-uppercase"><i class="fas fa-folder-open has-text-grey"> </i><a class="link-muted" href="/categories/linux2/">linux2</a></p></div></article></div></div><div class="card widget"><div class="card-content"><div class="menu"><h3 class="menu-label">分类</h3><ul class="menu-list"><li><a class="level is-mobile is-marginless" href="/categories/English/"><span class="level-start"><span class="level-item">English</span></span><span class="level-end"><span class="level-item tag">1</span></span></a></li><li><a class="level is-mobile is-marginless" href="/categories/HTML/"><span class="level-start"><span class="level-item">HTML</span></span><span class="level-end"><span class="level-item tag">4</span></span></a></li><li><a class="level is-mobile is-marginless" href="/categories/JS/"><span class="level-start"><span class="level-item">JS</span></span><span class="level-end"><span class="level-item tag">2</span></span></a></li><li><a class="level is-mobile is-marginless" href="/categories/html/"><span class="level-start"><span class="level-item">html</span></span><span class="level-end"><span class="level-item tag">1</span></span></a></li><li><a class="level is-mobile is-marginless" href="/categories/linux1/"><span class="level-start"><span class="level-item">linux1</span></span><span class="level-end"><span class="level-item tag">15</span></span></a></li><li><a class="level is-mobile is-marginless" href="/categories/linux2/"><span class="level-start"><span class="level-item">linux2</span></span><span class="level-end"><span class="level-item tag">33</span></span></a></li><li><a class="level is-mobile is-marginless" href="/categories/linux3/"><span class="level-start"><span class="level-item">linux3</span></span><span class="level-end"><span class="level-item tag">27</span></span></a></li><li><a class="level is-mobile is-marginless" href="/categories/python/"><span class="level-start"><span class="level-item">python</span></span><span class="level-end"><span class="level-item tag">12</span></span></a></li><li><a class="level is-mobile is-marginless" href="/categories/web/"><span class="level-start"><span class="level-item">web</span></span><span class="level-end"><span class="level-item tag">1</span></span></a></li><li><a class="level is-mobile is-marginless" href="/categories/work/"><span class="level-start"><span class="level-item">work</span></span><span class="level-end"><span class="level-item tag">7</span></span></a></li><a class="level is-mobile is-marginless" href="/categories/"><span class="level-start"><span class="level-item">查看全部&gt;&gt;</span></span></a></ul></div></div></div><div class="card widget"><div class="card-content"><div class="menu"><h3 class="menu-label">归档</h3><ul class="menu-list"><li><a class="level is-mobile is-marginless" href="/archives/2023/11/"><span class="level-start"><span class="level-item">十一月 2023</span></span><span class="level-end"><span class="level-item tag">5</span></span></a></li><li><a class="level is-mobile is-marginless" href="/archives/2023/05/"><span class="level-start"><span class="level-item">五月 2023</span></span><span class="level-end"><span class="level-item tag">13</span></span></a></li><li><a class="level is-mobile is-marginless" href="/archives/2023/04/"><span class="level-start"><span class="level-item">四月 2023</span></span><span class="level-end"><span class="level-item tag">2</span></span></a></li><li><a class="level is-mobile is-marginless" href="/archives/2023/02/"><span class="level-start"><span class="level-item">二月 2023</span></span><span class="level-end"><span class="level-item tag">1</span></span></a></li><li><a class="level is-mobile is-marginless" href="/archives/2022/06/"><span class="level-start"><span class="level-item">六月 2022</span></span><span class="level-end"><span class="level-item tag">3</span></span></a></li><a class="level is-mobile is-marginless" href="/archives/"><span class="level-start"><span class="level-item">查看全部&gt;&gt;</span></span></a></ul></div></div></div><div class="card widget"><div class="card-content"><div class="menu"><h3 class="menu-label">标签</h3><div class="field is-grouped is-grouped-multiline"><div class="control"><a class="tags has-addons" href="/tags/linux/"><span class="tag">linux</span><span class="tag is-grey-lightest">18</span></a></div><div class="control"><a class="tags has-addons" href="/tags/docker/"><span class="tag">docker</span><span class="tag is-grey-lightest">16</span></a></div><div class="control"><a class="tags has-addons" href="/tags/Prometheus/"><span class="tag">Prometheus</span><span class="tag is-grey-lightest">14</span></a></div><div class="control"><a class="tags has-addons" href="/tags/html/"><span class="tag">html</span><span class="tag is-grey-lightest">14</span></a></div><div class="control"><a class="tags has-addons" href="/tags/python/"><span class="tag">python</span><span class="tag is-grey-lightest">12</span></a></div><div class="control"><a class="tags has-addons" href="/tags/web/"><span class="tag">web</span><span class="tag is-grey-lightest">12</span></a></div><div class="control"><a class="tags has-addons" href="/tags/nginx/"><span class="tag">nginx</span><span class="tag is-grey-lightest">9</span></a></div><div class="control"><a class="tags has-addons" href="/tags/mysql/"><span class="tag">mysql</span><span class="tag is-grey-lightest">7</span></a></div><div class="control"><a class="tags has-addons" href="/tags/%E5%AE%B9%E5%99%A8/"><span class="tag">容器</span><span class="tag is-grey-lightest">7</span></a></div><div class="control"><a class="tags has-addons" href="/tags/%E6%95%B0%E6%8D%AE%E5%BA%93/"><span class="tag">数据库</span><span class="tag is-grey-lightest">7</span></a></div><div class="control"><a class="tags has-addons" href="/tags/%E7%A7%91%E5%AD%A6%E4%B8%8A%E7%BD%91/"><span class="tag">科学上网</span><span class="tag is-grey-lightest">6</span></a></div><div class="control"><a class="tags has-addons" href="/tags/work/"><span class="tag">work</span><span class="tag is-grey-lightest">5</span></a></div><div class="control"><a class="tags has-addons" href="/tags/%E8%87%AA%E5%8A%A8%E5%8C%96/"><span class="tag">自动化</span><span class="tag is-grey-lightest">5</span></a></div><div class="control"><a class="tags has-addons" href="/tags/%E5%8D%9A%E5%AE%A2/"><span class="tag">博客</span><span class="tag is-grey-lightest">4</span></a></div><div class="control"><a class="tags has-addons" href="/tags/%E5%B7%A5%E4%BD%9C/"><span class="tag">工作</span><span class="tag is-grey-lightest">4</span></a></div><div class="control"><a class="tags has-addons" href="/tags/%E5%B7%A5%E5%85%B7/"><span class="tag">工具</span><span class="tag is-grey-lightest">4</span></a></div><div class="control"><a class="tags has-addons" href="/tags/ssl/"><span class="tag">ssl</span><span class="tag is-grey-lightest">3</span></a></div><div class="control"><a class="tags has-addons" href="/tags/%E6%96%87%E4%BB%B6%E7%B3%BB%E7%BB%9F/"><span class="tag">文件系统</span><span class="tag is-grey-lightest">3</span></a></div><div class="control"><a class="tags has-addons" href="/tags/%E6%97%A5%E5%BF%97/"><span class="tag">日志</span><span class="tag is-grey-lightest">3</span></a></div><div class="control"><a class="tags has-addons" href="/tags/%E6%97%A5%E5%BF%97%E5%8A%A0%E5%AF%86/"><span class="tag">日志加密</span><span class="tag is-grey-lightest">3</span></a></div></div><div class="field is-grouped is-grouped-multiline"><a class="tags has-addons" href="/tags/"><span class="tag">查看全部&gt;&gt;</span></a></div></div></div></div><div class="card widget"><div class="card-content"><div class="menu"><h3 class="menu-label">订阅更新</h3><form action="https://feedburner.google.com/fb/a/mailverify" method="post" target="popupwindow" onsubmit="window.open(&#039;https://feedburner.google.com/fb/a/mailverify?uri=zhi666FeedsId&#039;,&#039;popupwindow&#039;,&#039;scrollbars=yes,width=550,height=520&#039;);return true"><input type="hidden" value="zhi666FeedsId" name="uri"><input type="hidden" name="loc" value="en_US"><div class="field has-addons"><div class="control has-icons-left is-expanded"><input class="input" name="email" type="email" placeholder="Email"><span class="icon is-small is-left"><i class="fas fa-envelope"></i></span></div><div class="control"><input class="button is-primary" type="submit" value="订阅"></div></div><p class="help">输入邮箱开始订阅，更博后邮件通知！</p></form></div></div></div></div></div></div></section><footer class="footer"><div class="container"><div class="level"><div class="level-start"><a class="footer-logo is-block mb-2" href="/"><img src="/img/logo.png" alt="逸尘秀" height="28"></a><p class="size-small"><span>&copy; 2023 yichen</span>  Powered by <a href="https://hexo.io/" target="_blank">Hexo</a> &amp; <a href="https://github.com/ppoffice/hexo-theme-icarus" target="_blank">Icarus</a>,Modify by <a href="https://github.com/removeif/hexo-theme-amazing" target="_blank">removeif</a> <br><span>© 版权说明：[本网站所有内容均收集于互联网或自己创作,<br />&nbsp;&nbsp;&nbsp;&nbsp;方便于网友与自己学习交流，如有侵权，请<a href="/message" target="_blank">留言</a>，立即处理]<br /></span><span><span id="statistic-times">loading...</span><script>function createTime(time) {
+            var n = new Date(time);
+            now.setTime(now.getTime() + 250),
+                days = (now - n) / 1e3 / 60 / 60 / 24,
+                dnum = Math.floor(days),
+                hours = (now - n) / 1e3 / 60 / 60 - 24 * dnum,
+                hnum = Math.floor(hours),
+            1 == String(hnum).length && (hnum = "0" + hnum),
+                minutes = (now - n) / 1e3 / 60 - 1440 * dnum - 60 * hnum,
+                mnum = Math.floor(minutes),
+            1 == String(mnum).length && (mnum = "0" + mnum),
+                seconds = (now - n) / 1e3 - 86400 * dnum - 3600 * hnum - 60 * mnum,
+                snum = Math.round(seconds),
+            1 == String(snum).length && (snum = "0" + snum),
+                document.getElementById("statistic-times").innerHTML = "❤️本站自 <strong>"+time.split(" ")[0].replace(/\//g,".")+"</strong> 已运行 <strong>" + dnum + "</strong> 天 <strong>" + hnum + "</strong> 小时 <strong>" + mnum + "</strong> 分 <strong>" + snum + "</strong> 秒！❤️";
+        }var now = new Date();setInterval("createTime('2020/08/02 00:00:00')", 250,"");</script><br></span><div class="size-small"><span>❤️感谢 <strong><span id="busuanzi_value_site_uv">99+</span></strong> 小伙伴的 <strong><span id="busuanzi_value_site_pv">99+</span></strong> 次光临！❤️</span></div></p></div><div class="level-end"><div class="field has-addons"><p class="control"><a class="button is-transparent is-large" target="_blank" rel="noopener" title="Creative Commons" href="https://creativecommons.org/"><i class="fab fa-creative-commons"></i></a></p><p class="control"><a class="button is-transparent is-large" target="_blank" rel="noopener" title="Attribution 4.0 International" href="https://creativecommons.org/licenses/by/4.0/"><i class="fab fa-creative-commons-by"></i></a></p><p class="control"><a class="button is-transparent is-large" target="_blank" rel="noopener" title="Download on GitHub" href="https://github.com/zhi666"><i class="fab fa-github"></i></a></p></div><div class="sideMusic"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/aplayer/dist/APlayer.min.css"><script src="/js/APlayer.min.js"></script><script src="https://cdn.jsdelivr.net/npm/meting@2/dist/Meting.min.js"></script><meting-js style="width: auto;height: 2000px;" server="netease" type="playlist" id="2364053447" theme="#2980b9" loop="all" autoplay="false" order="list" storageName="aplayer-setting" lrctype="0" list-max-height="400px" fixed="true"></meting-js></div></div></div></div></footer><script src="https://cdnjs.loli.net/ajax/libs/moment.js/2.22.2/moment-with-locales.min.js"></script><script>moment.locale("zh-CN");</script><script>var IcarusThemeSettings = {
+            site: {
+                url: 'https://yc6.cool',
+                external_link: {"enable":true,"exclude":[]}
+            },
+            article: {
+                highlight: {
+                    clipboard: true,
+                    fold: 'unfolded'
+                }
+            }
+        };</script><script src="https://cdnjs.loli.net/ajax/libs/clipboard.js/2.0.4/clipboard.min.js" defer></script><script src="/js/animation.js"></script><a id="back-to-top" title="回到顶端" href="javascript:;"><i class="fas fa-chevron-up"></i></a><script src="/js/back-to-top.js" defer></script><!--!--><!--!--><script src="https://cdnjs.loli.net/ajax/libs/lightgallery/1.6.12/js/lightgallery-all.min.js" defer></script><script src="https://cdnjs.loli.net/ajax/libs/justifiedGallery/3.7.0/js/jquery.justifiedGallery.min.js" defer></script><!--!--><!--!--><!--!--><script src="/js/toc.js" defer></script><script src="/js/main.js" defer></script><script>$.getScript('/js/comment-issue-data.js',function(){loadIssueData('1b861f81e9a79ee6028d','cc629aff090aa9c60d5e13ddf7fcfce14f00a478','zhi666','issue_database',false);})</script><link rel="stylesheet" href="/css/insight.css"><div class="searchbox ins-search"><div class="searchbox-container ins-search-container"><div class="searchbox-input-wrapper"><input class="searchbox-input ins-search-input" type="text" placeholder="想要查找什么..."><span class="searchbox-close ins-close ins-selectable"><i class="fa fa-times-circle"></i></span></div><div class="searchbox-result-wrapper ins-section-wrapper"><div class="ins-section-container"></div></div></div></div><script>(function (window) {
+            var INSIGHT_CONFIG = {
+                TRANSLATION: {
+                    POSTS: '文章',
+                    PAGES: '页面',
+                    CATEGORIES: '分类',
+                    TAGS: '标签',
+                    UNTITLED: '(无标题)',
+                },
+                CONTENT_URL: '/content.json',
+            };
+            window.INSIGHT_CONFIG = INSIGHT_CONFIG;
+        })(window);</script><script src="/js/insight.js" defer></script></body></html>

@@ -1,0 +1,1794 @@
+<!doctype html>
+<html lang="zh"><head><meta charset="utf-8"><meta name="generator" content="Hexo 4.2.0"><meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"><meta><meta name="keywords" content="null"><meta name="description" content="运维,技术分享,python开发,数据库,html"><meta name="author" content="zhi666"><title>逸尘秀</title><meta description="运维,技术分享,python开发,数据库,html"><meta property="og:type" content="website"><meta property="og:title" content="逸尘秀"><meta property="og:url" content="https://yc6.cool/6.html"><meta property="og:site_name" content="逸尘秀"><meta property="og:description" content="运维,技术分享,python开发,数据库,html"><meta property="og:locale" content="zh_CN"><meta property="article:published_time" content="2023-11-01T02:25:44.534Z"><meta property="article:modified_time" content="2023-11-01T02:25:44.534Z"><meta property="article:author" content="zhi666"><meta property="twitter:card" content="summary"><meta property="twitter:image" content="https://yc6.cool/img/avatar.png"><script type="application/ld+json">{"@context":"https://schema.org","@type":"BlogPosting","mainEntityOfPage":{"@type":"WebPage","@id":"https://yc6.cool/6.html"},"headline":"逸尘秀","image":["https://yc6.cool/img/avatar.png"],"datePublished":"2023-11-01T02:25:44.534Z","dateModified":"2023-11-01T02:25:44.534Z","author":{"@type":"Person","name":"zhi666"},"description":"运维,技术分享,python开发,数据库,html"}</script><link rel="alternative" href="/atom.xml" title="逸尘秀" type="application/atom+xml"><link rel="icon" href="/img/favicon.png"><link rel="stylesheet" href="https://cdnjs.loli.net/ajax/libs/font-awesome/5.12.0/css/all.min.css"><link rel="stylesheet" href="https://fonts.loli.net/css?family=Ubuntu:400,600|Source+Code+Pro|Monda:300,300italic,400,400italic,700,700italic|Roboto Slab:300,300italic,400,400italic,700,700italic|Microsoft YaHei:300,300italic,400,400italic,700,700italic|PT Mono:300,300italic,400,400italic,700,700italic&amp;amp;subset=latin,latin-ext|Inconsolata|Itim|Lobster.css"><link rel="stylesheet" href="https://cdnjs.loli.net/ajax/libs/highlight.js/9.12.0/styles/atom-one-dark.min.css"><style>body>.footer,body>.navbar,body>.section{opacity:0}</style><!--!--><!--!--><script src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js" defer></script><link rel="stylesheet" href="https://cdnjs.loli.net/ajax/libs/lightgallery/1.6.12/css/lightgallery.min.css"><link rel="stylesheet" href="https://cdnjs.loli.net/ajax/libs/justifiedGallery/3.7.0/css/justifiedGallery.min.css"><!--!--><!--!--><script src="https://cdnjs.loli.net/ajax/libs/pace/1.0.2/pace.min.js"></script><link rel="stylesheet" href="/css/style.css"><script src="https://cdnjs.loli.net/ajax/libs/jquery/3.3.1/jquery.min.js"></script><script src="/js/globalUtils.js"></script><link rel="stylesheet" href="/live2d/waifu.css"><script type="text/javascript" async src="/live2d/autoload.js"></script></head><body class="is-3-column has-navbar-fixed-top"><nav class="navbar navbar-main is-fixed-top"><div class="container"><div class="navbar-brand justify-content-center"><a class="navbar-item navbar-logo" href="/"><img src="/img/logo.png" alt="逸尘秀" height="28"></a></div><div class="navbar-menu"><div class="navbar-start"><a class="navbar-item" href="/">首页</a><a class="navbar-item" href="/archives">归档</a><a class="navbar-item" href="/categories">分类</a><a class="navbar-item" href="/tags">标签</a><a class="navbar-item" href="/media">影音</a><a class="navbar-item" href="/album">相册</a><a class="navbar-item" href="/friend">友链</a><a class="navbar-item" href="/self-talking">碎碎念</a><a class="navbar-item" href="/message">留言</a><a class="navbar-item" href="/about">关于</a></div><div class="navbar-end"><a class="navbar-item" target="_blank" rel="noopener" title="Download on GitHub" href="https://github.com/zhi666"><i class="fab fa-github"></i></a><a class="navbar-item search" title="搜索" href="javascript:;"><i class="fas fa-search"></i></a><a class="navbar-item" id="night-nav" title="Night Mode" href="javascript:;"><i class="fas fa-moon" id="night-icon"></i></a></div></div></div></nav><script type="text/javascript" src="/js/theme-setting.js"></script><section class="section"><div class="container"><div class="columns"><div class="column order-2 column-main is-8-tablet is-8-desktop is-9-widescreen"><div class="card"><article class="card-content article" role="article"><h1 class="title is-3 is-size-4-mobile"> </h1><div class="content"><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html> <!-- xmlns="http://www.w3.org/1999/xhtml"> -->
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<title>Six &bull; 逸尘秀 </title>
+
+
+<style type="text/css"> 
+
+* {
+	margin: 0; 
+	padding: 0;
+	-webkit-box-sizing: border-box;
+	-moz-box-sizing: border-box;
+	-ms-box-sizing: border-box;
+	-o-box-sizing: border-box;
+	box-sizing: border-box;
+}
+html, body {
+	margin: 0;
+	padding: 0;
+	font: 16px/1.4 'Lato', sans-serif;
+	color: #fefeff;
+	-webkit-font-smoothing: antialiased;
+	font-smoothing: antialiased;
+}
+body {
+	background: rgb(8,5,16);
+	overflow:hidden;
+	-webkit-touch-callout: none;
+	-webkit-user-select: none;
+	-khtml-user-select: none;
+	-moz-user-select: none;
+	-ms-user-select: none;
+	user-select: none;
+}
+
+h1 {
+	font: 2.75em 'Cinzel', serif;
+	font-weight: 400;
+	letter-spacing: 0.35em;
+	text-shadow: 0 0 25px rgba(254,254,255,0.85);
+}
+h2 {
+	font: 1.45em 'Cinzel', serif;
+	font-weight: 400;
+	letter-spacing: 0.5em;
+	text-shadow: 0 0 25px rgba(254,254,255,0.85);
+	text-transform: lowercase;
+}
+
+
+[class^="letter"] {
+	-webkit-transition: opacity 3s ease;
+	-moz-transition: opacity 3s ease;
+	transition: opacity 3s ease;
+}
+.letter-0  { transition-delay: 0.2s; }
+.letter-1  { transition-delay: 0.4s; }
+.letter-2  { transition-delay: 0.6s; }
+.letter-3  { transition-delay: 0.8s; }
+.letter-4  { transition-delay: 1.0s; }
+.letter-5  { transition-delay: 1.2s; }
+.letter-6  { transition-delay: 1.4s; }
+.letter-7  { transition-delay: 1.6s; }
+.letter-8  { transition-delay: 1.8s; }
+.letter-9  { transition-delay: 2.0s; }
+.letter-10 { transition-delay: 2.2s; }
+.letter-11 { transition-delay: 2.4s; }
+.letter-12 { transition-delay: 2.6s; }
+.letter-13 { transition-delay: 2.8s; }
+.letter-14 { transition-delay: 3.0s; }
+
+h1, h2 {
+	visibility: hidden;
+	-webkit-transform: translate3d(0, 0, 0);
+	-moz-transform: translate3d(0, 0, 0);
+	transform: translate3d(0, 0, 0);
+}	
+h1.transition-in,
+h2.transition-in {
+	visibility: visible;
+}
+h1 [class^="letter"], 
+h2 [class^="letter"]{
+	opacity: 0;
+}
+h1.transition-in [class^="letter"],
+h2.transition-in [class^="letter"]{
+	opacity: 1;
+}
+
+#container {
+display: table;
+position: absolute;
+z-index: 20;
+width: 100%;
+height: 100%;
+text-align: center;
+cursor: none;
+left: 15px;
+}
+#container > div {
+	display: table-cell;
+	vertical-align: middle;
+}
+#container p {
+	position: absolute;
+	width: 100%;
+	left: 0;
+	bottom: 25px;
+	font-size: 0.8em;
+	letter-spacing: 0.1em;
+	font-weight: 300;
+	color: #76747a;
+	-webkit-font-smoothing: subpixel-antialiased;
+	font-smoothing: subpixel-antialiased; 
+}
+#container p strong {
+color: #b3abc5;
+font-size: 5em;
+}
+#container p span {
+	font-size: 0.75em;
+	padding: 0 2px;
+}
+
+#canvas {
+	position: absolute;
+	z-index: 10;
+	top: 0;
+	left: 0;
+	width: 100%;
+	height: 100%;
+	cursor: none;
+}
+
+#stats { 
+	position: absolute; 
+	z-index: 10; 
+	left: 10px; 
+	top: 10px; 
+}
+
+.dg.ac {
+	z-index: 100 !important;
+}
+
+#container div p strong a {
+color: #999;
+font-size: 0.5em;
+}
+body,td,th {
+font-family: Lato, sans-serif;
+}
+a:link {
+text-decoration: none;
+}
+a:visited {
+text-decoration: none;
+}
+a:hover {
+text-decoration: none;
+}
+a:active {
+text-decoration: none;
+}
+</style>
+<script src="https://wohenliu.com/html/jquery-3.4.1.min.js"></script>
+<style>body {
+    padding:0;
+    margin:0;
+    overflow:hidden;
+    height: 600px;
+}
+canvas {
+    padding:0;
+    margin:0;
+}
+div.btnbg {
+    position:fixed;
+    left:0;
+    top:0;
+}</style>
+
+<style>
+html{
+    width: 100%;
+    height: 100%;
+    overflow: hidden;
+    font-style: sans-serif;
+}
+body{
+    width: 100%;
+    height: 100%;
+    font-family: 'Open Sans',sans-serif;
+    margin: 0;
+}
+#login{
+    position: absolute;
+    top: 50%;
+    left:50%;
+    margin: -150px 0 0 -150px;
+    width: 300px;
+    height: 300px;
+}
+#login h1{
+    color: #fff;
+    text-shadow:0 0 10px;
+    letter-spacing: 1px;
+    text-align: center;
+}
+h1{
+    font-size: 2em;
+    margin: 0.67em 0;
+}
+input{
+    width: 300px;
+    height: 40px;
+    margin-bottom: 10px;
+    outline: none;
+    padding: 10px;
+    font-size: 13px;
+    color: #fff;
+    text-shadow:1px 1px 1px;
+    border-top: 1px solid #312E3D;
+    border-left: 1px solid #312E3D;
+    border-right: 1px solid #312E3D;
+    border-bottom: 1px solid #56536A;
+    border-radius: 4px;
+    background-color: #2D2D3F;
+}
+.but{
+    width: 300px;
+    min-height: 20px;
+    display: block;
+    background-color: #4a77d4;
+    border: 1px solid #3762bc;
+    color: #fff;
+    padding: 9px 14px;
+    font-size: 15px;
+    line-height: normal;
+    border-radius: 5px;
+    margin: 0;
+}
+
+</style>
+</head>
+<body ondragstart="window.event.returnValue=false" oncontextmenu="window.event.returnValue=false" onselectstart="event.returnValue=false">
+</script>
+<div id="container">
+	<div>
+		<h1 id="h1"> Six&bull;逸尘秀 </h1>
+        	<h2 id="h2"> [ 只此一生 必须快乐！ ]</h2>
+		<br />
+<!--		<h3 id="h3">相思本是无凭语，莫向花笺费泪行</h3> -->
+		<p>&nbsp;</p>
+		<p><strong><a href="https://zhi666.github.io/index.html">进入主站</a></strong></p>
+		<p>&nbsp;</p>
+	  <p>&nbsp;</p>
+		<p>&nbsp;</p>
+		<p>&nbsp;</p>
+		<p>&nbsp;</p>
+	</div>
+
+</div>
+
+<canvas id="canvas"></canvas>
+<!--
+-->
+<script>
+var Stats=function(){var e=Date.now(),t=e,i=0,n=1/0,r=0,s=0,o=1/0,a=0,l=0,h=0,c=document.createElement("div");c.id="stats",c.addEventListener("mousedown",function(e){e.preventDefault(),v(++h%2)},!1),c.style.cssText="width:80px;opacity:0.9;cursor:pointer";var u=document.createElement("div");u.id="fps",u.style.cssText="padding:0 0 3px 3px;text-align:left;background-color:#002",c.appendChild(u);var d=document.createElement("div");d.id="fpsText",d.style.cssText="color:#0ff;font-family:Helvetica,Arial,sans-serif;font-size:9px;font-weight:bold;line-height:15px",d.innerHTML="FPS",u.appendChild(d);var p=document.createElement("div");for(p.id="fpsGraph",p.style.cssText="position:relative;width:74px;height:30px;background-color:#0ff",u.appendChild(p);74>p.children.length;){var f=document.createElement("span");f.style.cssText="width:1px;height:30px;float:left;background-color:#113",p.appendChild(f)}var m=document.createElement("div");m.id="ms",m.style.cssText="padding:0 0 3px 3px;text-align:left;background-color:#020;display:none",c.appendChild(m);var g=document.createElement("div");g.id="msText",g.style.cssText="color:#0f0;font-family:Helvetica,Arial,sans-serif;font-size:9px;font-weight:bold;line-height:15px",g.innerHTML="MS",m.appendChild(g);var y=document.createElement("div");for(y.id="msGraph",y.style.cssText="position:relative;width:74px;height:30px;background-color:#0f0",m.appendChild(y);74>y.children.length;){var f=document.createElement("span");f.style.cssText="width:1px;height:30px;float:left;background-color:#131",y.appendChild(f)}var v=function(e){switch(h=e){case 0:u.style.display="block",m.style.display="none";break;case 1:u.style.display="none",m.style.display="block"}},b=function(e,t){var i=e.appendChild(e.firstChild);i.style.height=t+"px"};return{REVISION:11,domElement:c,setMode:v,begin:function(){e=Date.now()},end:function(){var h=Date.now();return i=h-e,n=Math.min(n,i),r=Math.max(r,i),g.textContent=i+" MS ("+n+"-"+r+")",b(y,Math.min(30,30-30*(i/200))),l++,h>t+1e3&&(s=Math.round(1e3*l/(h-t)),o=Math.min(o,s),a=Math.max(a,s),d.textContent=s+" FPS ("+o+"-"+a+")",b(p,Math.min(30,30-30*(s/100))),t=h,l=0),h},update:function(){e=this.end()}}};
+</script>
+<script>
+
+;(function(window) {
+
+var ctx,
+	hue,
+	logo,
+	form,
+	buffer,
+	target = {},
+	tendrils = [],
+	settings = {};
+
+settings.debug = true;
+settings.friction = 0.5;
+settings.trails = 20;
+settings.size = 50;
+settings.dampening = 0.25;
+settings.tension = 0.98;
+
+Math.TWO_PI = Math.PI * 2;
+
+// ========================================================================================
+// Oscillator
+// ----------------------------------------------------------------------------------------
+
+function Oscillator(options) {
+	this.init(options || {});
+}
+
+Oscillator.prototype = (function() {
+	
+	var value = 0;
+	
+	return {
+		
+		init: function(options) {
+			this.phase = options.phase || 0;
+			this.offset = options.offset || 0;
+			this.frequency = options.frequency || 0.001;
+			this.amplitude = options.amplitude || 1;
+		},
+		
+		update: function() {
+			this.phase += this.frequency;
+			value = this.offset + Math.sin(this.phase) * this.amplitude;
+			return value;
+		},
+		
+		value: function() {
+			return value;
+		}
+	};
+		
+})();
+
+// ========================================================================================
+// Tendril
+// ----------------------------------------------------------------------------------------
+
+function Tendril(options) {
+	this.init(options || {});
+}
+
+Tendril.prototype = (function() {
+	
+	function Node() {
+		this.x = 0;
+		this.y = 0;
+		this.vy = 0;
+		this.vx = 0;
+	}
+	
+	return {
+	
+		init: function(options) {
+			
+			this.spring = options.spring + (Math.random() * 0.1) - 0.05; 
+			this.friction = settings.friction + (Math.random() * 0.01) - 0.005;
+			this.nodes = [];
+			
+			for(var i = 0, node; i < settings.size; i++) {
+		
+				node = new Node();
+				node.x = target.x;
+				node.y = target.y;
+		
+				this.nodes.push(node);
+			}	
+		},
+		
+		update: function() {
+			
+			var spring = this.spring,
+				node = this.nodes[0];
+			
+			node.vx += (target.x - node.x) * spring;
+			node.vy += (target.y - node.y) * spring;
+			
+			for(var prev, i = 0, n = this.nodes.length; i < n; i++) {
+
+				node = this.nodes[i];
+				
+				if(i > 0) {
+					
+					prev = this.nodes[i - 1];
+					
+					node.vx += (prev.x - node.x) * spring;
+					node.vy += (prev.y - node.y) * spring;
+					node.vx += prev.vx * settings.dampening;
+					node.vy += prev.vy * settings.dampening;
+				}
+				
+				node.vx *= this.friction;
+				node.vy *= this.friction;
+				node.x += node.vx;
+				node.y += node.vy;
+				
+				spring *= settings.tension;
+			}
+		},
+
+		draw: function() {
+		
+			var x = this.nodes[0].x, 
+				y = this.nodes[0].y,
+				a, b;
+			
+			ctx.beginPath();
+			ctx.moveTo(x, y);
+			
+			for(var i = 1, n = this.nodes.length - 2; i < n; i++) {
+				
+				a = this.nodes[i];
+				b = this.nodes[i + 1];
+				x = (a.x + b.x) * 0.5;
+				y = (a.y + b.y) * 0.5;
+				
+				ctx.quadraticCurveTo(a.x, a.y, x, y);
+			}
+			
+			a = this.nodes[i];
+			b = this.nodes[i + 1];
+			
+			ctx.quadraticCurveTo(a.x, a.y, b.x, b.y);
+			ctx.stroke();
+			ctx.closePath();
+		}
+	};
+
+})();
+
+// ----------------------------------------------------------------------------------------
+
+function init(event) {
+
+	document.removeEventListener('mousemove', init);
+	document.removeEventListener('touchstart', init);
+	
+	document.addEventListener('mousemove', mousemove);
+	document.addEventListener('touchmove', mousemove);
+	document.addEventListener('touchstart', touchstart);
+	
+	mousemove(event);
+	reset();
+	loop();
+}
+
+function reset() {
+	
+	tendrils = [];
+
+	for(var i = 0; i < settings.trails; i++) {
+		
+		tendrils.push(new Tendril({
+			spring: 0.45 + 0.025 * (i / settings.trails)
+		}));
+	}
+}
+
+function loop() {
+	
+	if(!ctx.running) return;
+
+	ctx.globalCompositeOperation = 'source-over';
+	ctx.fillStyle = 'rgba(8,5,16,0.4)';
+	ctx.fillRect(0, 0, ctx.canvas.width, ctx.canvas.height);
+	ctx.globalCompositeOperation = 'lighter';
+	ctx.strokeStyle = 'hsla(' + Math.round(hue.update()) + ',90%,50%,0.25)';
+	ctx.lineWidth = 1;
+	
+	if(ctx.frame % 60 == 0) {
+		console.log(hue.update(), Math.round(hue.update()), hue.phase, hue.offset, hue.frequency, hue.amplitude);
+	}
+	
+	for(var i = 0, tendril; i < settings.trails; i++) {
+		tendril = tendrils[i];
+		tendril.update();
+		tendril.draw();
+	}
+	
+	ctx.frame++;
+	ctx.stats.update();
+	requestAnimFrame(loop);
+}
+
+function resize() {
+	ctx.canvas.width = window.innerWidth;
+	ctx.canvas.height = window.innerHeight;
+}
+
+function start() {
+	if(!ctx.running) {
+		ctx.running = true;
+		loop();
+	}
+}
+
+function stop() {
+	ctx.running = false;
+}
+
+function mousemove(event) {
+	if(event.touches) {
+		target.x = event.touches[0].pageX;
+		target.y = event.touches[0].pageY;
+	} else {
+		target.x = event.clientX
+		target.y = event.clientY;
+	}
+	event.preventDefault();
+}
+
+function touchstart(event) {
+	if(event.touches.length == 1) {
+		target.x = event.touches[0].pageX;
+		target.y = event.touches[0].pageY;
+	}
+}
+
+function keyup(event) {
+	
+	switch(event.keyCode) {
+		case 32:
+			save();
+			break;
+		default: 
+			// console.log(event.keyCode);
+	}
+}
+
+function letters(id) {
+
+	var el = document.getElementById(id),
+		letters = el.innerHTML.replace('&amp;', '&').split(''),
+		heading = '';
+	
+	for(var i = 0, n = letters.length, letter; i < n; i++) {
+		letter = letters[i].replace('&', '&amp');
+		heading += letter.trim() ? '<span class="letter-' + i + '">' + letter + '</span>' : '&nbsp;';
+	}
+	
+	el.innerHTML = heading;
+	setTimeout(function() { 
+		el.className = 'transition-in';	
+	}, (Math.random() * 500) + 500);
+}
+
+function save() {
+
+	if(!buffer) {
+		
+		buffer = document.createElement('canvas');
+		buffer.width = screen.availWidth;
+		buffer.height = screen.availHeight;
+		buffer.ctx = buffer.getContext('2d');
+		
+		form = document.createElement('form');
+		form.method = 'post';
+		form.input = document.createElement('input');
+		form.input.type = 'hidden';
+		form.input.name = 'data';
+		form.appendChild(form.input);
+		
+		document.body.appendChild(form);
+	}
+
+	buffer.ctx.fillStyle = 'rgba(8,5,16)';
+	buffer.ctx.fillRect(0, 0, buffer.width, buffer.height);
+	
+	buffer.ctx.drawImage(canvas,
+		Math.round(buffer.width / 2 - canvas.width / 2), 
+		Math.round(buffer.height / 2 - canvas.height / 2)
+	);
+	
+	buffer.ctx.drawImage(logo,
+		Math.round(buffer.width / 2 - logo.width / 4), 
+		Math.round(buffer.height / 2 - logo.height / 4),
+		logo.width / 2,
+		logo.height / 2
+	);
+	
+	window.open(buffer.toDataURL(), 'wallpaper', 'top=0,left=0,width=' + buffer.width + ',height=' + buffer.height);
+	
+	// form.input.value = buffer.toDataURL().substr(22);
+	// form.submit();
+}
+
+window.requestAnimFrame = (function() {
+	return window.requestAnimationFrame || window.webkitRequestAnimationFrame || window.mozRequestAnimationFrame || function(fn) { window.setTimeout(fn, 1000 / 60) };
+})();
+
+window.onload = function() {
+	
+	ctx = document.getElementById('canvas').getContext('2d');
+	ctx.stats = new Stats();
+	ctx.running = true;
+	ctx.frame = 1;
+	
+	logo = new Image();
+<!--	logo.src = 'http://labs.nikrowell.com/lightsandmotion/ultraviolet/images/logo.png'; -->
+	
+	hue = new Oscillator({
+		phase: Math.random() * Math.TWO_PI,
+		amplitude: 85,
+		frequency: 0.0015,
+		offset: 285
+	});
+	
+	letters('h1');
+	letters('h2');
+	
+	document.addEventListener('mousemove', init);
+	document.addEventListener('touchstart', init);
+	document.body.addEventListener('orientationchange', resize);
+	window.addEventListener('resize', resize);
+	window.addEventListener('keyup', keyup);
+	window.addEventListener('focus', start);
+	window.addEventListener('blur', stop);
+	
+	resize();
+	
+	if(window.DEBUG) {
+		
+		var gui = new dat.GUI();
+		
+		// gui.add(settings, 'debug');
+		settings.gui.add(settings, 'trails', 1, 30).onChange(reset);
+		settings.gui.add(settings, 'size', 25, 75).onFinishChange(reset);
+		settings.gui.add(settings, 'friction', 0.45, 0.55).onFinishChange(reset);
+		settings.gui.add(settings, 'dampening', 0.01, 0.4).onFinishChange(reset);
+		settings.gui.add(settings, 'tension', 0.95, 0.999).onFinishChange(reset);	
+		
+		document.body.appendChild(ctx.stats.domElement);
+	}
+};
+
+})(window);
+
+</script>
+<canvas id="sakura"></canvas>
+<div class="btnbg">
+</div>
+
+<!-- sakura shader -->
+<script id="sakura_point_vsh" type="x-shader/x_vertex">
+uniform mat4 uProjection;
+uniform mat4 uModelview;
+uniform vec3 uResolution;
+uniform vec3 uOffset;
+uniform vec3 uDOF;  //x:focus distance, y:focus radius, z:max radius
+uniform vec3 uFade; //x:start distance, y:half distance, z:near fade start
+
+attribute vec3 aPosition;
+attribute vec3 aEuler;
+attribute vec2 aMisc; //x:size, y:fade
+
+varying vec3 pposition;
+varying float psize;
+varying float palpha;
+varying float pdist;
+
+//varying mat3 rotMat;
+varying vec3 normX;
+varying vec3 normY;
+varying vec3 normZ;
+varying vec3 normal;
+
+varying float diffuse;
+varying float specular;
+varying float rstop;
+varying float distancefade;
+
+void main(void) {
+    // Projection is based on vertical angle
+    vec4 pos = uModelview * vec4(aPosition + uOffset, 1.0);
+    gl_Position = uProjection * pos;
+    gl_PointSize = aMisc.x * uProjection[1][1] / -pos.z * uResolution.y * 0.5;
+    
+    pposition = pos.xyz;
+    psize = aMisc.x;
+    pdist = length(pos.xyz);
+    palpha = smoothstep(0.0, 1.0, (pdist - 0.1) / uFade.z);
+    
+    vec3 elrsn = sin(aEuler);
+    vec3 elrcs = cos(aEuler);
+    mat3 rotx = mat3(
+        1.0, 0.0, 0.0,
+        0.0, elrcs.x, elrsn.x,
+        0.0, -elrsn.x, elrcs.x
+    );
+    mat3 roty = mat3(
+        elrcs.y, 0.0, -elrsn.y,
+        0.0, 1.0, 0.0,
+        elrsn.y, 0.0, elrcs.y
+    );
+    mat3 rotz = mat3(
+        elrcs.z, elrsn.z, 0.0, 
+        -elrsn.z, elrcs.z, 0.0,
+        0.0, 0.0, 1.0
+    );
+    mat3 rotmat = rotx * roty * rotz;
+    normal = rotmat[2];
+    
+    mat3 trrotm = mat3(
+        rotmat[0][0], rotmat[1][0], rotmat[2][0],
+        rotmat[0][1], rotmat[1][1], rotmat[2][1],
+        rotmat[0][2], rotmat[1][2], rotmat[2][2]
+    );
+    normX = trrotm[0];
+    normY = trrotm[1];
+    normZ = trrotm[2];
+    
+    const vec3 lit = vec3(0.6917144638660746, 0.6917144638660746, -0.20751433915982237);
+    
+    float tmpdfs = dot(lit, normal);
+    if(tmpdfs < 0.0) {
+        normal = -normal;
+        tmpdfs = dot(lit, normal);
+    }
+    diffuse = 0.4 + tmpdfs;
+    
+    vec3 eyev = normalize(-pos.xyz);
+    if(dot(eyev, normal) > 0.0) {
+        vec3 hv = normalize(eyev + lit);
+        specular = pow(max(dot(hv, normal), 0.0), 20.0);
+    }
+    else {
+        specular = 0.0;
+    }
+    
+    rstop = clamp((abs(pdist - uDOF.x) - uDOF.y) / uDOF.z, 0.0, 1.0);
+    rstop = pow(rstop, 0.5);
+    //-0.69315 = ln(0.5)
+    distancefade = min(1.0, exp((uFade.x - pdist) * 0.69315 / uFade.y));
+}
+</script>
+<script id="sakura_point_fsh" type="x-shader/x_fragment">
+#ifdef GL_ES
+//precision mediump float;
+precision highp float;
+#endif
+
+uniform vec3 uDOF;  //x:focus distance, y:focus radius, z:max radius
+uniform vec3 uFade; //x:start distance, y:half distance, z:near fade start
+
+const vec3 fadeCol = vec3(0.08, 0.03, 0.06);
+
+varying vec3 pposition;
+varying float psize;
+varying float palpha;
+varying float pdist;
+
+//varying mat3 rotMat;
+varying vec3 normX;
+varying vec3 normY;
+varying vec3 normZ;
+varying vec3 normal;
+
+varying float diffuse;
+varying float specular;
+varying float rstop;
+varying float distancefade;
+
+float ellipse(vec2 p, vec2 o, vec2 r) {
+    vec2 lp = (p - o) / r;
+    return length(lp) - 1.0;
+}
+
+void main(void) {
+    vec3 p = vec3(gl_PointCoord - vec2(0.5, 0.5), 0.0) * 2.0;
+    vec3 d = vec3(0.0, 0.0, -1.0);
+    float nd = normZ.z; //dot(-normZ, d);
+    if(abs(nd) < 0.0001) discard;
+    
+    float np = dot(normZ, p);
+    vec3 tp = p + d * np / nd;
+    vec2 coord = vec2(dot(normX, tp), dot(normY, tp));
+    
+    //angle = 15 degree
+    const float flwrsn = 0.258819045102521;
+    const float flwrcs = 0.965925826289068;
+    mat2 flwrm = mat2(flwrcs, -flwrsn, flwrsn, flwrcs);
+    vec2 flwrp = vec2(abs(coord.x), coord.y) * flwrm;
+    
+    float r;
+    if(flwrp.x < 0.0) {
+        r = ellipse(flwrp, vec2(0.065, 0.024) * 0.5, vec2(0.36, 0.96) * 0.5);
+    }
+    else {
+        r = ellipse(flwrp, vec2(0.065, 0.024) * 0.5, vec2(0.58, 0.96) * 0.5);
+    }
+    
+    if(r > rstop) discard;
+    
+    vec3 col = mix(vec3(1.0, 0.8, 0.75), vec3(1.0, 0.9, 0.87), r);
+    float grady = mix(0.0, 1.0, pow(coord.y * 0.5 + 0.5, 0.35));
+    col *= vec3(1.0, grady, grady);
+    col *= mix(0.8, 1.0, pow(abs(coord.x), 0.3));
+    col = col * diffuse + specular;
+    
+    col = mix(fadeCol, col, distancefade);
+    
+    float alpha = (rstop > 0.001)? (0.5 - r / (rstop * 2.0)) : 1.0;
+    alpha = smoothstep(0.0, 1.0, alpha) * palpha;
+    
+    gl_FragColor = vec4(col * 0.5, alpha);
+}
+</script>
+<!-- effects -->
+<script id="fx_common_vsh" type="x-shader/x_vertex">
+uniform vec3 uResolution;
+attribute vec2 aPosition;
+
+varying vec2 texCoord;
+varying vec2 screenCoord;
+
+void main(void) {
+    gl_Position = vec4(aPosition, 0.0, 1.0);
+    texCoord = aPosition.xy * 0.5 + vec2(0.5, 0.5);
+    screenCoord = aPosition.xy * vec2(uResolution.z, 1.0);
+}
+</script>
+<script id="bg_fsh" type="x-shader/x_fragment">
+#ifdef GL_ES
+//precision mediump float;
+precision highp float;
+#endif
+
+uniform vec2 uTimes;
+
+varying vec2 texCoord;
+varying vec2 screenCoord;
+
+void main(void) {
+    vec3 col;
+    float c;
+    vec2 tmpv = texCoord * vec2(0.8, 1.0) - vec2(0.95, 1.0);
+    c = exp(-pow(length(tmpv) * 1.8, 2.0));
+    col = mix(vec3(0.02, 0.0, 0.03), vec3(0.96, 0.98, 1.0) * 1.5, c);
+    gl_FragColor = vec4(col * 0.5, 1.0);
+}
+</script>
+<script id="fx_brightbuf_fsh" type="x-shader/x_fragment">
+#ifdef GL_ES
+//precision mediump float;
+precision highp float;
+#endif
+uniform sampler2D uSrc;
+uniform vec2 uDelta;
+
+varying vec2 texCoord;
+varying vec2 screenCoord;
+
+void main(void) {
+    vec4 col = texture2D(uSrc, texCoord);
+    gl_FragColor = vec4(col.rgb * 2.0 - vec3(0.5), 1.0);
+}
+</script>
+<script id="fx_dirblur_r4_fsh" type="x-shader/x_fragment">
+#ifdef GL_ES
+//precision mediump float;
+precision highp float;
+#endif
+uniform sampler2D uSrc;
+uniform vec2 uDelta;
+uniform vec4 uBlurDir; //dir(x, y), stride(z, w)
+
+varying vec2 texCoord;
+varying vec2 screenCoord;
+
+void main(void) {
+    vec4 col = texture2D(uSrc, texCoord);
+    col = col + texture2D(uSrc, texCoord + uBlurDir.xy * uDelta);
+    col = col + texture2D(uSrc, texCoord - uBlurDir.xy * uDelta);
+    col = col + texture2D(uSrc, texCoord + (uBlurDir.xy + uBlurDir.zw) * uDelta);
+    col = col + texture2D(uSrc, texCoord - (uBlurDir.xy + uBlurDir.zw) * uDelta);
+    gl_FragColor = col / 5.0;
+}
+</script>
+<!-- effect fragment shader template -->
+<script id="fx_common_fsh" type="x-shader/x_fragment">
+#ifdef GL_ES
+//precision mediump float;
+precision highp float;
+#endif
+uniform sampler2D uSrc;
+uniform vec2 uDelta;
+
+varying vec2 texCoord;
+varying vec2 screenCoord;
+
+void main(void) {
+    gl_FragColor = texture2D(uSrc, texCoord);
+}
+</script>
+<!-- post processing -->
+<script id="pp_final_vsh" type="x-shader/x_vertex">
+uniform vec3 uResolution;
+attribute vec2 aPosition;
+varying vec2 texCoord;
+varying vec2 screenCoord;
+void main(void) {
+    gl_Position = vec4(aPosition, 0.0, 1.0);
+    texCoord = aPosition.xy * 0.5 + vec2(0.5, 0.5);
+    screenCoord = aPosition.xy * vec2(uResolution.z, 1.0);
+}
+</script>
+<script id="pp_final_fsh" type="x-shader/x_fragment">
+#ifdef GL_ES
+//precision mediump float;
+precision highp float;
+#endif
+uniform sampler2D uSrc;
+uniform sampler2D uBloom;
+uniform vec2 uDelta;
+varying vec2 texCoord;
+varying vec2 screenCoord;
+void main(void) {
+    vec4 srccol = texture2D(uSrc, texCoord) * 2.0;
+    vec4 bloomcol = texture2D(uBloom, texCoord);
+    vec4 col;
+    col = srccol + bloomcol * (vec4(1.0) + srccol);
+    col *= smoothstep(1.0, 0.0, pow(length((texCoord - vec2(0.5)) * 2.0), 1.2) * 0.5);
+    col = pow(col, vec4(0.45454545454545)); //(1.0 / 2.2)
+    
+    gl_FragColor = vec4(col.rgb, 1.0);
+    gl_FragColor.a = 1.0;
+}
+</script>
+  <script>
+  // Utilities
+var Vector3 = {};
+var Matrix44 = {};
+Vector3.create = function(x, y, z) {
+    return {'x':x, 'y':y, 'z':z};
+};
+Vector3.dot = function (v0, v1) {
+    return v0.x * v1.x + v0.y * v1.y + v0.z * v1.z;
+};
+Vector3.cross = function (v, v0, v1) {
+    v.x = v0.y * v1.z - v0.z * v1.y;
+    v.y = v0.z * v1.x - v0.x * v1.z;
+    v.z = v0.x * v1.y - v0.y * v1.x;
+};
+Vector3.normalize = function (v) {
+    var l = v.x * v.x + v.y * v.y + v.z * v.z;
+    if(l > 0.00001) {
+        l = 1.0 / Math.sqrt(l);
+        v.x *= l;
+        v.y *= l;
+        v.z *= l;
+    }
+};
+Vector3.arrayForm = function(v) {
+    if(v.array) {
+        v.array[0] = v.x;
+        v.array[1] = v.y;
+        v.array[2] = v.z;
+    }
+    else {
+        v.array = new Float32Array([v.x, v.y, v.z]);
+    }
+    return v.array;
+};
+Matrix44.createIdentity = function () {
+    return new Float32Array([1.0, 0.0, 0.0, 0.0, 0.0, 1.0, 0.0, 0.0, 0.0, 0.0, 1.0, 0.0, 0.0, 0.0, 0.0, 1.0]);
+};
+Matrix44.loadProjection = function (m, aspect, vdeg, near, far) {
+    var h = near * Math.tan(vdeg * Math.PI / 180.0 * 0.5) * 2.0;
+    var w = h * aspect;
+    
+    m[0] = 2.0 * near / w;
+    m[1] = 0.0;
+    m[2] = 0.0;
+    m[3] = 0.0;
+    
+    m[4] = 0.0;
+    m[5] = 2.0 * near / h;
+    m[6] = 0.0;
+    m[7] = 0.0;
+    
+    m[8] = 0.0;
+    m[9] = 0.0;
+    m[10] = -(far + near) / (far - near);
+    m[11] = -1.0;
+    
+    m[12] = 0.0;
+    m[13] = 0.0;
+    m[14] = -2.0 * far * near / (far - near);
+    m[15] = 0.0;
+};
+Matrix44.loadLookAt = function (m, vpos, vlook, vup) {
+    var frontv = Vector3.create(vpos.x - vlook.x, vpos.y - vlook.y, vpos.z - vlook.z);
+    Vector3.normalize(frontv);
+    var sidev = Vector3.create(1.0, 0.0, 0.0);
+    Vector3.cross(sidev, vup, frontv);
+    Vector3.normalize(sidev);
+    var topv = Vector3.create(1.0, 0.0, 0.0);
+    Vector3.cross(topv, frontv, sidev);
+    Vector3.normalize(topv);
+    
+    m[0] = sidev.x;
+    m[1] = topv.x;
+    m[2] = frontv.x;
+    m[3] = 0.0;
+    
+    m[4] = sidev.y;
+    m[5] = topv.y;
+    m[6] = frontv.y;
+    m[7] = 0.0;
+    
+    m[8] = sidev.z;
+    m[9] = topv.z;
+    m[11] = frontv.z;
+    m[11] = 0.0;
+    
+    m[12] = -(vpos.x * m[0] + vpos.y * m[4] + vpos.z * m[8]);
+    m[13] = -(vpos.x * m[1] + vpos.y * m[5] + vpos.z * m[9]);
+    m[14] = -(vpos.x * m[2] + vpos.y * m[6] + vpos.z * m[10]);
+    m[15] = 1.0;
+};
+
+//
+var timeInfo = {
+    'start':0, 'prev':0, // Date
+    'delta':0, 'elapsed':0 // Number(sec)
+};
+
+//
+var gl;
+var renderSpec = {
+    'width':0,
+    'height':0,
+    'aspect':1,
+    'array':new Float32Array(3),
+    'halfWidth':0,
+    'halfHeight':0,
+    'halfArray':new Float32Array(3)
+    // and some render targets. see setViewport()
+};
+renderSpec.setSize = function(w, h) {
+    renderSpec.width = w;
+    renderSpec.height = h;
+    renderSpec.aspect = renderSpec.width / renderSpec.height;
+    renderSpec.array[0] = renderSpec.width;
+    renderSpec.array[1] = renderSpec.height;
+    renderSpec.array[2] = renderSpec.aspect;
+    
+    renderSpec.halfWidth = Math.floor(w / 2);
+    renderSpec.halfHeight = Math.floor(h / 2);
+    renderSpec.halfArray[0] = renderSpec.halfWidth;
+    renderSpec.halfArray[1] = renderSpec.halfHeight;
+    renderSpec.halfArray[2] = renderSpec.halfWidth / renderSpec.halfHeight;
+};
+
+function deleteRenderTarget(rt) {
+    gl.deleteFramebuffer(rt.frameBuffer);
+    gl.deleteRenderbuffer(rt.renderBuffer);
+    gl.deleteTexture(rt.texture);
+}
+
+function createRenderTarget(w, h) {
+    var ret = {
+        'width':w,
+        'height':h,
+        'sizeArray':new Float32Array([w, h, w / h]),
+        'dtxArray':new Float32Array([1.0 / w, 1.0 / h])
+    };
+    ret.frameBuffer = gl.createFramebuffer();
+    ret.renderBuffer = gl.createRenderbuffer();
+    ret.texture = gl.createTexture();
+    
+    gl.bindTexture(gl.TEXTURE_2D, ret.texture);
+    gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGBA, w, h, 0, gl.RGBA, gl.UNSIGNED_BYTE, null);
+    gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_S, gl.CLAMP_TO_EDGE);
+    gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_T, gl.CLAMP_TO_EDGE);
+    gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MAG_FILTER, gl.LINEAR);
+    gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, gl.LINEAR);
+    
+    gl.bindFramebuffer(gl.FRAMEBUFFER, ret.frameBuffer);
+    gl.framebufferTexture2D(gl.FRAMEBUFFER, gl.COLOR_ATTACHMENT0, gl.TEXTURE_2D, ret.texture, 0);
+    
+    gl.bindRenderbuffer(gl.RENDERBUFFER, ret.renderBuffer);
+    gl.renderbufferStorage(gl.RENDERBUFFER, gl.DEPTH_COMPONENT16, w, h);
+    gl.framebufferRenderbuffer(gl.FRAMEBUFFER, gl.DEPTH_ATTACHMENT, gl.RENDERBUFFER, ret.renderBuffer);
+    
+    gl.bindTexture(gl.TEXTURE_2D, null);
+    gl.bindRenderbuffer(gl.RENDERBUFFER, null);
+    gl.bindFramebuffer(gl.FRAMEBUFFER, null);
+    
+    return ret;
+}
+
+function compileShader(shtype, shsrc) {
+    var retsh = gl.createShader(shtype);
+    
+    gl.shaderSource(retsh, shsrc);
+    gl.compileShader(retsh);
+    
+    if(!gl.getShaderParameter(retsh, gl.COMPILE_STATUS)) {
+        var errlog = gl.getShaderInfoLog(retsh);
+        gl.deleteShader(retsh);
+        console.error(errlog);
+        return null;
+    }
+    return retsh;
+}
+
+function createShader(vtxsrc, frgsrc, uniformlist, attrlist) {
+    var vsh = compileShader(gl.VERTEX_SHADER, vtxsrc);
+    var fsh = compileShader(gl.FRAGMENT_SHADER, frgsrc);
+    
+    if(vsh == null || fsh == null) {
+        return null;
+    }
+    
+    var prog = gl.createProgram();
+    gl.attachShader(prog, vsh);
+    gl.attachShader(prog, fsh);
+    
+    gl.deleteShader(vsh);
+    gl.deleteShader(fsh);
+    
+    gl.linkProgram(prog);
+    if (!gl.getProgramParameter(prog, gl.LINK_STATUS)) {
+        var errlog = gl.getProgramInfoLog(prog);
+        console.error(errlog);
+        return null;
+    }
+    
+    if(uniformlist) {
+        prog.uniforms = {};
+        for(var i = 0; i < uniformlist.length; i++) {
+            prog.uniforms[uniformlist[i]] = gl.getUniformLocation(prog, uniformlist[i]);
+        }
+    }
+    
+    if(attrlist) {
+        prog.attributes = {};
+        for(var i = 0; i < attrlist.length; i++) {
+            var attr = attrlist[i];
+            prog.attributes[attr] = gl.getAttribLocation(prog, attr);
+        }
+    }
+    
+    return prog;
+}
+
+function useShader(prog) {
+    gl.useProgram(prog);
+    for(var attr in prog.attributes) {
+        gl.enableVertexAttribArray(prog.attributes[attr]);;
+    }
+}
+
+function unuseShader(prog) {
+    for(var attr in prog.attributes) {
+        gl.disableVertexAttribArray(prog.attributes[attr]);;
+    }
+    gl.useProgram(null);
+}
+
+/////
+var projection = {
+    'angle':60,
+    'nearfar':new Float32Array([0.1, 100.0]),
+    'matrix':Matrix44.createIdentity()
+};
+var camera = {
+    'position':Vector3.create(0, 0, 100),
+    'lookat':Vector3.create(0, 0, 0),
+    'up':Vector3.create(0, 1, 0),
+    'dof':Vector3.create(10.0, 4.0, 8.0),
+    'matrix':Matrix44.createIdentity()
+};
+
+var pointFlower = {};
+var meshFlower = {};
+var sceneStandBy = false;
+
+var BlossomParticle = function () {
+    this.velocity = new Array(3);
+    this.rotation = new Array(3);
+    this.position = new Array(3);
+    this.euler = new Array(3);
+    this.size = 1.0;
+    this.alpha = 1.0;
+    this.zkey = 0.0;
+};
+
+BlossomParticle.prototype.setVelocity = function (vx, vy, vz) {
+    this.velocity[0] = vx;
+    this.velocity[1] = vy;
+    this.velocity[2] = vz;
+};
+
+BlossomParticle.prototype.setRotation = function (rx, ry, rz) {
+    this.rotation[0] = rx;
+    this.rotation[1] = ry;
+    this.rotation[2] = rz;
+};
+
+BlossomParticle.prototype.setPosition = function (nx, ny, nz) {
+    this.position[0] = nx;
+    this.position[1] = ny;
+    this.position[2] = nz;
+};
+
+BlossomParticle.prototype.setEulerAngles = function (rx, ry, rz) {
+    this.euler[0] = rx;
+    this.euler[1] = ry;
+    this.euler[2] = rz;
+};
+
+BlossomParticle.prototype.setSize = function (s) {
+    this.size = s;
+};
+
+BlossomParticle.prototype.update = function (dt, et) {
+    this.position[0] += this.velocity[0] * dt;
+    this.position[1] += this.velocity[1] * dt;
+    this.position[2] += this.velocity[2] * dt;
+    
+    this.euler[0] += this.rotation[0] * dt;
+    this.euler[1] += this.rotation[1] * dt;
+    this.euler[2] += this.rotation[2] * dt;
+};
+
+function createPointFlowers() {
+    // get point sizes
+    var prm = gl.getParameter(gl.ALIASED_POINT_SIZE_RANGE);
+    renderSpec.pointSize = {'min':prm[0], 'max':prm[1]};
+    
+    var vtxsrc = document.getElementById("sakura_point_vsh").textContent;
+    var frgsrc = document.getElementById("sakura_point_fsh").textContent;
+    
+    pointFlower.program = createShader(
+        vtxsrc, frgsrc,
+        ['uProjection', 'uModelview', 'uResolution', 'uOffset', 'uDOF', 'uFade'],
+        ['aPosition', 'aEuler', 'aMisc']
+    );
+    
+    useShader(pointFlower.program);
+    pointFlower.offset = new Float32Array([0.0, 0.0, 0.0]);
+    pointFlower.fader = Vector3.create(0.0, 10.0, 0.0);
+    
+    // paramerters: velocity[3], rotate[3]
+    pointFlower.numFlowers = 1600;
+    pointFlower.particles = new Array(pointFlower.numFlowers);
+    // vertex attributes {position[3], euler_xyz[3], size[1]}
+    pointFlower.dataArray = new Float32Array(pointFlower.numFlowers * (3 + 3 + 2));
+    pointFlower.positionArrayOffset = 0;
+    pointFlower.eulerArrayOffset = pointFlower.numFlowers * 3;
+    pointFlower.miscArrayOffset = pointFlower.numFlowers * 6;
+    
+    pointFlower.buffer = gl.createBuffer();
+    gl.bindBuffer(gl.ARRAY_BUFFER, pointFlower.buffer);
+    gl.bufferData(gl.ARRAY_BUFFER, pointFlower.dataArray, gl.DYNAMIC_DRAW);
+    gl.bindBuffer(gl.ARRAY_BUFFER, null);
+    
+    unuseShader(pointFlower.program);
+    
+    for(var i = 0; i < pointFlower.numFlowers; i++) {
+        pointFlower.particles[i] = new BlossomParticle();
+    }
+}
+
+function initPointFlowers() {
+    //area
+    pointFlower.area = Vector3.create(20.0, 20.0, 20.0);
+    pointFlower.area.x = pointFlower.area.y * renderSpec.aspect;
+    
+    pointFlower.fader.x = 10.0; //env fade start
+    pointFlower.fader.y = pointFlower.area.z; //env fade half
+    pointFlower.fader.z = 0.1;  //near fade start
+    
+    //particles
+    var PI2 = Math.PI * 2.0;
+    var tmpv3 = Vector3.create(0, 0, 0);
+    var tmpv = 0;
+    var symmetryrand = function() {return (Math.random() * 2.0 - 1.0);};
+    for(var i = 0; i < pointFlower.numFlowers; i++) {
+        var tmpprtcl = pointFlower.particles[i];
+        
+        //velocity
+        tmpv3.x = symmetryrand() * 0.3 + 0.8;
+        tmpv3.y = symmetryrand() * 0.2 - 1.0;
+        tmpv3.z = symmetryrand() * 0.3 + 0.5;
+        Vector3.normalize(tmpv3);
+        tmpv = 2.0 + Math.random() * 1.0;
+        tmpprtcl.setVelocity(tmpv3.x * tmpv, tmpv3.y * tmpv, tmpv3.z * tmpv);
+        
+        //rotation
+        tmpprtcl.setRotation(
+            symmetryrand() * PI2 * 0.5,
+            symmetryrand() * PI2 * 0.5,
+            symmetryrand() * PI2 * 0.5
+        );
+        
+        //position
+        tmpprtcl.setPosition(
+            symmetryrand() * pointFlower.area.x,
+            symmetryrand() * pointFlower.area.y,
+            symmetryrand() * pointFlower.area.z
+        );
+        
+        //euler
+        tmpprtcl.setEulerAngles(
+            Math.random() * Math.PI * 2.0,
+            Math.random() * Math.PI * 2.0,
+            Math.random() * Math.PI * 2.0
+        );
+        
+        //size
+        tmpprtcl.setSize(0.9 + Math.random() * 0.1);
+    }
+}
+
+function renderPointFlowers() {
+    //update
+    var PI2 = Math.PI * 2.0;
+    var limit = [pointFlower.area.x, pointFlower.area.y, pointFlower.area.z];
+    var repeatPos = function (prt, cmp, limit) {
+        if(Math.abs(prt.position[cmp]) - prt.size * 0.5 > limit) {
+            //out of area
+            if(prt.position[cmp] > 0) {
+                prt.position[cmp] -= limit * 2.0;
+            }
+            else {
+                prt.position[cmp] += limit * 2.0;
+            }
+        }
+    };
+    var repeatEuler = function (prt, cmp) {
+        prt.euler[cmp] = prt.euler[cmp] % PI2;
+        if(prt.euler[cmp] < 0.0) {
+            prt.euler[cmp] += PI2;
+        }
+    };
+    
+    for(var i = 0; i < pointFlower.numFlowers; i++) {
+        var prtcl = pointFlower.particles[i];
+        prtcl.update(timeInfo.delta, timeInfo.elapsed);
+        repeatPos(prtcl, 0, pointFlower.area.x);
+        repeatPos(prtcl, 1, pointFlower.area.y);
+        repeatPos(prtcl, 2, pointFlower.area.z);
+        repeatEuler(prtcl, 0);
+        repeatEuler(prtcl, 1);
+        repeatEuler(prtcl, 2);
+        
+        prtcl.alpha = 1.0;//(pointFlower.area.z - prtcl.position[2]) * 0.5;
+        
+        prtcl.zkey = (camera.matrix[2] * prtcl.position[0]
+                    + camera.matrix[6] * prtcl.position[1]
+                    + camera.matrix[10] * prtcl.position[2]
+                    + camera.matrix[14]);
+    }
+    
+    // sort
+    pointFlower.particles.sort(function(p0, p1){return p0.zkey - p1.zkey;});
+    
+    // update data
+    var ipos = pointFlower.positionArrayOffset;
+    var ieuler = pointFlower.eulerArrayOffset;
+    var imisc = pointFlower.miscArrayOffset;
+    for(var i = 0; i < pointFlower.numFlowers; i++) {
+        var prtcl = pointFlower.particles[i];
+        pointFlower.dataArray[ipos] = prtcl.position[0];
+        pointFlower.dataArray[ipos + 1] = prtcl.position[1];
+        pointFlower.dataArray[ipos + 2] = prtcl.position[2];
+        ipos += 3;
+        pointFlower.dataArray[ieuler] = prtcl.euler[0];
+        pointFlower.dataArray[ieuler + 1] = prtcl.euler[1];
+        pointFlower.dataArray[ieuler + 2] = prtcl.euler[2];
+        ieuler += 3;
+        pointFlower.dataArray[imisc] = prtcl.size;
+        pointFlower.dataArray[imisc + 1] = prtcl.alpha;
+        imisc += 2;
+    }
+    
+    //draw
+    gl.enable(gl.BLEND);
+    //gl.disable(gl.DEPTH_TEST);
+    gl.blendFunc(gl.SRC_ALPHA, gl.ONE_MINUS_SRC_ALPHA);
+    
+    var prog = pointFlower.program;
+    useShader(prog);
+    
+    gl.uniformMatrix4fv(prog.uniforms.uProjection, false, projection.matrix);
+    gl.uniformMatrix4fv(prog.uniforms.uModelview, false, camera.matrix);
+    gl.uniform3fv(prog.uniforms.uResolution, renderSpec.array);
+    gl.uniform3fv(prog.uniforms.uDOF, Vector3.arrayForm(camera.dof));
+    gl.uniform3fv(prog.uniforms.uFade, Vector3.arrayForm(pointFlower.fader));
+    
+    gl.bindBuffer(gl.ARRAY_BUFFER, pointFlower.buffer);
+    gl.bufferData(gl.ARRAY_BUFFER, pointFlower.dataArray, gl.DYNAMIC_DRAW);
+    
+    gl.vertexAttribPointer(prog.attributes.aPosition, 3, gl.FLOAT, false, 0, pointFlower.positionArrayOffset * Float32Array.BYTES_PER_ELEMENT);
+    gl.vertexAttribPointer(prog.attributes.aEuler, 3, gl.FLOAT, false, 0, pointFlower.eulerArrayOffset * Float32Array.BYTES_PER_ELEMENT);
+    gl.vertexAttribPointer(prog.attributes.aMisc, 2, gl.FLOAT, false, 0, pointFlower.miscArrayOffset * Float32Array.BYTES_PER_ELEMENT);
+    
+    // doubler
+    for(var i = 1; i < 2; i++) {
+        var zpos = i * -2.0;
+        pointFlower.offset[0] = pointFlower.area.x * -1.0;
+        pointFlower.offset[1] = pointFlower.area.y * -1.0;
+        pointFlower.offset[2] = pointFlower.area.z * zpos;
+        gl.uniform3fv(prog.uniforms.uOffset, pointFlower.offset);
+        gl.drawArrays(gl.POINT, 0, pointFlower.numFlowers);
+        
+        pointFlower.offset[0] = pointFlower.area.x * -1.0;
+        pointFlower.offset[1] = pointFlower.area.y *  1.0;
+        pointFlower.offset[2] = pointFlower.area.z * zpos;
+        gl.uniform3fv(prog.uniforms.uOffset, pointFlower.offset);
+        gl.drawArrays(gl.POINT, 0, pointFlower.numFlowers);
+        
+        pointFlower.offset[0] = pointFlower.area.x *  1.0;
+        pointFlower.offset[1] = pointFlower.area.y * -1.0;
+        pointFlower.offset[2] = pointFlower.area.z * zpos;
+        gl.uniform3fv(prog.uniforms.uOffset, pointFlower.offset);
+        gl.drawArrays(gl.POINT, 0, pointFlower.numFlowers);
+        
+        pointFlower.offset[0] = pointFlower.area.x *  1.0;
+        pointFlower.offset[1] = pointFlower.area.y *  1.0;
+        pointFlower.offset[2] = pointFlower.area.z * zpos;
+        gl.uniform3fv(prog.uniforms.uOffset, pointFlower.offset);
+        gl.drawArrays(gl.POINT, 0, pointFlower.numFlowers);
+    }
+    
+    //main
+    pointFlower.offset[0] = 0.0;
+    pointFlower.offset[1] = 0.0;
+    pointFlower.offset[2] = 0.0;
+    gl.uniform3fv(prog.uniforms.uOffset, pointFlower.offset);
+    gl.drawArrays(gl.POINT, 0, pointFlower.numFlowers);
+    
+    gl.bindBuffer(gl.ARRAY_BUFFER, null);
+    unuseShader(prog);
+    
+    gl.enable(gl.DEPTH_TEST);
+    gl.disable(gl.BLEND);
+}
+
+// effects
+//common util
+function createEffectProgram(vtxsrc, frgsrc, exunifs, exattrs) {
+    var ret = {};
+    var unifs = ['uResolution', 'uSrc', 'uDelta'];
+    if(exunifs) {
+        unifs = unifs.concat(exunifs);
+    }
+    var attrs = ['aPosition'];
+    if(exattrs) {
+        attrs = attrs.concat(exattrs);
+    }
+    
+    ret.program = createShader(vtxsrc, frgsrc, unifs, attrs);
+    useShader(ret.program);
+    
+    ret.dataArray = new Float32Array([
+        -1.0, -1.0,
+         1.0, -1.0,
+        -1.0,  1.0,
+         1.0,  1.0
+    ]);
+    ret.buffer = gl.createBuffer();
+    gl.bindBuffer(gl.ARRAY_BUFFER, ret.buffer);
+    gl.bufferData(gl.ARRAY_BUFFER, ret.dataArray, gl.STATIC_DRAW);
+    
+    gl.bindBuffer(gl.ARRAY_BUFFER, null);
+    unuseShader(ret.program);
+    
+    return ret;
+}
+
+// basic usage
+// useEffect(prog, srctex({'texture':texid, 'dtxArray':(f32)[dtx, dty]})); //basic initialize
+// gl.uniform**(...); //additional uniforms
+// drawEffect()
+// unuseEffect(prog)
+// TEXTURE0 makes src
+function useEffect(fxobj, srctex) {
+    var prog = fxobj.program;
+    useShader(prog);
+    gl.uniform3fv(prog.uniforms.uResolution, renderSpec.array);
+    
+    if(srctex != null) {
+        gl.uniform2fv(prog.uniforms.uDelta, srctex.dtxArray);
+        gl.uniform1i(prog.uniforms.uSrc, 0);
+        
+        gl.activeTexture(gl.TEXTURE0);
+        gl.bindTexture(gl.TEXTURE_2D, srctex.texture);
+    }
+}
+function drawEffect(fxobj) {
+    gl.bindBuffer(gl.ARRAY_BUFFER, fxobj.buffer);
+    gl.vertexAttribPointer(fxobj.program.attributes.aPosition, 2, gl.FLOAT, false, 0, 0);
+    gl.drawArrays(gl.TRIANGLE_STRIP, 0, 4);
+}
+function unuseEffect(fxobj) {
+    unuseShader(fxobj.program);
+}
+
+var effectLib = {};
+function createEffectLib() {
+    
+    var vtxsrc, frgsrc;
+    //common
+    var cmnvtxsrc = document.getElementById("fx_common_vsh").textContent;
+    
+    //background
+    frgsrc = document.getElementById("bg_fsh").textContent;
+    effectLib.sceneBg = createEffectProgram(cmnvtxsrc, frgsrc, ['uTimes'], null);
+    
+    // make brightpixels buffer
+    frgsrc = document.getElementById("fx_brightbuf_fsh").textContent;
+    effectLib.mkBrightBuf = createEffectProgram(cmnvtxsrc, frgsrc, null, null);
+    
+    // direction blur
+    frgsrc = document.getElementById("fx_dirblur_r4_fsh").textContent;
+    effectLib.dirBlur = createEffectProgram(cmnvtxsrc, frgsrc, ['uBlurDir'], null);
+    
+    //final composite
+    vtxsrc = document.getElementById("pp_final_vsh").textContent;
+    frgsrc = document.getElementById("pp_final_fsh").textContent;
+    effectLib.finalComp = createEffectProgram(vtxsrc, frgsrc, ['uBloom'], null);
+}
+
+// background
+function createBackground() {
+    //console.log("create background");
+}
+function initBackground() {
+    //console.log("init background");
+}
+function renderBackground() {
+    gl.disable(gl.DEPTH_TEST);
+    
+    useEffect(effectLib.sceneBg, null);
+    gl.uniform2f(effectLib.sceneBg.program.uniforms.uTimes, timeInfo.elapsed, timeInfo.delta);
+    drawEffect(effectLib.sceneBg);
+    unuseEffect(effectLib.sceneBg);
+    
+    gl.enable(gl.DEPTH_TEST);
+}
+
+// post process
+var postProcess = {};
+function createPostProcess() {
+    //console.log("create post process");
+}
+function initPostProcess() {
+    //console.log("init post process");
+}
+
+function renderPostProcess() {
+    gl.enable(gl.TEXTURE_2D);
+    gl.disable(gl.DEPTH_TEST);
+    var bindRT = function (rt, isclear) {
+        gl.bindFramebuffer(gl.FRAMEBUFFER, rt.frameBuffer);
+        gl.viewport(0, 0, rt.width, rt.height);
+        if(isclear) {
+            gl.clearColor(0, 0, 0, 0);
+            gl.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT);
+        }
+    };
+    
+    //make bright buff
+    bindRT(renderSpec.wHalfRT0, true);
+    useEffect(effectLib.mkBrightBuf, renderSpec.mainRT);
+    drawEffect(effectLib.mkBrightBuf);
+    unuseEffect(effectLib.mkBrightBuf);
+    
+    // make bloom
+    for(var i = 0; i < 2; i++) {
+        var p = 1.5 + 1 * i;
+        var s = 2.0 + 1 * i;
+        bindRT(renderSpec.wHalfRT1, true);
+        useEffect(effectLib.dirBlur, renderSpec.wHalfRT0);
+        gl.uniform4f(effectLib.dirBlur.program.uniforms.uBlurDir, p, 0.0, s, 0.0);
+        drawEffect(effectLib.dirBlur);
+        unuseEffect(effectLib.dirBlur);
+        
+        bindRT(renderSpec.wHalfRT0, true);
+        useEffect(effectLib.dirBlur, renderSpec.wHalfRT1);
+        gl.uniform4f(effectLib.dirBlur.program.uniforms.uBlurDir, 0.0, p, 0.0, s);
+        drawEffect(effectLib.dirBlur);
+        unuseEffect(effectLib.dirBlur);
+    }
+    
+    //display
+    gl.bindFramebuffer(gl.FRAMEBUFFER, null);
+    gl.viewport(0, 0, renderSpec.width, renderSpec.height);
+    gl.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT);
+    
+    useEffect(effectLib.finalComp, renderSpec.mainRT);
+    gl.uniform1i(effectLib.finalComp.program.uniforms.uBloom, 1);
+    gl.activeTexture(gl.TEXTURE1);
+    gl.bindTexture(gl.TEXTURE_2D, renderSpec.wHalfRT0.texture);
+    drawEffect(effectLib.finalComp);
+    unuseEffect(effectLib.finalComp);
+    
+    gl.enable(gl.DEPTH_TEST);
+}
+
+/////
+var SceneEnv = {};
+function createScene() {
+    createEffectLib();
+    createBackground();
+    createPointFlowers();
+    createPostProcess();
+    sceneStandBy = true;
+}
+
+function initScene() {
+    initBackground();
+    initPointFlowers();
+    initPostProcess();
+    
+    //camera.position.z = 17.320508;
+    camera.position.z = pointFlower.area.z + projection.nearfar[0];
+    projection.angle = Math.atan2(pointFlower.area.y, camera.position.z + pointFlower.area.z) * 180.0 / Math.PI * 2.0;
+    Matrix44.loadProjection(projection.matrix, renderSpec.aspect, projection.angle, projection.nearfar[0], projection.nearfar[1]);
+}
+
+function renderScene() {
+    //draw
+    Matrix44.loadLookAt(camera.matrix, camera.position, camera.lookat, camera.up);
+    
+    gl.enable(gl.DEPTH_TEST);
+    
+    //gl.bindFramebuffer(gl.FRAMEBUFFER, null);
+    gl.bindFramebuffer(gl.FRAMEBUFFER, renderSpec.mainRT.frameBuffer);
+    gl.viewport(0, 0, renderSpec.mainRT.width, renderSpec.mainRT.height);
+    gl.clearColor(0.005, 0, 0.05, 0);
+    gl.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT);
+    
+    renderBackground();
+    renderPointFlowers();
+    renderPostProcess();
+}
+
+/////
+function onResize(e) {
+    makeCanvasFullScreen(document.getElementById("sakura"));
+    setViewports();
+    if(sceneStandBy) {
+        initScene();
+    }
+}
+
+function setViewports() {
+    renderSpec.setSize(gl.canvas.width, gl.canvas.height);
+    
+    gl.clearColor(0.2, 0.2, 0.5, 1.0);
+    gl.viewport(0, 0, renderSpec.width, renderSpec.height);
+    
+    var rtfunc = function (rtname, rtw, rth) {
+        var rt = renderSpec[rtname];
+        if(rt) deleteRenderTarget(rt);
+        renderSpec[rtname] = createRenderTarget(rtw, rth);
+    };
+    rtfunc('mainRT', renderSpec.width, renderSpec.height);
+    rtfunc('wFullRT0', renderSpec.width, renderSpec.height);
+    rtfunc('wFullRT1', renderSpec.width, renderSpec.height);
+    rtfunc('wHalfRT0', renderSpec.halfWidth, renderSpec.halfHeight);
+    rtfunc('wHalfRT1', renderSpec.halfWidth, renderSpec.halfHeight);
+}
+
+function render() {
+    renderScene();
+}
+
+var animating = true;
+function toggleAnimation(elm) {
+    animating ^= true;
+    if(animating) animate();
+    if(elm) {
+        elm.innerHTML = animating? "Stop":"Start";
+    }
+}
+
+function stepAnimation() {
+    if(!animating) animate();
+}
+
+function animate() {
+    var curdate = new Date();
+    timeInfo.elapsed = (curdate - timeInfo.start) / 1000.0;
+    timeInfo.delta = (curdate - timeInfo.prev) / 1000.0;
+    timeInfo.prev = curdate;
+    
+    if(animating) requestAnimationFrame(animate);
+    render();
+}
+
+function makeCanvasFullScreen(canvas) {
+    var b = document.body;
+    var d = document.documentElement;
+    fullw = Math.max(b.clientWidth , b.scrollWidth, d.scrollWidth, d.clientWidth);
+    fullh = Math.max(b.clientHeight , b.scrollHeight, d.scrollHeight, d.clientHeight);
+    canvas.width = fullw;
+    canvas.height = fullh;
+}
+
+window.addEventListener('load', function(e) {
+    var canvas = document.getElementById("sakura");
+    try {
+        makeCanvasFullScreen(canvas);
+        gl = canvas.getContext('experimental-webgl');
+    } catch(e) {
+        alert("WebGL not supported." + e);
+        console.error(e);
+        return;
+    }
+    
+    window.addEventListener('resize', onResize);
+    
+    setViewports();
+    createScene();
+    initScene();
+    
+    timeInfo.start = new Date();
+    timeInfo.prev = timeInfo.start;
+    animate();
+});
+
+//set window.requestAnimationFrame
+(function (w, r) {
+    w['r'+r] = w['r'+r] || w['webkitR'+r] || w['mozR'+r] || w['msR'+r] || w['oR'+r] || function(c){ w.setTimeout(c, 1000 / 60); };
+})(window, 'equestAnimationFrame');
+  </script>
+</body>
+</html>
+</div><link rel="stylesheet" href="https://cdnjs.loli.net/ajax/libs/social-share.js/1.0.16/css/share.min.css"><div class="social-share"></div><script src="https://cdnjs.loli.net/ajax/libs/social-share.js/1.0.16/js/social-share.min.js"></script></article></div><div class="card"><div class="card-content"><h3 class="menu-label has-text-centered">喜欢这篇文章？打赏一下作者吧</h3><div class="buttons is-centered"><a class="button is-info donate"><span class="icon is-small"><i class="fab fa-alipay"></i></span><span>支付宝</span><span class="qrcode"><img src="https://yichenxiu.com/tupian/tubiao/alipay1.jpg" alt="支付宝"></span></a><a class="button is-success donate"><span class="icon is-small"><i class="fab fa-weixin"></i></span><span>微信</span><span class="qrcode"><img src="https://i.328888.xyz/2023/03/05/dZXCk.jpeg" alt="微信"></span></a></div></div></div><div class="card"><div class="card-content"><h3 class="title is-5">评论</h3><div id="comment-container"></div><link rel="stylesheet" href="https://cdnjs.loli.net/ajax/libs/gitalk/1.6.0/gitalk.css"><script> $.getScript('/js/gitalk.min.js', function () { 
+            var gitalk = new Gitalk({
+            language:'zh-CN',
+            id: 'c8b1d594f6b0d2552d9eb8675daeeee1',
+            repo: 'issue_database',
+            owner: 'zhi666',
+            clientID: '1b861f81e9a79ee6028d',
+            clientSecret: 'cc629aff090aa9c60d5e13ddf7fcfce14f00a478',
+            admin: ["zhi666"],
+            createIssueManually: true,
+            distractionFreeMode: true,
+            perPage: 10,
+            pagerDirection: 'last',
+            proxy: 'https://cors-anywhere.azm.workers.dev/https://github.com/login/oauth/access_token',
+            
+            enableHotKey: true,
+            isLocked: false
+        })
+        gitalk.render('comment-container')});</script></div></div></div><div class="column column-left is-4-tablet is-4-desktop is-4-widescreen  order-1 is-sticky"><!--!--><div class="card widget"><div class="card-content"><nav class="level"><div class="level-item has-text-centered flex-shrink-1"><div><figure class="image is-128x128 mx-auto mb-2"><img class="is-rounded" src="/img/toudong.jpg" alt="逸尘秀"></figure><p class="title is-size-4 is-block line-height-inherit">逸尘秀</p><p class="is-size-6 is-block">只此一生 ， 必须快乐 ！</p><p class="is-size-6 is-flex justify-content-center"><i class="fas fa-map-marker-alt mr-1"></i><span>深圳</span></p></div></div></nav><nav class="level is-mobile"><div class="level-item has-text-centered is-marginless"><div><p class="heading">文章</p><a href="/archives"><p class="title">136</p></a></div></div><div class="level-item has-text-centered is-marginless"><div><p class="heading">分类</p><a href="/categories"><p class="title">17</p></a></div></div><div class="level-item has-text-centered is-marginless"><div><p class="heading">标签</p><a href="/tags"><p class="title">55</p></a></div></div></nav><div class="level"><a class="level-item button is-primary is-rounded" href="https://weibo.com/u/6155656382" target="_blank" rel="noopener">关注我</a></div><div class="level is-mobile"><a class="level-item button is-transparent is-white is-marginless" target="_blank" rel="noopener" title="Github" href="https://github.com/zhi666"><i class="fab fa-github"></i></a><a class="level-item button is-transparent is-white is-marginless" target="_blank" rel="noopener" title="Weibo" href="https://weibo.com/u/6155656382"><i class="fab fa-weibo"></i></a><a class="level-item button is-transparent is-white is-marginless" target="_blank" rel="noopener" title="Email" href="mailto:1378373724@qq.com"><i class="fa fa-envelope"></i></a><a class="level-item button is-transparent is-white is-marginless" target="_blank" rel="noopener" title="Next" href="https://zhi666.github.io/remove.io"><i class="fab fa-dribbble"></i></a><a class="level-item button is-transparent is-white is-marginless" target="_blank" rel="noopener" title="RSS" href="/atom.xml"><i class="fas fa-rss"></i></a></div><div><hr><p id="hitokoto">:D 一言句子获取中...</p><script type="text/javascript" defer>function getYiyan(){
+                                $.getJSON("https://v1.hitokoto.cn/", function (data) {
+                                if(data){
+                                    $('#hitokoto').html("");
+                                    $('#hitokoto').append("<strong style='color: #3273dc;'>"+data.hitokoto+"</strong>"+
+                                    "<p>"+"来源《"+data.from+"》</p><p>提供者-"+data.creator+"</p>");
+                                }});}
+                                $(function (){getYiyan();$('#hitokoto').click(function(){getYiyan();})});</script></div></div></div><div class="card widget"><div class="card-content"><h3 class="menu-label">最新评论</h3><span class="body_hot_comment">加载中，最新评论有1分钟缓存...</span></div></div><div class="card widget"><div class="card-content"><h3 class="menu-label">最新文章</h3><article class="media"><div class="media-content size-small"><p><time dateTime="2023-11-01T02:25:44.578Z">2023-11-01</time></p><p class="title is-6"><a class="link-muted" href="/2023/11/01/selenlium%E6%89%B9%E9%87%8F%E6%B7%BB%E5%8A%A0dns%E5%9F%9F%E5%90%8D/">批量添加dns域名解析</a></p><p class="is-uppercase"><i class="fas fa-folder-open has-text-grey"> </i><a class="link-muted" href="/categories/python/">python</a></p></div></article><article class="media"><div class="media-content size-small"><p><time dateTime="2023-05-17T01:45:36.000Z">2023-05-17</time></p><p class="title is-6"><a class="link-muted" href="/2023/05/17/Kubernetes%E9%AB%98%E5%8F%AF%E7%94%A8%E9%9B%86%E7%BE%A4%E4%BA%8C%E8%BF%9B%E5%88%B6%E9%83%A8%E7%BD%B2/">Kubernetes高可用集群二进制部署</a></p><p class="is-uppercase"><i class="fas fa-folder-open has-text-grey"> </i><a class="link-muted" href="/categories/linux3/">linux3</a></p></div></article><article class="media"><div class="media-content size-small"><p><time dateTime="2023-05-10T06:25:36.000Z">2023-05-10</time></p><p class="title is-6"><a class="link-muted" href="/2023/05/10/Prometheus%E4%BD%BF%E7%94%A8%E6%89%8B%E6%9C%BA%E7%94%B5%E8%AF%9D_%E7%9F%AD%E4%BF%A1%E6%8E%A5%E6%94%B6%E5%91%8A%E8%AD%A6%E9%80%9A%E7%9F%A5/">Prometheus使用手机电话_短信接收告警通知</a></p><p class="is-uppercase"><i class="fas fa-folder-open has-text-grey"> </i><a class="link-muted" href="/categories/linux2/">linux2</a></p></div></article><article class="media"><div class="media-content size-small"><p><time dateTime="2023-05-10T06:22:36.000Z">2023-05-10</time></p><p class="title is-6"><a class="link-muted" href="/2023/05/10/Prometheus%E4%BD%BF%E7%94%A8%E4%BC%81%E4%B8%9A%E5%BE%AE%E4%BF%A1%E6%8E%A5%E6%94%B6%E5%91%8A%E8%AD%A6%E9%80%9A%E7%9F%A5/">Prometheus使用企业微信接收告警通知</a></p><p class="is-uppercase"><i class="fas fa-folder-open has-text-grey"> </i><a class="link-muted" href="/categories/linux2/">linux2</a></p></div></article><article class="media"><div class="media-content size-small"><p><time dateTime="2023-05-10T06:20:36.000Z">2023-05-10</time></p><p class="title is-6"><a class="link-muted" href="/2023/05/10/Prometheus%E4%BD%BF%E7%94%A8%E4%BC%81%E4%B8%9A%E9%92%89%E9%92%89%E5%91%8A%E8%AD%A6%E9%80%9A%E7%9F%A5/">Prometheus使用企业钉钉接收告警通知</a></p><p class="is-uppercase"><i class="fas fa-folder-open has-text-grey"> </i><a class="link-muted" href="/categories/linux2/">linux2</a></p></div></article></div></div><div class="card widget"><div class="card-content"><div class="menu"><h3 class="menu-label">分类</h3><ul class="menu-list"><li><a class="level is-mobile is-marginless" href="/categories/English/"><span class="level-start"><span class="level-item">English</span></span><span class="level-end"><span class="level-item tag">1</span></span></a></li><li><a class="level is-mobile is-marginless" href="/categories/HTML/"><span class="level-start"><span class="level-item">HTML</span></span><span class="level-end"><span class="level-item tag">4</span></span></a></li><li><a class="level is-mobile is-marginless" href="/categories/JS/"><span class="level-start"><span class="level-item">JS</span></span><span class="level-end"><span class="level-item tag">2</span></span></a></li><li><a class="level is-mobile is-marginless" href="/categories/html/"><span class="level-start"><span class="level-item">html</span></span><span class="level-end"><span class="level-item tag">1</span></span></a></li><li><a class="level is-mobile is-marginless" href="/categories/linux1/"><span class="level-start"><span class="level-item">linux1</span></span><span class="level-end"><span class="level-item tag">15</span></span></a></li><li><a class="level is-mobile is-marginless" href="/categories/linux2/"><span class="level-start"><span class="level-item">linux2</span></span><span class="level-end"><span class="level-item tag">33</span></span></a></li><li><a class="level is-mobile is-marginless" href="/categories/linux3/"><span class="level-start"><span class="level-item">linux3</span></span><span class="level-end"><span class="level-item tag">27</span></span></a></li><li><a class="level is-mobile is-marginless" href="/categories/python/"><span class="level-start"><span class="level-item">python</span></span><span class="level-end"><span class="level-item tag">12</span></span></a></li><li><a class="level is-mobile is-marginless" href="/categories/web/"><span class="level-start"><span class="level-item">web</span></span><span class="level-end"><span class="level-item tag">1</span></span></a></li><li><a class="level is-mobile is-marginless" href="/categories/work/"><span class="level-start"><span class="level-item">work</span></span><span class="level-end"><span class="level-item tag">7</span></span></a></li><a class="level is-mobile is-marginless" href="/categories/"><span class="level-start"><span class="level-item">查看全部&gt;&gt;</span></span></a></ul></div></div></div><div class="card widget"><div class="card-content"><div class="menu"><h3 class="menu-label">归档</h3><ul class="menu-list"><li><a class="level is-mobile is-marginless" href="/archives/2023/11/"><span class="level-start"><span class="level-item">十一月 2023</span></span><span class="level-end"><span class="level-item tag">5</span></span></a></li><li><a class="level is-mobile is-marginless" href="/archives/2023/05/"><span class="level-start"><span class="level-item">五月 2023</span></span><span class="level-end"><span class="level-item tag">13</span></span></a></li><li><a class="level is-mobile is-marginless" href="/archives/2023/04/"><span class="level-start"><span class="level-item">四月 2023</span></span><span class="level-end"><span class="level-item tag">2</span></span></a></li><li><a class="level is-mobile is-marginless" href="/archives/2023/02/"><span class="level-start"><span class="level-item">二月 2023</span></span><span class="level-end"><span class="level-item tag">1</span></span></a></li><li><a class="level is-mobile is-marginless" href="/archives/2022/06/"><span class="level-start"><span class="level-item">六月 2022</span></span><span class="level-end"><span class="level-item tag">3</span></span></a></li><a class="level is-mobile is-marginless" href="/archives/"><span class="level-start"><span class="level-item">查看全部&gt;&gt;</span></span></a></ul></div></div></div><div class="card widget"><div class="card-content"><div class="menu"><h3 class="menu-label">标签</h3><div class="field is-grouped is-grouped-multiline"><div class="control"><a class="tags has-addons" href="/tags/linux/"><span class="tag">linux</span><span class="tag is-grey-lightest">18</span></a></div><div class="control"><a class="tags has-addons" href="/tags/docker/"><span class="tag">docker</span><span class="tag is-grey-lightest">16</span></a></div><div class="control"><a class="tags has-addons" href="/tags/Prometheus/"><span class="tag">Prometheus</span><span class="tag is-grey-lightest">14</span></a></div><div class="control"><a class="tags has-addons" href="/tags/html/"><span class="tag">html</span><span class="tag is-grey-lightest">14</span></a></div><div class="control"><a class="tags has-addons" href="/tags/python/"><span class="tag">python</span><span class="tag is-grey-lightest">12</span></a></div><div class="control"><a class="tags has-addons" href="/tags/web/"><span class="tag">web</span><span class="tag is-grey-lightest">12</span></a></div><div class="control"><a class="tags has-addons" href="/tags/nginx/"><span class="tag">nginx</span><span class="tag is-grey-lightest">9</span></a></div><div class="control"><a class="tags has-addons" href="/tags/mysql/"><span class="tag">mysql</span><span class="tag is-grey-lightest">7</span></a></div><div class="control"><a class="tags has-addons" href="/tags/%E5%AE%B9%E5%99%A8/"><span class="tag">容器</span><span class="tag is-grey-lightest">7</span></a></div><div class="control"><a class="tags has-addons" href="/tags/%E6%95%B0%E6%8D%AE%E5%BA%93/"><span class="tag">数据库</span><span class="tag is-grey-lightest">7</span></a></div><div class="control"><a class="tags has-addons" href="/tags/%E7%A7%91%E5%AD%A6%E4%B8%8A%E7%BD%91/"><span class="tag">科学上网</span><span class="tag is-grey-lightest">6</span></a></div><div class="control"><a class="tags has-addons" href="/tags/work/"><span class="tag">work</span><span class="tag is-grey-lightest">5</span></a></div><div class="control"><a class="tags has-addons" href="/tags/%E8%87%AA%E5%8A%A8%E5%8C%96/"><span class="tag">自动化</span><span class="tag is-grey-lightest">5</span></a></div><div class="control"><a class="tags has-addons" href="/tags/%E5%8D%9A%E5%AE%A2/"><span class="tag">博客</span><span class="tag is-grey-lightest">4</span></a></div><div class="control"><a class="tags has-addons" href="/tags/%E5%B7%A5%E4%BD%9C/"><span class="tag">工作</span><span class="tag is-grey-lightest">4</span></a></div><div class="control"><a class="tags has-addons" href="/tags/%E5%B7%A5%E5%85%B7/"><span class="tag">工具</span><span class="tag is-grey-lightest">4</span></a></div><div class="control"><a class="tags has-addons" href="/tags/ssl/"><span class="tag">ssl</span><span class="tag is-grey-lightest">3</span></a></div><div class="control"><a class="tags has-addons" href="/tags/%E6%96%87%E4%BB%B6%E7%B3%BB%E7%BB%9F/"><span class="tag">文件系统</span><span class="tag is-grey-lightest">3</span></a></div><div class="control"><a class="tags has-addons" href="/tags/%E6%97%A5%E5%BF%97/"><span class="tag">日志</span><span class="tag is-grey-lightest">3</span></a></div><div class="control"><a class="tags has-addons" href="/tags/%E6%97%A5%E5%BF%97%E5%8A%A0%E5%AF%86/"><span class="tag">日志加密</span><span class="tag is-grey-lightest">3</span></a></div></div><div class="field is-grouped is-grouped-multiline"><a class="tags has-addons" href="/tags/"><span class="tag">查看全部&gt;&gt;</span></a></div></div></div></div><div class="card widget"><div class="card-content"><div class="menu"><h3 class="menu-label">订阅更新</h3><form action="https://feedburner.google.com/fb/a/mailverify" method="post" target="popupwindow" onsubmit="window.open(&#039;https://feedburner.google.com/fb/a/mailverify?uri=zhi666FeedsId&#039;,&#039;popupwindow&#039;,&#039;scrollbars=yes,width=550,height=520&#039;);return true"><input type="hidden" value="zhi666FeedsId" name="uri"><input type="hidden" name="loc" value="en_US"><div class="field has-addons"><div class="control has-icons-left is-expanded"><input class="input" name="email" type="email" placeholder="Email"><span class="icon is-small is-left"><i class="fas fa-envelope"></i></span></div><div class="control"><input class="button is-primary" type="submit" value="订阅"></div></div><p class="help">输入邮箱开始订阅，更博后邮件通知！</p></form></div></div></div></div></div></div></section><footer class="footer"><div class="container"><div class="level"><div class="level-start"><a class="footer-logo is-block mb-2" href="/"><img src="/img/logo.png" alt="逸尘秀" height="28"></a><p class="size-small"><span>&copy; 2023 yichen</span>  Powered by <a href="https://hexo.io/" target="_blank">Hexo</a> &amp; <a href="https://github.com/ppoffice/hexo-theme-icarus" target="_blank">Icarus</a>,Modify by <a href="https://github.com/removeif/hexo-theme-amazing" target="_blank">removeif</a> <br><span>© 版权说明：[本网站所有内容均收集于互联网或自己创作,<br />&nbsp;&nbsp;&nbsp;&nbsp;方便于网友与自己学习交流，如有侵权，请<a href="/message" target="_blank">留言</a>，立即处理]<br /></span><span><span id="statistic-times">loading...</span><script>function createTime(time) {
+            var n = new Date(time);
+            now.setTime(now.getTime() + 250),
+                days = (now - n) / 1e3 / 60 / 60 / 24,
+                dnum = Math.floor(days),
+                hours = (now - n) / 1e3 / 60 / 60 - 24 * dnum,
+                hnum = Math.floor(hours),
+            1 == String(hnum).length && (hnum = "0" + hnum),
+                minutes = (now - n) / 1e3 / 60 - 1440 * dnum - 60 * hnum,
+                mnum = Math.floor(minutes),
+            1 == String(mnum).length && (mnum = "0" + mnum),
+                seconds = (now - n) / 1e3 - 86400 * dnum - 3600 * hnum - 60 * mnum,
+                snum = Math.round(seconds),
+            1 == String(snum).length && (snum = "0" + snum),
+                document.getElementById("statistic-times").innerHTML = "❤️本站自 <strong>"+time.split(" ")[0].replace(/\//g,".")+"</strong> 已运行 <strong>" + dnum + "</strong> 天 <strong>" + hnum + "</strong> 小时 <strong>" + mnum + "</strong> 分 <strong>" + snum + "</strong> 秒！❤️";
+        }var now = new Date();setInterval("createTime('2020/08/02 00:00:00')", 250,"");</script><br></span><div class="size-small"><span>❤️感谢 <strong><span id="busuanzi_value_site_uv">99+</span></strong> 小伙伴的 <strong><span id="busuanzi_value_site_pv">99+</span></strong> 次光临！❤️</span></div></p></div><div class="level-end"><div class="field has-addons"><p class="control"><a class="button is-transparent is-large" target="_blank" rel="noopener" title="Creative Commons" href="https://creativecommons.org/"><i class="fab fa-creative-commons"></i></a></p><p class="control"><a class="button is-transparent is-large" target="_blank" rel="noopener" title="Attribution 4.0 International" href="https://creativecommons.org/licenses/by/4.0/"><i class="fab fa-creative-commons-by"></i></a></p><p class="control"><a class="button is-transparent is-large" target="_blank" rel="noopener" title="Download on GitHub" href="https://github.com/zhi666"><i class="fab fa-github"></i></a></p></div><div class="sideMusic"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/aplayer/dist/APlayer.min.css"><script src="/js/APlayer.min.js"></script><script src="https://cdn.jsdelivr.net/npm/meting@2/dist/Meting.min.js"></script><meting-js style="width: auto;height: 2000px;" server="netease" type="playlist" id="2364053447" theme="#2980b9" loop="all" autoplay="false" order="list" storageName="aplayer-setting" lrctype="0" list-max-height="400px" fixed="true"></meting-js></div></div></div></div></footer><script src="https://cdnjs.loli.net/ajax/libs/moment.js/2.22.2/moment-with-locales.min.js"></script><script>moment.locale("zh-CN");</script><script>var IcarusThemeSettings = {
+            site: {
+                url: 'https://yc6.cool',
+                external_link: {"enable":true,"exclude":[]}
+            },
+            article: {
+                highlight: {
+                    clipboard: true,
+                    fold: 'unfolded'
+                }
+            }
+        };</script><script src="https://cdnjs.loli.net/ajax/libs/clipboard.js/2.0.4/clipboard.min.js" defer></script><script src="/js/animation.js"></script><a id="back-to-top" title="回到顶端" href="javascript:;"><i class="fas fa-chevron-up"></i></a><script src="/js/back-to-top.js" defer></script><!--!--><!--!--><script src="https://cdnjs.loli.net/ajax/libs/lightgallery/1.6.12/js/lightgallery-all.min.js" defer></script><script src="https://cdnjs.loli.net/ajax/libs/justifiedGallery/3.7.0/js/jquery.justifiedGallery.min.js" defer></script><!--!--><!--!--><!--!--><script src="/js/toc.js" defer></script><script src="/js/main.js" defer></script><script>$.getScript('/js/comment-issue-data.js',function(){loadIssueData('1b861f81e9a79ee6028d','cc629aff090aa9c60d5e13ddf7fcfce14f00a478','zhi666','issue_database',false);})</script><link rel="stylesheet" href="/css/insight.css"><div class="searchbox ins-search"><div class="searchbox-container ins-search-container"><div class="searchbox-input-wrapper"><input class="searchbox-input ins-search-input" type="text" placeholder="想要查找什么..."><span class="searchbox-close ins-close ins-selectable"><i class="fa fa-times-circle"></i></span></div><div class="searchbox-result-wrapper ins-section-wrapper"><div class="ins-section-container"></div></div></div></div><script>(function (window) {
+            var INSIGHT_CONFIG = {
+                TRANSLATION: {
+                    POSTS: '文章',
+                    PAGES: '页面',
+                    CATEGORIES: '分类',
+                    TAGS: '标签',
+                    UNTITLED: '(无标题)',
+                },
+                CONTENT_URL: '/content.json',
+            };
+            window.INSIGHT_CONFIG = INSIGHT_CONFIG;
+        })(window);</script><script src="/js/insight.js" defer></script></body></html>

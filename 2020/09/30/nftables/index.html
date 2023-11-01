@@ -1,0 +1,465 @@
+<!doctype html>
+<html lang="zh"><head><meta charset="utf-8"><meta name="generator" content="Hexo 4.2.0"><meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"><meta><meta name="keywords" content="[object Object]"><meta name="description" content="nftables使用在 nftables 中，所有地址族都遵循一个规则。与 iptables 不同，nftables 在用户空间中运行，iptables 中的每个模块都运行在内核（空间）中。它很少需要更新内核，并带有一些新功能，例如映射、地址族和字典。"><meta name="author" content="zhi666"><title>nftables - 逸尘秀</title><meta description="nftables使用在 nftables 中，所有地址族都遵循一个规则。与 iptables 不同，nftables 在用户空间中运行，iptables 中的每个模块都运行在内核（空间）中。它很少需要更新内核，并带有一些新功能，例如映射、地址族和字典。"><meta property="og:type" content="article"><meta property="og:title" content="nftables"><meta property="og:url" content="https://yc6.cool/2020/09/30/nftables/"><meta property="og:site_name" content="逸尘秀"><meta property="og:description" content="nftables使用在 nftables 中，所有地址族都遵循一个规则。与 iptables 不同，nftables 在用户空间中运行，iptables 中的每个模块都运行在内核（空间）中。它很少需要更新内核，并带有一些新功能，例如映射、地址族和字典。"><meta property="og:locale" content="zh_CN"><meta property="article:published_time" content="2020-09-30T10:35:36.000Z"><meta property="article:modified_time" content="2023-11-01T02:25:44.573Z"><meta property="article:author" content="zhi666"><meta property="article:tag" content="防火墙"><meta property="article:tag" content="网络"><meta property="twitter:card" content="summary"><meta property="twitter:image" content="https://yc6.cool/img/avatar.png"><script type="application/ld+json">{"@context":"https://schema.org","@type":"BlogPosting","mainEntityOfPage":{"@type":"WebPage","@id":"https://yc6.cool/2020/09/30/nftables/"},"headline":"nftables","image":["https://yc6.cool/img/avatar.png"],"datePublished":"2020-09-30T10:35:36.000Z","dateModified":"2023-11-01T02:25:44.573Z","author":{"@type":"Person","name":"zhi666"},"description":"nftables使用在 nftables 中，所有地址族都遵循一个规则。与 iptables 不同，nftables 在用户空间中运行，iptables 中的每个模块都运行在内核（空间）中。它很少需要更新内核，并带有一些新功能，例如映射、地址族和字典。"}</script><link rel="alternative" href="/atom.xml" title="逸尘秀" type="application/atom+xml"><link rel="icon" href="/img/favicon.png"><link rel="stylesheet" href="https://cdnjs.loli.net/ajax/libs/font-awesome/5.12.0/css/all.min.css"><link rel="stylesheet" href="https://fonts.loli.net/css?family=Ubuntu:400,600|Source+Code+Pro|Monda:300,300italic,400,400italic,700,700italic|Roboto Slab:300,300italic,400,400italic,700,700italic|Microsoft YaHei:300,300italic,400,400italic,700,700italic|PT Mono:300,300italic,400,400italic,700,700italic&amp;amp;subset=latin,latin-ext|Inconsolata|Itim|Lobster.css"><link rel="stylesheet" href="https://cdnjs.loli.net/ajax/libs/highlight.js/9.12.0/styles/atom-one-dark.min.css"><style>body>.footer,body>.navbar,body>.section{opacity:0}</style><!--!--><!--!--><script src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js" defer></script><link rel="stylesheet" href="https://cdnjs.loli.net/ajax/libs/lightgallery/1.6.12/css/lightgallery.min.css"><link rel="stylesheet" href="https://cdnjs.loli.net/ajax/libs/justifiedGallery/3.7.0/css/justifiedGallery.min.css"><!--!--><!--!--><script src="https://cdnjs.loli.net/ajax/libs/pace/1.0.2/pace.min.js"></script><link rel="stylesheet" href="/css/style.css"><script src="https://cdnjs.loli.net/ajax/libs/jquery/3.3.1/jquery.min.js"></script><script src="/js/globalUtils.js"></script><link rel="stylesheet" href="/live2d/waifu.css"><script type="text/javascript" async src="/live2d/autoload.js"></script></head><body class="is-3-column has-navbar-fixed-top"><nav class="navbar navbar-main is-fixed-top"><div class="container"><div class="navbar-brand justify-content-center"><a class="navbar-item navbar-logo" href="/"><img src="/img/logo.png" alt="逸尘秀" height="28"></a></div><div class="navbar-menu"><div class="navbar-start"><a class="navbar-item" href="/">首页</a><a class="navbar-item" href="/archives">归档</a><a class="navbar-item" href="/categories">分类</a><a class="navbar-item" href="/tags">标签</a><a class="navbar-item" href="/media">影音</a><a class="navbar-item" href="/album">相册</a><a class="navbar-item" href="/friend">友链</a><a class="navbar-item" href="/self-talking">碎碎念</a><a class="navbar-item" href="/message">留言</a><a class="navbar-item" href="/about">关于</a></div><div class="navbar-end"><a class="navbar-item" target="_blank" rel="noopener" title="Download on GitHub" href="https://github.com/zhi666"><i class="fab fa-github"></i></a><a class="navbar-item search" title="搜索" href="javascript:;"><i class="fas fa-search"></i></a><a class="navbar-item" id="night-nav" title="Night Mode" href="javascript:;"><i class="fas fa-moon" id="night-icon"></i></a></div></div></div></nav><script type="text/javascript" src="/js/theme-setting.js"></script><section class="section"><div class="container"><div class="columns"><div class="column order-2 column-main is-8-tablet is-8-desktop is-9-widescreen"><div class="card"><article class="card-content article" role="article"><div class="article-meta size-small is-uppercase level is-mobile"><div class="level-left"><i class="far fa-calendar-plus"> </i>2020-09-30  <a class="commentCountImg" href="/2020/09/30/nftables/#comment-container"><span class="display-none-class">90491944a9e0ca3403cc2644d59cc62c</span><i class="far fa-comment-dots"></i> <span class="commentCount" id="90491944a9e0ca3403cc2644d59cc62c">99+</span>  </a><span class="level-item"><i class="far fa-clock"> </i>39 分钟  <i class="fas fa-pencil-alt"> </i>5.8 k</span><span class="level-item" id="busuanzi_container_page_pv"><i class="far fa-eye"></i>&nbsp;&nbsp;<span id="busuanzi_value_page_pv">0</span>次访问</span></div></div><h1 class="title is-3 is-size-4-mobile">nftables</h1><div class="content"><h2 id="nftables使用"><a href="#nftables使用" class="headerlink" title="nftables使用"></a>nftables使用</h2><p>在 nftables 中，所有地址族都遵循一个规则。与 iptables 不同，nftables 在用户空间中运行，iptables 中的每个模块都运行在内核（空间）中。它很少需要更新内核，并带有一些新功能，例如映射、地址族和字典。</p>
+<a id="more"></a>
+<p><strong>地址族</strong></p>
+<p>地址族确定要处理的数据包的类型。在 nftables 中有六个地址族，它们是</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">ip  ipv6  inet  arp  bridge  netdev</span><br></pre></td></tr></table></figure>
+
+<p>在 nftables 中，ipv4 和 ipv6 协议可以被合并为一个称为 inet 的单一地址族。因此，我们不需要指定两个规则：一个用于 ipv4，另一个用于 ipv6。如果未指定地址族，它将默认为 ip 协议，即 ipv4。我们感兴趣的领域是 inet 地址族，因为大多数家庭用户将使用 ipv4 或 ipv6 协议。</p>
+<p><strong>nftables</strong></p>
+<p>典型的 nftables 规则包含三个部分：表、链和规则。</p>
+<p>表是链和规则的容器。它们由其地址族和名称来标识。链包含 inet/arp/bridge/netdev 等协议所需的规则，并具有三种类型：过滤器、NAT 和路由。nftables 规则可以从脚本加载，也可以在终端键入，然后另存为规则集。</p>
+<p>对于家庭用户，默认链为过滤器。inet 系列包含以下钩子:</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">input output forward pre-routing post-routing</span><br></pre></td></tr></table></figure>
+
+<p>nftables 使用一个名为 nft 的程序来添加、创建、列出、删除和加载规则。</p>
+<p>nft 需要以 root 身份运行或使用 sudo 运行。使用以下命令分别列出、刷新、删除规则集和加载脚本。</p>
+<h3 id="命令的使用"><a href="#命令的使用" class="headerlink" title="命令的使用"></a>命令的使用</h3><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line">列出所有规则集 </span><br><span class="line">nft list ruleset</span><br><span class="line">清空规则</span><br><span class="line">nft flush ruleset</span><br><span class="line">删除规则集</span><br><span class="line">nft delete table inet filter</span><br><span class="line">加载脚本</span><br><span class="line">nft -f &#x2F;etc&#x2F;nftables&#x2F;default.nft</span><br><span class="line"></span><br><span class="line">把当前规则加载到配置文件</span><br><span class="line">nft list ruleset &gt; &#x2F;etc&#x2F;nftables&#x2F;defalut.nft</span><br><span class="line"></span><br><span class="line">重启</span><br><span class="line">systemctl restart nftables</span><br></pre></td></tr></table></figure>
+
+<p><strong>输入策略</strong></p>
+<p>就像 iptables 一样，防火墙将包含三部分：输入（input）、转发（forward）和输出（output）。在终端中，为输入（input）策略键入以下命令。在开始之前，请确保已刷新规则集。我们的默认策略将会删除所有内容。我们将在防火墙中使用 inet 地址族。将以下规则以 root 身份添加或使用 sudo 运行：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">增加一张表</span><br><span class="line">nft add table inet filter</span><br><span class="line">增加规则</span><br><span class="line">nft add chain inet filter input &#123; type filter hook input priority 0 \; counter \; policy drop \; &#125;</span><br><span class="line"></span><br><span class="line">你会注意到有一个名为 priority 0 的东西。这意味着赋予该规则更高的优先级。挂钩通常赋予负整数，这意味着更高的优先级。每个挂钩都有自己的优先级，过滤器链的优先级为 0。你可以检查 nftables Wiki 页面以查看每个挂钩的优先级。</span><br></pre></td></tr></table></figure>
+
+<h3 id="表（Tables）"><a href="#表（Tables）" class="headerlink" title="表（Tables）"></a>表（Tables）</h3><p>表包含<a href="https://wiki.archlinux.org/index.php/Nftables_(%E7%AE%80%E4%BD%93%E4%B8%AD%E6%96%87)#%E9%93%BE">#链</a>[<a href="https://wiki.archlinux.org/index.php/ArchWiki:Requests#Broken_section_links">断开的链接</a>：无效的部分]。与iptables中的表不同，nftables中没有内置表。表的数量和名称由用户决定。但是，每个表只有一个地址簇，并且只适用于该簇的数据包。表可以指定五个簇中的一个：</p>
+<table>
+<thead>
+<tr>
+<th align="center">nftables簇</th>
+<th align="center">iptables实用程序</th>
+</tr>
+</thead>
+<tbody><tr>
+<td align="center">ip</td>
+<td align="center">iptables</td>
+</tr>
+<tr>
+<td align="center">ip6</td>
+<td align="center">ip6tables</td>
+</tr>
+<tr>
+<td align="center">inet</td>
+<td align="center">iptables和ip6tables</td>
+</tr>
+<tr>
+<td align="center">arp</td>
+<td align="center">arptables</td>
+</tr>
+<tr>
+<td align="center">bridge</td>
+<td align="center">ebtables</td>
+</tr>
+</tbody></table>
+<p><code>ip</code>（即IPv4）是默认簇，如果未指定簇，则使用该簇。</p>
+<p>要创建同时适用于IPv4和IPv6的规则，请使用<code>inet</code>。<code>inet</code>允许统一<code>ip</code>和<code>ip6</code>簇，以便更容易地定义规则。</p>
+<p><strong>注意：</strong> <code>inet</code>不能用于<code>nat</code>类型的链，只能用于<code>filter</code>类型的链。（<a href="http://www.spinics.net/lists/netfilter/msg56411.html">source</a>）</p>
+<p>有关地址簇的完整描述，请参见<a href="https://jlk.fjfi.cvut.cz/arch/manpages/man/nft.8">nft(8)</a>中的<code>ADDRESS FAMILIES</code>章节。</p>
+<p><strong>在以下情况中，<code>family</code>是可选的，如果未指定则设为<code>ip</code>。</strong></p>
+<p><strong>创建表</strong></p>
+<p>创建一个新的表：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"># nft add table family table</span><br><span class="line">我设置为inet类型的表 表名为 filter</span><br><span class="line">nft add table inet filter</span><br></pre></td></tr></table></figure>
+
+<p><strong>列出表</strong></p>
+<p>列出所有表：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"># nft list tables</span><br></pre></td></tr></table></figure>
+
+<p><strong>列出表中的链和规则</strong></p>
+<p>列出指定表中的所有链和规则：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"># nft list table inet filter</span><br></pre></td></tr></table></figure>
+
+<p>例如，要列出<code>inet</code>簇中<code>filter</code>表中的所有规则：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"># nft list table inet filter</span><br></pre></td></tr></table></figure>
+
+<p><strong>删除表</strong></p>
+<p>删除一个表：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"># nft delete table family table</span><br></pre></td></tr></table></figure>
+
+<p>只能删除不包含链的表。</p>
+<p><strong>清空表</strong></p>
+<p>要清空一个表中的所有规则：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"># nft flush table family table</span><br></pre></td></tr></table></figure>
+
+<h3 id="链（Chains）"><a href="#链（Chains）" class="headerlink" title="链（Chains）"></a>链（Chains）</h3><p>链的目的是保存<a href="https://wiki.archlinux.org/index.php/Nftables_(%E7%AE%80%E4%BD%93%E4%B8%AD%E6%96%87)#%E8%A7%84%E5%88%99">#规则</a>[<a href="https://wiki.archlinux.org/index.php/ArchWiki:Requests#Broken_section_links">断开的链接</a>：无效的部分]。与iptables中的链不同，nftables没有内置链。这意味着与iptables不同，如果链没有使用netfilter框架中的任何类型或钩子，则流经这些链的数据包不会被nftables触及。</p>
+<p>链有两种类型。<em>基本</em>链是来自网络栈的数据包的入口点，其中指定了钩子值。<em>常规</em>链可以作为更好地处理的跳转目标。</p>
+<p>在以下情况中，<code>*family*</code>是可选的，如果未指定则设为<code>ip</code>。</p>
+<p>创建链</p>
+<p><strong>常规链</strong></p>
+<p>将名为<code>*chain*</code>的常规链添加到名为<code>*filter*</code>的表中：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"># nft add chain family filter chain</span><br></pre></td></tr></table></figure>
+
+<p>例如，将名为<code>input</code>的常规链添加到<code>inet</code>簇中名为<code>filter</code>的表中：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"># nft add chain inet filter input</span><br><span class="line"></span><br><span class="line">nft delete chain inet filter input   删除</span><br></pre></td></tr></table></figure>
+
+<p><strong>基本链</strong></p>
+<p>添加基本链，需要指定钩子和优先级值：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"># nft add chain family table chain &#123; type type hook hook priority priority \; &#125;</span><br></pre></td></tr></table></figure>
+
+<p><code>*type*</code>可以是<code>filter</code>、<code>route</code>或者<code>nat</code>。</p>
+<p>IPv4/IPv6/Inet地址簇中，<code>*hook*</code>可以是<code>prerouting</code>、<code>input</code>、<code>forward</code>、<code>output</code>或者<code>postrouting</code>。其他地址簇中的钩子列表请参见<a href="https://jlk.fjfi.cvut.cz/arch/manpages/man/nft.8">nft(8)</a>。</p>
+<p><code>*priority*</code>采用整数值。数字较小的链优先处理，并且可以是负数。[<a href="https://wiki.nftables.org/wiki-nftables/index.php/Configuring_chains#Base_chain_types">3]</a></p>
+<p>例如，添加筛选输入数据包的基本链：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"># nft add chain inet filter input &#123; type filter hook input priority 0\; &#125;</span><br><span class="line">增加一个output钩子</span><br><span class="line">nft add chain inet filter output &#123; type filter hook output priority 0\; &#125;</span><br></pre></td></tr></table></figure>
+
+<p>将上面命令中的<code>add</code>替换为<code>create</code>则可以添加一个新的链，但如果链已经存在，则返回错误。</p>
+<p>列出规则</p>
+<p>列出一个链中的所有规则：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"># nft list chain family table chain</span><br></pre></td></tr></table></figure>
+
+<p>例如，要列出<code>inet</code>中<code>filter</code>表的<code>output</code>链中的所有规则：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"># nft list chain inet filter output</span><br></pre></td></tr></table></figure>
+
+<p>编辑链</p>
+<p>要编辑一个链，只需按名称调用并定义要更改的规则。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"># nft chain family table chain &#123; [ type type hook hook device device priority priority \; policy &lt;policy&gt; \; ] &#125;</span><br></pre></td></tr></table></figure>
+
+<p>例如，将默认表中的input链策略从<code>accept</code>更改为<code>drop</code>：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"># nft chain inet filter input &#123; policy drop \; &#125;</span><br></pre></td></tr></table></figure>
+
+<p><strong>删除链</strong></p>
+<p>删除一个链：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"># nft delete chain inet filter output</span><br></pre></td></tr></table></figure>
+
+<p><strong>清空链中的规则</strong></p>
+<p>清空一个链的规则：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"># nft flush chain inet  filter output</span><br></pre></td></tr></table></figure>
+
+<h3 id="规则（Rules）"><a href="#规则（Rules）" class="headerlink" title="规则（Rules）"></a>规则（Rules）</h3><p>规则由语句或表达式构成，包含在链中。</p>
+<p><strong>添加规则</strong></p>
+<p><strong>提示：</strong> <em>iptables-translate</em>实用程序何以将<a href="https://wiki.archlinux.org/index.php/Iptables">iptables</a>规则转换成nftables格式。</p>
+<p>将一条规则添加到链中：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"># nft add rule family table chain handle handle statement</span><br></pre></td></tr></table></figure>
+
+<p>规则添加到<code>*handle*</code>处，这是可选的。如果不指定，则规则添加到链的末尾。</p>
+<p>将规则插入到指定位置：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"># nft insert rule family table chain handle handle statement</span><br></pre></td></tr></table></figure>
+
+<p>如果未指定<code>*handle*</code>，则规则插入到链的开头。</p>
+<p>例如：增加规则允许所有访问22端口</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">nft add rule inet filter input tcp dport 22 accept</span><br><span class="line">允许来源ip 192.168.224.0网段的访问</span><br><span class="line">nft add rule inet filter input ip saddr 192.168.224.0 tcp dport 22 accept</span><br><span class="line">允许 80-99端口放行</span><br><span class="line">nft add rule inet filter input tcp dport   80-99   accept</span><br></pre></td></tr></table></figure>
+
+
+
+<p><strong>表达式</strong></p>
+<p>通常情况下，<code>*statement*</code>包含一些要匹配的表达式，然后是判断语句。结论语句包括<code>accept</code>、<code>drop</code>、<code>queue</code>、<code>continue</code>、<code>return</code>、<code>jump *chain*</code>和<code>goto *chain*</code>。也可能是其他陈述。有关信息信息，请参阅<a href="https://jlk.fjfi.cvut.cz/arch/manpages/man/nft.8">nft(8)</a>。</p>
+<p>nftables中有多种可用的表达式，并且在大多数情况下，与iptables的对应项一致。最明显的区别是没有一般或隐式匹配。一般匹配是始终可用的匹配，如<code>--protocol</code>或<code>--source</code>。隐式匹配是用于特定协议的匹配，如TCP数据包的<code>--sport</code>。</p>
+<p>以下是可用匹配的部分列表：</p>
+<ul>
+<li>meta （元属性，如接口）</li>
+<li>icmp （ICMP协议）</li>
+<li>icmpv6 （ICMPv6协议）</li>
+<li>ip （IP协议）</li>
+<li>ip6 （IPv6协议）</li>
+<li>tcp （TCP协议）</li>
+<li>udp （UDP协议）</li>
+<li>sctp （SCTP协议）</li>
+<li>ct （链接跟踪）</li>
+</ul>
+<p>以下是匹配参数的部分列表（完整列表请参见<a href="https://jlk.fjfi.cvut.cz/arch/manpages/man/nft.8">nft(8)</a></p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br></pre></td><td class="code"><pre><span class="line">meta:</span><br><span class="line">  oif &lt;output interface INDEX&gt;</span><br><span class="line">  iif &lt;input interface INDEX&gt;</span><br><span class="line">  oifname &lt;output interface NAME&gt;</span><br><span class="line">  iifname &lt;input interface NAME&gt;</span><br><span class="line"></span><br><span class="line">  （oif 和 iif 接受字符串参数并转换为接口索引）</span><br><span class="line">  （oifname 和 iifname 更具动态性，但因字符串匹配速度更慢）</span><br><span class="line"></span><br><span class="line">icmp:</span><br><span class="line">  type &lt;icmp type&gt;</span><br><span class="line"></span><br><span class="line">icmpv6:</span><br><span class="line">  type &lt;icmpv6 type&gt;</span><br><span class="line"></span><br><span class="line">ip:</span><br><span class="line">  protocol &lt;protocol&gt;</span><br><span class="line">  daddr &lt;destination address&gt;</span><br><span class="line">  saddr &lt;source address&gt;</span><br><span class="line"></span><br><span class="line">ip6:</span><br><span class="line">  daddr &lt;destination address&gt;</span><br><span class="line">  saddr &lt;source address&gt;</span><br><span class="line"></span><br><span class="line">tcp:</span><br><span class="line">  dport &lt;destination port&gt;</span><br><span class="line">  sport &lt;source port&gt;</span><br><span class="line"></span><br><span class="line">udp:</span><br><span class="line">  dport &lt;destination port&gt;</span><br><span class="line">  sport &lt;source port&gt;</span><br><span class="line"></span><br><span class="line">sctp:</span><br><span class="line">  dport &lt;destination port&gt;</span><br><span class="line">  sport &lt;source port&gt;</span><br><span class="line"></span><br><span class="line">ct:</span><br><span class="line">  state &lt;new | established | related | invalid&gt;</span><br></pre></td></tr></table></figure>
+
+<p><strong>注意：</strong> <em>nft</em>不使用<code>/etc/services</code>文件匹配端口号和名称，而是使用<a href="https://git.netfilter.org/nftables/plain/src/services.c">内置列表</a>[<a href="https://en.wikipedia.org/wiki/Wikipedia:Link_rot">失效链接</a> 2020-08-04 ⓘ]。要在命令行显示端口映射，请使用 <code>nft describe tcp dport</code>。</p>
+<h2 id="提示和技巧"><a href="#提示和技巧" class="headerlink" title="提示和技巧"></a>提示和技巧</h2><p>简单可用的防火墙</p>
+<p>详细信息参见 <a href="https://wiki.archlinux.org/index.php/Simple_stateful_firewall">Simple stateful firewall</a> 。</p>
+<p>单一计算机</p>
+<p>清空当前规则集：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"># nft flush ruleset</span><br></pre></td></tr></table></figure>
+
+<p>添加一个表：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"># nft add table inet filter</span><br></pre></td></tr></table></figure>
+
+<p>添加input、forward和output三个基本链。input和forward的默认策略是drop。output的默认策略是accept。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"># nft add chain inet filter input &#123; type filter hook input priority 0 \; policy drop \; &#125;</span><br><span class="line"># nft add chain inet filter forward &#123; type filter hook forward priority 0 \; policy drop \; &#125;</span><br><span class="line"># nft add chain inet filter output &#123; type filter hook output priority 0 \; policy accept \; &#125;</span><br></pre></td></tr></table></figure>
+
+<p>添加两个与TCP和UDP关联的常规链：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"># nft add chain inet filter TCP</span><br><span class="line"># nft add chain inet filter UDP</span><br></pre></td></tr></table></figure>
+
+<p>related和established的流量会accept：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"># nft add rule inet filter input ct state related,established accept</span><br></pre></td></tr></table></figure>
+
+<p>loopback接口的流量会accept：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"># nft add rule inet filter input iif lo accept</span><br></pre></td></tr></table></figure>
+
+<p>无效的流量会drop：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"># nft add rule inet filter input ct state invalid drop</span><br></pre></td></tr></table></figure>
+
+<p>新的echo请求（ping）会accept：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"># nft add rule inet filter input ip protocol icmp icmp type echo-request ct state new accept</span><br></pre></td></tr></table></figure>
+
+<p>新的UDP流量跳转到UDP链：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"># nft add rule inet filter input ip protocol udp ct state new jump UDP</span><br></pre></td></tr></table></figure>
+
+<p>新的TCP流量跳转到TCP链：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"># nft add rule inet filter input ip protocol tcp tcp flags \&amp; \(fin\|syn\|rst\|ack\) &#x3D;&#x3D; syn ct state new jump TCP</span><br></pre></td></tr></table></figure>
+
+<p>未由其他规则处理的所有通信会reject：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"># nft add rule inet filter input ip protocol udp reject</span><br><span class="line"># nft add rule inet filter input ip protocol tcp reject with tcp reset</span><br><span class="line"># nft add rule inet filter input counter reject with icmp type prot-unreachable</span><br></pre></td></tr></table></figure>
+
+<p>此时，应决定对传入连接打开哪些端口，这些由TCP和UDP链处理。例如，要打开web服务器的连接端口，添加：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"># nft add rule inet filter TCP tcp dport 80 accept</span><br></pre></td></tr></table></figure>
+
+<p>要打开web服务器HTTPS连接端口443：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"># nft add rule inet filter TCP tcp dport 443 accept</span><br></pre></td></tr></table></figure>
+
+<p>允许SSH连接端口22：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"># nft add rule inet filter TCP tcp dport 22 accept</span><br></pre></td></tr></table></figure>
+
+<p>允许传入DNS请求：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"># nft add rule inet filter TCP tcp dport 53 accept</span><br><span class="line"># nft add rule inet filter UDP udp dport 53 accept</span><br></pre></td></tr></table></figure>
+
+<p>确保更改是永久的。</p>
+<h1 id="nftables详细语法"><a href="#nftables详细语法" class="headerlink" title="nftables详细语法"></a>nftables详细语法</h1><h3 id="创建表"><a href="#创建表" class="headerlink" title="创建表"></a><strong>创建表</strong></h3><p>nftables 的每个表只有一个地址簇，并且只适用于该簇的数据包。表可以指定五个簇中的一个：</p>
+<table>
+<thead>
+<tr>
+<th><strong><em>\</em>nftables\</strong>*<em>簇***</em></th>
+<th><strong><em>\</em>iptables\</strong>*<em>命令行工具***</em></th>
+</tr>
+</thead>
+<tbody><tr>
+<td>ip</td>
+<td>iptables</td>
+</tr>
+<tr>
+<td>ip6</td>
+<td>ip6tables</td>
+</tr>
+<tr>
+<td>inet</td>
+<td>iptables和ip6tables</td>
+</tr>
+<tr>
+<td>arp</td>
+<td>arptables</td>
+</tr>
+<tr>
+<td>bridge</td>
+<td>ebtables</td>
+</tr>
+</tbody></table>
+<p>inet 同时适用于 IPv4 和 IPv6 的数据包，即统一了 ip 和 ip6 簇，可以更容易地定义规则，下文的示例都将采用 inet 簇。</p>
+<p>先创建一个新的表：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">nft add table inet nftables_svc</span><br></pre></td></tr></table></figure>
+
+<p>列出所有规则:</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">nft list ruleset</span><br><span class="line">table inet nftables_svc &#123;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>现在表中还没有任何规则，需要创建一个链来保存规则。</p>
+<h3 id="创建链"><a href="#创建链" class="headerlink" title="创建链"></a><strong>创建链</strong></h3><p>链是用来保存规则的，和表一样，链也需要被显示创建，因为 nftables 没有内置的链。链有以下两种类型：</p>
+<ul>
+<li><strong>常规链</strong> : 不需要指定钩子类型和优先级，可以用来做跳转，从逻辑上对规则进行分类。</li>
+<li><strong>基本链</strong> : 数据包的入口点，需要指定钩子类型和优先级。</li>
+</ul>
+<p>创建常规链：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">nft add chain inet nftables_svc my_utility_chain</span><br></pre></td></tr></table></figure>
+
+<p>创建基本链：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">nft add chain inet nftables_svc INPUT &#123; type filter hook input priority 0 \;&#125;</span><br></pre></td></tr></table></figure>
+
+<ul>
+<li>反斜线（\）用来转义，这样 shell 就不会将分号解释为命令的结尾。</li>
+<li>priority 采用整数值，可以是负数，值较小的链优先处理。</li>
+</ul>
+<p>列出链中的所有规则：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line">nft list chain inet nftables_svc my_utility_chain</span><br><span class="line">table inet nftables_svc &#123;</span><br><span class="line">	chain my_utility_chain &#123;</span><br><span class="line">	&#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">nft list chain inet nftables_svc INPUT</span><br><span class="line">table inet nftables_svc &#123;</span><br><span class="line">	chain INPUT &#123;</span><br><span class="line">		type filter hook input priority filter; policy accept;</span><br><span class="line">	&#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h3 id="创建规则"><a href="#创建规则" class="headerlink" title="创建规则"></a><strong>创建规则</strong></h3><p>有了表和链之后，就可以创建规则了，规则由语句或表达式构成，包含在链中。下面添加一条规则允许 SSH 登录：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">nft add rule inet nftables_svc INPUT tcp dport ssh accept</span><br></pre></td></tr></table></figure>
+
+<p>add 表示将规则添加到链的末尾，如果想将规则添加到链的开头，可以使用 insert。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">nft insert rule inet nftables_svc INPUT tcp dport http accept</span><br></pre></td></tr></table></figure>
+
+<p>也可以将规则插入到链的指定位置，有两种方法：</p>
+<p>1、 使用 index 来指定规则的索引。add 表示新规则添加在索引位置的规则后面，inser 表示新规则添加在索引位置的规则前面。index 的值从 0 开始增加。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">nft insert rule inet nftables_svc INPUT index 1 tcp dport nfs accept</span><br><span class="line">nft add rule inet nftables_svc INPUT index 1 tcp dport 888 accept</span><br></pre></td></tr></table></figure>
+
+<p>index 类似于 iptables 的 -I 选项，但有两点需要注意：一是 index 的值是从 0 开始的；二是 index 必须指向一个存在的规则，比如 nft insert rule … index 0 就是非法的。</p>
+<p>2、 使用 handle 来指定规则的句柄。add 表示新规则添加在索引位置的规则后面，inser 表示新规则添加在索引位置的规则前面。handle 的值可以通过参数 –handle 获取。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line">nft --handle list ruleset</span><br><span class="line"></span><br><span class="line">table inet nftables_svc &#123; # handle 41</span><br><span class="line">	chain my_utility_chain &#123; # handle 1</span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">	chain INPUT &#123; # handle 2</span><br><span class="line">		type filter hook input priority filter; policy accept;</span><br><span class="line">		tcp dport 80 accept # handle 4</span><br><span class="line">		tcp dport 2049 accept # handle 5</span><br><span class="line">		tcp dport 888 accept # handle 6</span><br><span class="line">		tcp dport 22 accept # handle 3</span><br><span class="line">	&#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>使用add</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">nft add rule inet nftables_svc INPUT handle 4 tcp dport 666 accept</span><br><span class="line">nft insert rule inet nftables_svc INPUT handle 5 tcp dport 777 accept</span><br></pre></td></tr></table></figure>
+
+<p>在 nftables 中，句柄值是固定不变的，除非规则被删除，这就为规则提供了稳定的索引。而 index 的值是可变的，只要有新规则插入，就有可能发生变化。一般建议使用 handle 来插入新规则。</p>
+<p>也可以在创建规则时就获取到规则的句柄值，只需要在创建规则时同时加上参数 –echo 和 –handle。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">nft --echo --handle add  rule inet nftables_svc INPUT  udp dport 333 accept</span><br><span class="line"></span><br><span class="line">add rule inet nftables_svc INPUT udp dport 333 accept # handle 9</span><br></pre></td></tr></table></figure>
+
+<p><strong>删除规则</strong></p>
+<p>单个规则只能通过其句柄删除，首先需要找到你想删除的规则句柄：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">nft --handle list ruleset</span><br><span class="line">删除句柄9的规则</span><br><span class="line">nft delete rule inet nftables_svc INPUT handle 9</span><br></pre></td></tr></table></figure>
+
+<p><strong>列出规则</strong></p>
+<p>前面的示例都是列出了所有规则，我们还可以根据自己的需求列出规则的一部分。例如：</p>
+<p>列出某个表中的所有规则：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">nft list table inet nftables_svc</span><br></pre></td></tr></table></figure>
+
+<p>列出某条链中的所有规则：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">nft list chain inet nftables_svc INPUT</span><br></pre></td></tr></table></figure>
+
+<h3 id="集合"><a href="#集合" class="headerlink" title="集合"></a><strong>集合</strong></h3><p>nftables 的语法原生支持集合，可以用来匹配多个 IP 地址、端口号、网卡或其他任何条件。</p>
+<p><strong>匿名集合</strong></p>
+<p>集合分为<strong>匿名集合</strong>与<strong>命名集合</strong>，匿名集合比较适合用于将来不需要更改的规则。</p>
+<p>例如，下面的规则允许来自源 IP 处于 192.168.224.1 ~ 192.168.224.231 这个区间内的主机的流量。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">nft add rule inet nftables_svc INPUT ip saddr &#123; 192.168.224.1, 192.168.224.231 &#125; accept</span><br></pre></td></tr></table></figure>
+
+<p>匿名集合的缺点是，如果需要修改集合，就得替换规则。如果后面需要频繁修改集合，推荐使用命名集合。</p>
+<p>之前的示例中添加的规则也可以通过集合来简化</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">nft add rule inet nftables_svc INPUT tcp dport  &#123; http,nfs,ssh &#125; accept</span><br></pre></td></tr></table></figure>
+
+<p>iptables 可以借助 ipset 来使用集合，而 nftables 原生支持集合，所以不需要借助 ipset。</p>
+<p><strong>命名集合</strong></p>
+<p>nftables 也支持命名集合，命名集合是可以修改的。创建集合需要指定其元素的类型，当前支持的数据类型有：</p>
+<ul>
+<li>ipv4_addr : IPv4 地址</li>
+<li>ipv6_addr : IPv6 地址</li>
+<li>ether_addr : 以太网（Ethernet）地址</li>
+<li>inet_proto : 网络协议</li>
+<li>inet_service : 网络服务</li>
+<li>mark : 标记类型</li>
+</ul>
+<p>先创建一个空的命名集合：名字为allowed_ssh_ipv4_ips  类型为 ipv4_addr</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line">nft add set inet nftables_svc allowed_ssh_ipv4_ips &#123;</span><br><span class="line"> type ipv4_addr \;&#125;</span><br><span class="line"> </span><br><span class="line">nft list sets</span><br><span class="line"> </span><br><span class="line">table inet nftables_svc &#123;</span><br><span class="line">	set allowed_ssh_ipv4_ips &#123;</span><br><span class="line">		type ipv4_addr</span><br><span class="line">	&#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>要想在添加规则时引用集合，可以使用 @ 符号跟上集合的名字。下面的规则表示将集合allowed_ssh_ipv4_ips 中的 IP 地址添加到白名单中。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">nft insert rule inet nftables_svc INPUT ip saddr @allowed_ssh_ipv4_ips accept</span><br></pre></td></tr></table></figure>
+
+<p>向集合中添加元素：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">nft add element inet nftables_svc allowed_ssh_ipv4_ips &#123; 162.247.4.225, 34.96.147.71, 47.244.41.255, 154.194.255.73, 154.194.255.73, 47.244.62.17, 192.168.224.0,&#125;</span><br></pre></td></tr></table></figure>
+
+<p>如果你向集合中添加一个区间就会报错：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">nft add element inet nftables_svc allowed_ssh_ipv4_ips &#123; 192.168.224.1-192.168.224.231&#125;</span><br><span class="line"></span><br><span class="line">Error: Set member cannot be range, missing interval flag on declaration</span><br><span class="line">add element inet nftables_svc allowed_ssh_ipv4_ips &#123; 192.168.224.1-192.168.224.231&#125;</span><br><span class="line">                                                     ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^</span><br></pre></td></tr></table></figure>
+
+
+
+<p>要想在集合中使用区间，需要加上一个 flag interval，因为内核必须提前确认该集合存储的数据类型，以便采用适当的数据结构。</p>
+<p><strong>支持区间</strong></p>
+<p>创建一个支持区间的命名集合：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">nft add set inet nftables_svc my_range_set &#123; type ipv4_addr \;  flags interval \; &#125;</span><br><span class="line">添加元素</span><br><span class="line">nft add element inet nftables_svc my_range_set &#123; 192.168.224.1-192.168.224.231&#125;</span><br><span class="line">nft add element inet nftables_svc my_range_set &#123; 192.168.223.0&#x2F;24&#125;</span><br></pre></td></tr></table></figure>
+
+<p>子网掩码表示法会被隐式转换为 IP 地址的区间，你也可以直接使用区间 10.20.20.0-10.20.20.255 来获得相同的效果。</p>
+<p><strong>创建一个集合放行端口</strong></p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">nft add set inet nftables_svc allowed_ports &#123; type inet_service \; flags interval \; &#125;</span><br></pre></td></tr></table></figure>
+
+<p>添加规则引用集合</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">nft add rule inet nftables_svc INPUT tcp dport @allowed_ports accept</span><br></pre></td></tr></table></figure>
+
+<p>向集合里添加端口</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">nft add element inet nftables_svc allowed_ports &#123; telnet, http, https, 25, 88, 90-95, 666, 888, 873, 2018-2022, 2097-2098, 3656, 999, 8000, 8080, 8989, 9000 &#125;</span><br></pre></td></tr></table></figure>
+
+<p><strong>级联不同类型</strong></p>
+<p>命名集合也支持对不同类型的元素进行级联，通过级联操作符 . 来分隔。例如，下面的规则可以一次性匹配 IP 地址、协议和端口号。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">nft add set inet nftables_svc my_concat_set &#123; type ipv4_addr . inet_proto . inet_service \; &#125;</span><br><span class="line"></span><br><span class="line">nft list set inet nftables_svc my_concat_set</span><br></pre></td></tr></table></figure>
+
+<p>向集合中添加元素：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">nft add element inet nftables_svc my_concat_set &#123; 192.168.224.12  . tcp . telnet &#125;</span><br></pre></td></tr></table></figure>
+
+<p>在规则中引用级联类型的集合和之前一样，但需要标明集合中每个元素对应到规则中的哪个位置。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">nft add rule inet nftables_svc INPUT ip saddr . meta l4proto . tcp dport @my_concat_set accept</span><br></pre></td></tr></table></figure>
+
+<p>这就表示如果数据包的源 IP、协议类型、目标端口匹配 192.168.224.12、tcp、telnet 时，nftables 就会允许该数据包通过。</p>
+<p>匿名集合也可以使用级联元素，例如：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">nft add rule inet nftables_svc INPUT ip saddr . meta l4proto . udp dport &#123; 192.168.224.12 . udp . bootps &#125; accept</span><br></pre></td></tr></table></figure>
+
+<p>nftables 级联类型的集合类似于 ipset 的聚合类型，例如 hash:ip,port。</p>
+<p><strong>字典</strong></p>
+<p>字典是 nftables 的一个高级特性，它可以使用不同类型的数据并将匹配条件映射到某一个规则上面，并且由于是哈希映射的方式，可以完美的避免链式规则跳转的性能开销。</p>
+<p>例如，为了从逻辑上将对 TCP 和 UDP 数据包的处理规则拆分开来，可以使用字典来实现，这样就可以通过一条规则实现上述需求。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">nft add chain inet nftables_svc TCP</span><br><span class="line">nft add chain inet nftables_svc UDP </span><br><span class="line"></span><br><span class="line">nft add rule inet nftables_svc INPUT meta l4proto vmap &#123; tcp : jump TCP, udp : jump UDP &#125;</span><br><span class="line"></span><br><span class="line">nft list chain inet nftables_svc INPUT</span><br></pre></td></tr></table></figure>
+
+<p>和集合一样，除了匿名字典之外，还可以创建命名字典：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">nft add map inet nftables_svc my_vmap &#123; type inet_proto : verdict \; &#125;</span><br></pre></td></tr></table></figure>
+
+<p>向字典中添加元素：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">nft add element inet nftables_svc my_vmap &#123; 192.168.224.10 : drop, 192.168.224.11 : accept &#125;</span><br></pre></td></tr></table></figure>
+
+<p>后面就可以在规则中引用字典中的元素了：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">nft add rule inet nftables_svc INPUT ip saddr vmap @my_vmap</span><br></pre></td></tr></table></figure>
+
+<p><strong>表与命名空间</strong></p>
+<p>在 nftables 中，每个表都是一个独立的命名空间，这就意味着不同的表中的链、集合、字典等都可以有相同的名字。例如：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">nft add table inet table_one</span><br><span class="line"></span><br><span class="line">nft add chain inet table_one INPUT</span><br><span class="line"></span><br><span class="line">nft add table inet table_two</span><br><span class="line"></span><br><span class="line">nft add chain inet table_two INPUT</span><br></pre></td></tr></table></figure>
+
+<p>有了这个特性，不同的应用就可以在相互不影响的情况下管理自己的表中的规则，而使用 iptables 就无法做到这一点。</p>
+<p>当然，这个特性也有缺陷，由于每个表都被视为独立的防火墙，那么某个数据包必须被所有表中的规则放行，才算真正的放行，即使 table_one 允许该数据包通过，该数据包仍然有可能被 table_two 拒绝。为了解决这个问题，nftables 引入了优先级，priority 值越高的链优先级越低，所以 priority 值低的链比 priority 值高的链先执行。如果两条链的优先级相同，就会进入竞争状态。</p>
+<h3 id="备份与恢复"><a href="#备份与恢复" class="headerlink" title="备份与恢复"></a>备份与恢复</h3><p>以上所有示例中的规则都是临时的，要想永久生效，我们可以将规则备份，重启后自动加载恢复，其实 nftables 的 systemd 服务就是这么工作的。</p>
+<p>备份规则：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">nft list ruleset &gt; &#x2F;root&#x2F;nftables.conf</span><br></pre></td></tr></table></figure>
+
+<p>加载恢复：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">nft -f &#x2F;root&#x2F;nftables.conf</span><br></pre></td></tr></table></figure>
+
+<p>在 CentOS 8 中，nftables.service 的规则被存储在 /etc/nftables.conf 中，其中 include 一些其他的示例规则，一般位于 /etc/sysconfig/nftables.conf 文件中，但默认会被注释掉。</p>
+<h3 id="工作环境nftables配置实例"><a href="#工作环境nftables配置实例" class="headerlink" title="工作环境nftables配置实例"></a>工作环境nftables配置实例</h3><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br></pre></td><td class="code"><pre><span class="line"># drop any existing nftables ruleset</span><br><span class="line">flush ruleset</span><br><span class="line"></span><br><span class="line"># a common table for both IPv4 and IPv6</span><br><span class="line">table inet nftables_svc &#123;</span><br><span class="line">	# 允许ping</span><br><span class="line">	set allowed_protocols &#123;</span><br><span class="line">		type inet_proto</span><br><span class="line">		elements &#x3D; &#123; icmp, icmpv6 &#125;</span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">	# 放行本地回环及docker0网卡</span><br><span class="line">	set allowed_interfaces &#123;</span><br><span class="line">		type ifname</span><br><span class="line">		elements &#x3D; &#123; &quot;lo&quot;, &quot;docker0&quot; &#125;</span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">        # ssh白名单</span><br><span class="line">        set allowed_ssh_ipv4_ips &#123;</span><br><span class="line">                type ipv4_addr</span><br><span class="line">                elements &#x3D; &#123; 162.247.4.225, 34.96.147.71, 47.244.41.255,</span><br><span class="line">                        114.199.68.31, 46.19.166.241, 49.213.26.92,</span><br><span class="line">                        58.82.202.253, 58.82.246.106, 58.82.247.186,</span><br><span class="line">                        154.194.255.73, 154.194.255.73, 47.244.62.176,</span><br><span class="line">                        202.60.234.56, 123.59.194.60, 154.194.254.176,</span><br><span class="line">			192.168.224.0,</span><br><span class="line">                        &#125;</span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line">        # 端口放行</span><br><span class="line">        set allowed_ports &#123;</span><br><span class="line">                type inet_service</span><br><span class="line">                flags interval</span><br><span class="line">                elements &#x3D; &#123; telnet, http, https, 25, 88, 90-95, 666, 888,</span><br><span class="line">                        873, 2018-2022, 2097-2098, 3656, 999, 8000, 8080,</span><br><span class="line">                        8989, 9000</span><br><span class="line">                        &#125;</span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line">	chain INPUT &#123;</span><br><span class="line">		type filter hook input priority 0</span><br><span class="line">		policy drop</span><br><span class="line"></span><br><span class="line">		ct state &#123; established, related &#125; accept</span><br><span class="line"></span><br><span class="line">		meta l4proto @allowed_protocols accept</span><br><span class="line">		iifname @allowed_interfaces accept</span><br><span class="line">                ip saddr @allowed_ssh_ipv4_ips tcp dport 22 accept</span><br><span class="line">                tcp dport @allowed_ports accept</span><br><span class="line"></span><br><span class="line">                #zabbix</span><br><span class="line">                ip saddr 47.244.62.176 tcp dport 10050 accept</span><br><span class="line">	&#125;</span><br><span class="line">       </span><br><span class="line">	chain OUTPUT &#123;</span><br><span class="line">		type filter hook output priority 0</span><br><span class="line">		policy drop</span><br><span class="line">                </span><br><span class="line">                ct state &#123; new, established, related, untracked &#125; accept</span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">        chain FORWARD &#123;</span><br><span class="line">		type filter hook forward priority 0</span><br><span class="line">		policy accept</span><br><span class="line">	&#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>后期新增ssh的ip白名单</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">nft add element inet nftables_svc allowed_ssh_ipv4_ips &#123; 192.168.224.1&#125;</span><br></pre></td></tr></table></figure>
+
+<p>后期新增端口访问</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">nft add element inet nftables_svc allowed_ports &#123;3306-3308, 6397&#125;</span><br></pre></td></tr></table></figure>
+
+<p>保存规则</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">nft list ruleset &gt; &#x2F;etc&#x2F;nftables&#x2F;default.nft</span><br></pre></td></tr></table></figure>
+
+
+</div><ul class="post-copyright"><li><strong>本文标题：</strong><a href="https://yc6.cool/2020/09/30/nftables/">nftables</a></li><li><strong>本文作者：</strong><a href="https://yc6.cool">yichen</a></li><li><strong>本文链接：</strong><a href="https://yc6.cool/2020/09/30/nftables/">https://yc6.cool/2020/09/30/nftables/</a></li><li><strong>版权声明：</strong><span>本博客所有文章除特别声明外，均采用 <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/deed.zh" rel="external nofollow" target="_blank">CC BY-NC-SA 4.0</a> 许可协议。转载请注明出处！</span></li></ul><div><div class="recommend-post"><span class="is-size-6 has-text-grey has-mr-7"># 相关文章</span><br><span>  1.<a class="is-size-6" href="/2023/05/17/Kubernetes%E9%AB%98%E5%8F%AF%E7%94%A8%E9%9B%86%E7%BE%A4%E4%BA%8C%E8%BF%9B%E5%88%B6%E9%83%A8%E7%BD%B2/" target="_blank">Kubernetes高可用集群二进制部署</a><br></span><span>  2.<a class="is-size-6" href="/2022/03/12/openresty%E7%BB%93%E5%90%88lua%E5%AF%B9%E5%90%8C%E4%B8%80%E6%9D%A1%E5%9F%9F%E5%90%8D%E5%88%A4%E6%96%AD%E5%8F%82%E6%95%B0%E5%81%9A%E8%B4%9F%E8%BD%BD/" target="_blank">openresty结合lua对域名参数做负载均衡</a><br></span><span>  3.<a class="is-size-6" href="/2021/07/31/nginx%E5%88%A4%E6%96%AD%E5%BE%AE%E4%BF%A1%E7%AB%AF%E8%B7%B3%E8%BD%AC%E4%B8%8D%E5%90%8C%E9%A1%B5%E9%9D%A2/" target="_blank">nginx判断微信端跳转不同页面</a><br></span><span>  4.<a class="is-size-6" href="/2020/08/04/k8s%E4%B8%ADYAML%E6%96%87%E4%BB%B6%E7%BC%96%E5%86%99%E4%B8%8E%E4%BD%BF%E7%94%A8/" target="_blank">k8s中yaml文件编写与使用</a><br></span><span>  5.<a class="is-size-6" href="/2020/08/04/k8s%E6%90%AD%E5%BB%BA/" target="_blank">kubernetes搭建</a><br></span><span>  6.<a class="is-size-6" href="/2020/08/04/%E5%88%9B%E5%BB%BAcentos%E9%95%9C%E5%83%8F%E6%94%AF%E6%8C%81ssh/" target="_blank">创建centos镜像支持ssh远程连接</a><br></span><span>  7.<a class="is-size-6" href="/2020/08/04/docker%E4%B8%80%E9%94%AE%E5%AE%89%E8%A3%85%E9%85%B7Q%E6%90%AD%E5%BB%BA%E4%B8%AA%E4%BA%BAQQ%E6%9C%BA%E5%99%A8%E4%BA%BA/" target="_blank">docke一键安装酷Q搭建个人QQ机器人</a><br></span><span>  8.<a class="is-size-6" href="/2020/08/04/docker%E6%95%B0%E6%8D%AE%E5%8C%96%E6%8C%81%E4%B9%85%E5%8D%B7%E6%8F%92%E4%BB%B6/" target="_blank">docker数据持久卷插件</a><br></span></div><div class="recommend-post"><span class="is-size-6 has-text-grey has-mr-7"># 推荐文章</span><br><span>  1.<a class="is-size-6" href="/2020/08/04/docker%E4%BD%BF%E7%94%A8/" target="_blank">docker的使用</a><br></span><span>  2.<a class="is-size-6" href="/2020/08/03/mysql%E5%9F%BA%E7%A1%80/" target="_blank">mysql基础</a><br></span><span>  3.<a class="is-size-6" href="/2020/08/03/nginx%E5%9F%BA%E7%A1%80/" target="_blank">nginx基础</a><br></span><span>  4.<a class="is-size-6" href="/2020/08/04/python3%E5%9F%BA%E7%A1%80%E7%9F%A5%E8%AF%86%E9%87%8D%E7%82%B9/" target="_blank">python3基础知识重点</a><br></span><span>  5.<a class="is-size-6" href="/2023/05/07/Linux%E6%9C%8D%E5%8A%A1%E5%99%A8%E7%B3%BB%E7%BB%9F%E7%9B%91%E6%8E%A7/" target="_blank">Prometheus监控linux</a><br></span><span>  6.<a class="is-size-6" href="/2023/05/10/Prometheus%E4%BD%BF%E7%94%A8%E9%82%AE%E7%AE%B1%E6%8E%A5%E6%94%B6%E5%91%8A%E8%AD%A6%E9%80%9A%E7%9F%A5/" target="_blank">Prometheus使用邮件接收告警通知</a><br></span></div></div><link rel="stylesheet" href="https://cdnjs.loli.net/ajax/libs/social-share.js/1.0.16/css/share.min.css"><div class="social-share"></div><script src="https://cdnjs.loli.net/ajax/libs/social-share.js/1.0.16/js/social-share.min.js"></script></article></div><div class="card"><div class="card-content"><h3 class="menu-label has-text-centered">喜欢这篇文章？打赏一下作者吧</h3><div class="buttons is-centered"><a class="button is-info donate"><span class="icon is-small"><i class="fab fa-alipay"></i></span><span>支付宝</span><span class="qrcode"><img src="https://yichenxiu.com/tupian/tubiao/alipay1.jpg" alt="支付宝"></span></a><a class="button is-success donate"><span class="icon is-small"><i class="fab fa-weixin"></i></span><span>微信</span><span class="qrcode"><img src="https://i.328888.xyz/2023/03/05/dZXCk.jpeg" alt="微信"></span></a></div></div></div><nav class="post-navigation mt-4 level is-mobile"><div class="level-start"><a class="article-nav-prev level level-item link-muted" href="/2020/11/08/English%E5%9F%BA%E7%A1%80/"><i class="level-item fas fa-chevron-left"></i><span class="level-item">English基础</span></a></div><div class="level-end"><a class="article-nav-next level level-item link-muted" href="/2020/08/07/hexo%E5%8D%9A%E5%AE%A2%E7%9A%84%E8%BF%81%E7%A7%BB/"><span class="level-item">hexo博客的迁移</span><i class="level-item fas fa-chevron-right"></i></a></div></nav><div class="card"><div class="card-content"><h3 class="title is-5">评论</h3><div id="comment-container"></div><link rel="stylesheet" href="https://cdnjs.loli.net/ajax/libs/gitalk/1.6.0/gitalk.css"><script> $.getScript('/js/gitalk.min.js', function () { 
+            var gitalk = new Gitalk({
+            language:'zh-CN',
+            id: '90491944a9e0ca3403cc2644d59cc62c',
+            repo: 'issue_database',
+            owner: 'zhi666',
+            clientID: '1b861f81e9a79ee6028d',
+            clientSecret: 'cc629aff090aa9c60d5e13ddf7fcfce14f00a478',
+            admin: ["zhi666"],
+            createIssueManually: true,
+            distractionFreeMode: true,
+            perPage: 10,
+            pagerDirection: 'last',
+            proxy: 'https://cors-anywhere.azm.workers.dev/https://github.com/login/oauth/access_token',
+            
+            enableHotKey: true,
+            isLocked: false
+        })
+        gitalk.render('comment-container')});</script></div></div></div><div class="column column-left is-4-tablet is-4-desktop is-4-widescreen  order-1 is-sticky"><!--!--><div class="card widget"><div class="card-content"><nav class="level"><div class="level-item has-text-centered flex-shrink-1"><div><figure class="image is-128x128 mx-auto mb-2"><img class="is-rounded" src="/img/toudong.jpg" alt="逸尘秀"></figure><p class="title is-size-4 is-block line-height-inherit">逸尘秀</p><p class="is-size-6 is-block">只此一生 ， 必须快乐 ！</p><p class="is-size-6 is-flex justify-content-center"><i class="fas fa-map-marker-alt mr-1"></i><span>深圳</span></p></div></div></nav><nav class="level is-mobile"><div class="level-item has-text-centered is-marginless"><div><p class="heading">文章</p><a href="/archives"><p class="title">136</p></a></div></div><div class="level-item has-text-centered is-marginless"><div><p class="heading">分类</p><a href="/categories"><p class="title">17</p></a></div></div><div class="level-item has-text-centered is-marginless"><div><p class="heading">标签</p><a href="/tags"><p class="title">55</p></a></div></div></nav><div class="level"><a class="level-item button is-primary is-rounded" href="https://weibo.com/u/6155656382" target="_blank" rel="noopener">关注我</a></div><div class="level is-mobile"><a class="level-item button is-transparent is-white is-marginless" target="_blank" rel="noopener" title="Github" href="https://github.com/zhi666"><i class="fab fa-github"></i></a><a class="level-item button is-transparent is-white is-marginless" target="_blank" rel="noopener" title="Weibo" href="https://weibo.com/u/6155656382"><i class="fab fa-weibo"></i></a><a class="level-item button is-transparent is-white is-marginless" target="_blank" rel="noopener" title="Email" href="mailto:1378373724@qq.com"><i class="fa fa-envelope"></i></a><a class="level-item button is-transparent is-white is-marginless" target="_blank" rel="noopener" title="Next" href="https://zhi666.github.io/remove.io"><i class="fab fa-dribbble"></i></a><a class="level-item button is-transparent is-white is-marginless" target="_blank" rel="noopener" title="RSS" href="/atom.xml"><i class="fas fa-rss"></i></a></div><div><hr><p id="hitokoto">:D 一言句子获取中...</p><script type="text/javascript" defer>function getYiyan(){
+                                $.getJSON("https://v1.hitokoto.cn/", function (data) {
+                                if(data){
+                                    $('#hitokoto').html("");
+                                    $('#hitokoto').append("<strong style='color: #3273dc;'>"+data.hitokoto+"</strong>"+
+                                    "<p>"+"来源《"+data.from+"》</p><p>提供者-"+data.creator+"</p>");
+                                }});}
+                                $(function (){getYiyan();$('#hitokoto').click(function(){getYiyan();})});</script></div></div></div><div class="card widget"><div class="card-content"><h3 class="menu-label">最新评论</h3><span class="body_hot_comment">加载中，最新评论有1分钟缓存...</span></div></div><div class="card widget"><div class="card-content"><h3 class="menu-label">最新文章</h3><article class="media"><div class="media-content size-small"><p><time dateTime="2023-11-01T02:25:44.578Z">2023-11-01</time></p><p class="title is-6"><a class="link-muted" href="/2023/11/01/selenlium%E6%89%B9%E9%87%8F%E6%B7%BB%E5%8A%A0dns%E5%9F%9F%E5%90%8D/">批量添加dns域名解析</a></p><p class="is-uppercase"><i class="fas fa-folder-open has-text-grey"> </i><a class="link-muted" href="/categories/python/">python</a></p></div></article><article class="media"><div class="media-content size-small"><p><time dateTime="2023-05-17T01:45:36.000Z">2023-05-17</time></p><p class="title is-6"><a class="link-muted" href="/2023/05/17/Kubernetes%E9%AB%98%E5%8F%AF%E7%94%A8%E9%9B%86%E7%BE%A4%E4%BA%8C%E8%BF%9B%E5%88%B6%E9%83%A8%E7%BD%B2/">Kubernetes高可用集群二进制部署</a></p><p class="is-uppercase"><i class="fas fa-folder-open has-text-grey"> </i><a class="link-muted" href="/categories/linux3/">linux3</a></p></div></article><article class="media"><div class="media-content size-small"><p><time dateTime="2023-05-10T06:25:36.000Z">2023-05-10</time></p><p class="title is-6"><a class="link-muted" href="/2023/05/10/Prometheus%E4%BD%BF%E7%94%A8%E6%89%8B%E6%9C%BA%E7%94%B5%E8%AF%9D_%E7%9F%AD%E4%BF%A1%E6%8E%A5%E6%94%B6%E5%91%8A%E8%AD%A6%E9%80%9A%E7%9F%A5/">Prometheus使用手机电话_短信接收告警通知</a></p><p class="is-uppercase"><i class="fas fa-folder-open has-text-grey"> </i><a class="link-muted" href="/categories/linux2/">linux2</a></p></div></article><article class="media"><div class="media-content size-small"><p><time dateTime="2023-05-10T06:22:36.000Z">2023-05-10</time></p><p class="title is-6"><a class="link-muted" href="/2023/05/10/Prometheus%E4%BD%BF%E7%94%A8%E4%BC%81%E4%B8%9A%E5%BE%AE%E4%BF%A1%E6%8E%A5%E6%94%B6%E5%91%8A%E8%AD%A6%E9%80%9A%E7%9F%A5/">Prometheus使用企业微信接收告警通知</a></p><p class="is-uppercase"><i class="fas fa-folder-open has-text-grey"> </i><a class="link-muted" href="/categories/linux2/">linux2</a></p></div></article><article class="media"><div class="media-content size-small"><p><time dateTime="2023-05-10T06:20:36.000Z">2023-05-10</time></p><p class="title is-6"><a class="link-muted" href="/2023/05/10/Prometheus%E4%BD%BF%E7%94%A8%E4%BC%81%E4%B8%9A%E9%92%89%E9%92%89%E5%91%8A%E8%AD%A6%E9%80%9A%E7%9F%A5/">Prometheus使用企业钉钉接收告警通知</a></p><p class="is-uppercase"><i class="fas fa-folder-open has-text-grey"> </i><a class="link-muted" href="/categories/linux2/">linux2</a></p></div></article></div></div><div class="card widget"><div class="card-content"><div class="menu"><h3 class="menu-label">分类</h3><ul class="menu-list"><li><a class="level is-mobile is-marginless" href="/categories/English/"><span class="level-start"><span class="level-item">English</span></span><span class="level-end"><span class="level-item tag">1</span></span></a></li><li><a class="level is-mobile is-marginless" href="/categories/HTML/"><span class="level-start"><span class="level-item">HTML</span></span><span class="level-end"><span class="level-item tag">4</span></span></a></li><li><a class="level is-mobile is-marginless" href="/categories/JS/"><span class="level-start"><span class="level-item">JS</span></span><span class="level-end"><span class="level-item tag">2</span></span></a></li><li><a class="level is-mobile is-marginless" href="/categories/html/"><span class="level-start"><span class="level-item">html</span></span><span class="level-end"><span class="level-item tag">1</span></span></a></li><li><a class="level is-mobile is-marginless" href="/categories/linux1/"><span class="level-start"><span class="level-item">linux1</span></span><span class="level-end"><span class="level-item tag">15</span></span></a></li><li><a class="level is-mobile is-marginless" href="/categories/linux2/"><span class="level-start"><span class="level-item">linux2</span></span><span class="level-end"><span class="level-item tag">33</span></span></a></li><li><a class="level is-mobile is-marginless" href="/categories/linux3/"><span class="level-start"><span class="level-item">linux3</span></span><span class="level-end"><span class="level-item tag">27</span></span></a></li><li><a class="level is-mobile is-marginless" href="/categories/python/"><span class="level-start"><span class="level-item">python</span></span><span class="level-end"><span class="level-item tag">12</span></span></a></li><li><a class="level is-mobile is-marginless" href="/categories/web/"><span class="level-start"><span class="level-item">web</span></span><span class="level-end"><span class="level-item tag">1</span></span></a></li><li><a class="level is-mobile is-marginless" href="/categories/work/"><span class="level-start"><span class="level-item">work</span></span><span class="level-end"><span class="level-item tag">7</span></span></a></li><a class="level is-mobile is-marginless" href="/categories/"><span class="level-start"><span class="level-item">查看全部&gt;&gt;</span></span></a></ul></div></div></div><div class="card widget"><div class="card-content"><div class="menu"><h3 class="menu-label">归档</h3><ul class="menu-list"><li><a class="level is-mobile is-marginless" href="/archives/2023/11/"><span class="level-start"><span class="level-item">十一月 2023</span></span><span class="level-end"><span class="level-item tag">5</span></span></a></li><li><a class="level is-mobile is-marginless" href="/archives/2023/05/"><span class="level-start"><span class="level-item">五月 2023</span></span><span class="level-end"><span class="level-item tag">13</span></span></a></li><li><a class="level is-mobile is-marginless" href="/archives/2023/04/"><span class="level-start"><span class="level-item">四月 2023</span></span><span class="level-end"><span class="level-item tag">2</span></span></a></li><li><a class="level is-mobile is-marginless" href="/archives/2023/02/"><span class="level-start"><span class="level-item">二月 2023</span></span><span class="level-end"><span class="level-item tag">1</span></span></a></li><li><a class="level is-mobile is-marginless" href="/archives/2022/06/"><span class="level-start"><span class="level-item">六月 2022</span></span><span class="level-end"><span class="level-item tag">3</span></span></a></li><a class="level is-mobile is-marginless" href="/archives/"><span class="level-start"><span class="level-item">查看全部&gt;&gt;</span></span></a></ul></div></div></div><div class="card widget"><div class="card-content"><div class="menu"><h3 class="menu-label">标签</h3><div class="field is-grouped is-grouped-multiline"><div class="control"><a class="tags has-addons" href="/tags/linux/"><span class="tag">linux</span><span class="tag is-grey-lightest">18</span></a></div><div class="control"><a class="tags has-addons" href="/tags/docker/"><span class="tag">docker</span><span class="tag is-grey-lightest">16</span></a></div><div class="control"><a class="tags has-addons" href="/tags/Prometheus/"><span class="tag">Prometheus</span><span class="tag is-grey-lightest">14</span></a></div><div class="control"><a class="tags has-addons" href="/tags/html/"><span class="tag">html</span><span class="tag is-grey-lightest">14</span></a></div><div class="control"><a class="tags has-addons" href="/tags/python/"><span class="tag">python</span><span class="tag is-grey-lightest">12</span></a></div><div class="control"><a class="tags has-addons" href="/tags/web/"><span class="tag">web</span><span class="tag is-grey-lightest">12</span></a></div><div class="control"><a class="tags has-addons" href="/tags/nginx/"><span class="tag">nginx</span><span class="tag is-grey-lightest">9</span></a></div><div class="control"><a class="tags has-addons" href="/tags/mysql/"><span class="tag">mysql</span><span class="tag is-grey-lightest">7</span></a></div><div class="control"><a class="tags has-addons" href="/tags/%E5%AE%B9%E5%99%A8/"><span class="tag">容器</span><span class="tag is-grey-lightest">7</span></a></div><div class="control"><a class="tags has-addons" href="/tags/%E6%95%B0%E6%8D%AE%E5%BA%93/"><span class="tag">数据库</span><span class="tag is-grey-lightest">7</span></a></div><div class="control"><a class="tags has-addons" href="/tags/%E7%A7%91%E5%AD%A6%E4%B8%8A%E7%BD%91/"><span class="tag">科学上网</span><span class="tag is-grey-lightest">6</span></a></div><div class="control"><a class="tags has-addons" href="/tags/work/"><span class="tag">work</span><span class="tag is-grey-lightest">5</span></a></div><div class="control"><a class="tags has-addons" href="/tags/%E8%87%AA%E5%8A%A8%E5%8C%96/"><span class="tag">自动化</span><span class="tag is-grey-lightest">5</span></a></div><div class="control"><a class="tags has-addons" href="/tags/%E5%8D%9A%E5%AE%A2/"><span class="tag">博客</span><span class="tag is-grey-lightest">4</span></a></div><div class="control"><a class="tags has-addons" href="/tags/%E5%B7%A5%E4%BD%9C/"><span class="tag">工作</span><span class="tag is-grey-lightest">4</span></a></div><div class="control"><a class="tags has-addons" href="/tags/%E5%B7%A5%E5%85%B7/"><span class="tag">工具</span><span class="tag is-grey-lightest">4</span></a></div><div class="control"><a class="tags has-addons" href="/tags/ssl/"><span class="tag">ssl</span><span class="tag is-grey-lightest">3</span></a></div><div class="control"><a class="tags has-addons" href="/tags/%E6%96%87%E4%BB%B6%E7%B3%BB%E7%BB%9F/"><span class="tag">文件系统</span><span class="tag is-grey-lightest">3</span></a></div><div class="control"><a class="tags has-addons" href="/tags/%E6%97%A5%E5%BF%97/"><span class="tag">日志</span><span class="tag is-grey-lightest">3</span></a></div><div class="control"><a class="tags has-addons" href="/tags/%E6%97%A5%E5%BF%97%E5%8A%A0%E5%AF%86/"><span class="tag">日志加密</span><span class="tag is-grey-lightest">3</span></a></div></div><div class="field is-grouped is-grouped-multiline"><a class="tags has-addons" href="/tags/"><span class="tag">查看全部&gt;&gt;</span></a></div></div></div></div><div class="card widget"><div class="card-content"><div class="menu"><h3 class="menu-label">订阅更新</h3><form action="https://feedburner.google.com/fb/a/mailverify" method="post" target="popupwindow" onsubmit="window.open(&#039;https://feedburner.google.com/fb/a/mailverify?uri=zhi666FeedsId&#039;,&#039;popupwindow&#039;,&#039;scrollbars=yes,width=550,height=520&#039;);return true"><input type="hidden" value="zhi666FeedsId" name="uri"><input type="hidden" name="loc" value="en_US"><div class="field has-addons"><div class="control has-icons-left is-expanded"><input class="input" name="email" type="email" placeholder="Email"><span class="icon is-small is-left"><i class="fas fa-envelope"></i></span></div><div class="control"><input class="button is-primary" type="submit" value="订阅"></div></div><p class="help">输入邮箱开始订阅，更博后邮件通知！</p></form></div></div></div></div></div></div></section><footer class="footer"><div class="container"><div class="level"><div class="level-start"><a class="footer-logo is-block mb-2" href="/"><img src="/img/logo.png" alt="逸尘秀" height="28"></a><p class="size-small"><span>&copy; 2023 yichen</span>  Powered by <a href="https://hexo.io/" target="_blank">Hexo</a> &amp; <a href="https://github.com/ppoffice/hexo-theme-icarus" target="_blank">Icarus</a>,Modify by <a href="https://github.com/removeif/hexo-theme-amazing" target="_blank">removeif</a> <br><span>© 版权说明：[本网站所有内容均收集于互联网或自己创作,<br />&nbsp;&nbsp;&nbsp;&nbsp;方便于网友与自己学习交流，如有侵权，请<a href="/message" target="_blank">留言</a>，立即处理]<br /></span><span><span id="statistic-times">loading...</span><script>function createTime(time) {
+            var n = new Date(time);
+            now.setTime(now.getTime() + 250),
+                days = (now - n) / 1e3 / 60 / 60 / 24,
+                dnum = Math.floor(days),
+                hours = (now - n) / 1e3 / 60 / 60 - 24 * dnum,
+                hnum = Math.floor(hours),
+            1 == String(hnum).length && (hnum = "0" + hnum),
+                minutes = (now - n) / 1e3 / 60 - 1440 * dnum - 60 * hnum,
+                mnum = Math.floor(minutes),
+            1 == String(mnum).length && (mnum = "0" + mnum),
+                seconds = (now - n) / 1e3 - 86400 * dnum - 3600 * hnum - 60 * mnum,
+                snum = Math.round(seconds),
+            1 == String(snum).length && (snum = "0" + snum),
+                document.getElementById("statistic-times").innerHTML = "❤️本站自 <strong>"+time.split(" ")[0].replace(/\//g,".")+"</strong> 已运行 <strong>" + dnum + "</strong> 天 <strong>" + hnum + "</strong> 小时 <strong>" + mnum + "</strong> 分 <strong>" + snum + "</strong> 秒！❤️";
+        }var now = new Date();setInterval("createTime('2020/08/02 00:00:00')", 250,"");</script><br></span><div class="size-small"><span>❤️感谢 <strong><span id="busuanzi_value_site_uv">99+</span></strong> 小伙伴的 <strong><span id="busuanzi_value_site_pv">99+</span></strong> 次光临！❤️</span></div></p></div><div class="level-end"><div class="field has-addons"><p class="control"><a class="button is-transparent is-large" target="_blank" rel="noopener" title="Creative Commons" href="https://creativecommons.org/"><i class="fab fa-creative-commons"></i></a></p><p class="control"><a class="button is-transparent is-large" target="_blank" rel="noopener" title="Attribution 4.0 International" href="https://creativecommons.org/licenses/by/4.0/"><i class="fab fa-creative-commons-by"></i></a></p><p class="control"><a class="button is-transparent is-large" target="_blank" rel="noopener" title="Download on GitHub" href="https://github.com/zhi666"><i class="fab fa-github"></i></a></p></div><div class="sideMusic"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/aplayer/dist/APlayer.min.css"><script src="/js/APlayer.min.js"></script><script src="https://cdn.jsdelivr.net/npm/meting@2/dist/Meting.min.js"></script><meting-js style="width: auto;height: 2000px;" server="netease" type="playlist" id="2364053447" theme="#2980b9" loop="all" autoplay="false" order="list" storageName="aplayer-setting" lrctype="0" list-max-height="400px" fixed="true"></meting-js></div></div></div></div></footer><script src="https://cdnjs.loli.net/ajax/libs/moment.js/2.22.2/moment-with-locales.min.js"></script><script>moment.locale("zh-CN");</script><script>var IcarusThemeSettings = {
+            site: {
+                url: 'https://yc6.cool',
+                external_link: {"enable":true,"exclude":[]}
+            },
+            article: {
+                highlight: {
+                    clipboard: true,
+                    fold: 'unfolded'
+                }
+            }
+        };</script><script src="https://cdnjs.loli.net/ajax/libs/clipboard.js/2.0.4/clipboard.min.js" defer></script><script src="/js/animation.js"></script><a id="back-to-top" title="回到顶端" href="javascript:;"><i class="fas fa-chevron-up"></i></a><script src="/js/back-to-top.js" defer></script><!--!--><!--!--><script src="https://cdnjs.loli.net/ajax/libs/lightgallery/1.6.12/js/lightgallery-all.min.js" defer></script><script src="https://cdnjs.loli.net/ajax/libs/justifiedGallery/3.7.0/js/jquery.justifiedGallery.min.js" defer></script><!--!--><!--!--><!--!--><script src="/js/toc.js" defer></script><script src="/js/main.js" defer></script><script>$.getScript('/js/comment-issue-data.js',function(){loadIssueData('1b861f81e9a79ee6028d','cc629aff090aa9c60d5e13ddf7fcfce14f00a478','zhi666','issue_database',false);})</script><link rel="stylesheet" href="/css/insight.css"><div class="searchbox ins-search"><div class="searchbox-container ins-search-container"><div class="searchbox-input-wrapper"><input class="searchbox-input ins-search-input" type="text" placeholder="想要查找什么..."><span class="searchbox-close ins-close ins-selectable"><i class="fa fa-times-circle"></i></span></div><div class="searchbox-result-wrapper ins-section-wrapper"><div class="ins-section-container"></div></div></div></div><script>(function (window) {
+            var INSIGHT_CONFIG = {
+                TRANSLATION: {
+                    POSTS: '文章',
+                    PAGES: '页面',
+                    CATEGORIES: '分类',
+                    TAGS: '标签',
+                    UNTITLED: '(无标题)',
+                },
+                CONTENT_URL: '/content.json',
+            };
+            window.INSIGHT_CONFIG = INSIGHT_CONFIG;
+        })(window);</script><script src="/js/insight.js" defer></script></body></html>
